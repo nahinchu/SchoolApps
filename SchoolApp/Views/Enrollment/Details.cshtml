@@ -1,0 +1,35 @@
+﻿@model SchoolApp.Models.Enrollment
+@{
+    ViewData["Title"] = "Chi tiết đăng ký";
+}
+
+<h2>Thông tin đăng ký</h2>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Học viên</dt>
+    <dd class="col-sm-9">@Model.Student?.FullName</dd>
+
+    <dt class="col-sm-3">Email học viên</dt>
+    <dd class="col-sm-9">@Model.Student?.Email</dd>
+
+    <dt class="col-sm-3">Khóa học</dt>
+    <dd class="col-sm-9">@Model.Course?.CourseName</dd>
+
+    <dt class="col-sm-3">Số tín chỉ</dt>
+    <dd class="col-sm-9">@Model.Course?.Credits</dd>
+
+    <dt class="col-sm-3">Học phí</dt>
+    <dd class="col-sm-9">@Model.Course?.Fee.ToString("N0") VNĐ</dd>
+
+    <dt class="col-sm-3">Ngày đăng ký</dt>
+    <dd class="col-sm-9">@Model.EnrollDate.ToString("dd/MM/yyyy")</dd>
+
+    <dt class="col-sm-3">Điểm</dt>
+    <dd class="col-sm-9">@(Model.Grade?.ToString("0.00") ?? "Chưa có")</dd>
+
+    <dt class="col-sm-3">Ghi chú</dt>
+    <dd class="col-sm-9">@Model.Notes</dd>
+</dl>
+
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

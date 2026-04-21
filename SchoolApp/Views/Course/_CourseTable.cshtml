@@ -1,0 +1,90 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<SchoolApp.Models.Course>
+@{
+    var role = Context.Session.GetString("Role");
+    var isAdmin = role == "Admin";
+    var isStudent = role == "Student";
+    var studentId = Context.Session.GetInt32("StudentId");
+    var searchTerm = ViewData["SearchTerm"] as string;
+}
+
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên</th>
+            <th>Tín chỉ</th>
+            <th>Học phí</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="5" class="text-center">Không có khóa học nào</td></tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CourseName</td>
+                    <td>@item.Credits</td>
+                    <td>@item.Fee.ToString("N0") VNĐ</td>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <span class="badge bg-success">Đang mở</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Đóng</span>
+                        }
+                    </td>
+                    <td>
+                        @if (isAdmin)
+                        {
+                            <button type="button" class="btn btn-sm btn-warning"
+                                    onclick="openEditModal(@item.CourseId)">
+                                Sửa
+                            </button>
+                            <button type="button" class="btn btn-sm btn-danger btn-delete-course"
+                                    data-id="@item.CourseId">
+                                Xóa
+                            </button>
+                        }
+                        else if (isStudent && item.IsActive)
+                        {
+                            <button type="button" class="btn btn-sm btn-success btn-register-course"
+                                    data-id="@item.CourseId">
+                                📚 Đăng ký
+                            </button>
+                        }
+                        else if (studentId == null)
+                        {
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-success">
+                                Đăng nhập để đăng ký
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center">
+    <span>
+        Trang @Model.PageNumber / @Model.PageCount
+        (Tổng: @Model.TotalItemCount khóa học)
+    </span>
+    @Html.PagedListPager(Model,
+    page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"] }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link ajax-page-link" },
+            UlElementClasses = new[] { "pagination" }
+        })
+</div>

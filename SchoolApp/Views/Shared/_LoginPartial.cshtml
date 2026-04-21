@@ -1,0 +1,9 @@
+﻿@if (Context.Session.GetString("StudentName") != null)
+{
+    <span>Xin chào @Context.Session.GetString("StudentName")</span>
+    <a asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+}
+else
+{
+    <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+}

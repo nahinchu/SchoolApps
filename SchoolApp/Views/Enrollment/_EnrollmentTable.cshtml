@@ -1,0 +1,74 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<SchoolApp.Models.Enrollment>
+@{
+    var searchTerm = ViewData["SearchTerm"] as string;
+}
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Học viên</th>
+            <th>Khóa học</th>
+            <th>Ngày đăng ký</th>
+            <th>Điểm</th>
+            <th>Ghi chú</th>
+            <th class="text-center">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="7" class="text-center">Không có đăng ký nào</td></tr>
+        }
+        else
+        {
+            int i = (Model.PageNumber - 1) * Model.PageSize + 1;
+            foreach (var e in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@e.Student?.FullName</td>
+                    <td>@e.Course?.CourseName</td>
+                    <td>@e.EnrollDate.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @if (e.Grade.HasValue)
+                        {
+                            <span class="badge bg-success">@e.Grade.Value.ToString("0.00")</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Chưa có</span>
+                        }
+                    </td>
+                    <td>@(e.Notes ?? "-")</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-warning"
+                                onclick="openEditModal(@e.EnrollmentId)">
+                            ✏️ Chấm điểm
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger btn-delete-enrollment"
+                                data-id="@e.EnrollmentId">
+                            🗑️ Xóa
+                        </button>
+                    </td>
+                </tr>
+                i++;
+            }
+        }
+    </tbody>
+</table>
+<div class="d-flex justify-content-between align-items-center">
+    <span>
+        Trang @Model.PageNumber / @Model.PageCount
+        (Tổng: @Model.TotalItemCount đăng ký)
+    </span>
+    @Html.PagedListPager(Model,
+    page => Url.Action("Index", new { page, searchTerm }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link ajax-page-link" },
+            UlElementClasses = new[] { "pagination" }
+        })
+</div>

@@ -1,0 +1,87 @@
+﻿@model SchoolApp.Models.Course
+@{
+    ViewData["Title"] = "Sửa khóa học";
+}
+
+<style>
+    .required-star {
+        color: #dc3545;
+        margin-left: 2px;
+    }
+
+    .form-control.input-validation-error {
+        border-color: #dc3545;
+    }
+
+    .field-validation-error {
+        color: #dc3545;
+        font-size: 0.875em;
+    }
+</style>
+
+<div class="container mt-4" style="max-width:700px">
+    <h2 class="mb-4">✏️ Sửa khóa học</h2>
+
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <input type="hidden" asp-for="CourseId" />
+
+        <div class="mb-3">
+            <label asp-for="CourseName" class="form-label fw-semibold">
+                @Html.DisplayNameFor(m => m.CourseName)
+                <span class="required-star">*</span>
+            </label>
+            <input asp-for="CourseName" class="form-control"
+                   placeholder="Nhập tên khóa học (3–200 ký tự)" />
+            <span asp-validation-for="CourseName" class="field-validation-error"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label fw-semibold">
+                @Html.DisplayNameFor(m => m.Description)
+            </label>
+            <textarea asp-for="Description" class="form-control" rows="3"
+                      placeholder="Mô tả khóa học (tối đa 1000 ký tự)..."></textarea>
+            <span asp-validation-for="Description" class="field-validation-error"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Credits" class="form-label fw-semibold">
+                    @Html.DisplayNameFor(m => m.Credits)
+                    <span class="required-star">*</span>
+                </label>
+                <input asp-for="Credits" class="form-control" type="number"
+                       min="1" max="10" placeholder="1–10" />
+                <span asp-validation-for="Credits" class="field-validation-error"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="Fee" class="form-label fw-semibold">
+                    @Html.DisplayNameFor(m => m.Fee)
+                    <span class="required-star">*</span>
+                </label>
+                <input asp-for="Fee" class="form-control" type="number"
+                       min="0" placeholder="0–100,000,000" />
+                <span asp-validation-for="Fee" class="field-validation-error"></span>
+            </div>
+        </div>
+
+        <div class="form-check form-switch mb-4">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label fw-semibold">
+                @Html.DisplayNameFor(m => m.IsActive)
+            </label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">💾 Cập nhật</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

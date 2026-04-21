@@ -1,0 +1,57 @@
+﻿@model SchoolApp.Models.Student
+@{
+    ViewData["Title"] = "Chi tiết học viên";
+}
+
+<h2>Thông tin học viên</h2>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Họ và tên</dt>
+    <dd class="col-sm-9">@Model.FullName</dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9">@Model.Email</dd>
+
+    <dt class="col-sm-3">Số điện thoại</dt>
+    <dd class="col-sm-9">@Model.Phone</dd>
+
+    <dt class="col-sm-3">Ngày sinh</dt>
+    <dd class="col-sm-9">@Model.DateOfBirth.ToString("dd/MM/yyyy")</dd>
+
+    <dt class="col-sm-3">Địa chỉ</dt>
+    <dd class="col-sm-9">@Model.Address</dd>
+
+    <dt class="col-sm-3">Ngày đăng ký</dt>
+    <dd class="col-sm-9">@Model.RegisteredDate.ToString("dd/MM/yyyy HH:mm")</dd>
+</dl>
+
+<h4 class="mt-4">Khóa học đã đăng ký</h4>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>Khóa học</th>
+            <th>Ngày đăng ký</th>
+            <th>Điểm</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Enrollments == null || !Model.Enrollments.Any())
+        {
+            <tr><td colspan="3" class="text-center">Chưa đăng ký khóa học nào</td></tr>
+        }
+        else
+        {
+            foreach (var e in Model.Enrollments)
+            {
+                <tr>
+                    <td>@e.Course?.CourseName</td>
+                    <td>@e.EnrollDate.ToString("dd/MM/yyyy")</td>
+                    <td>@(e.Grade?.ToString("0.00") ?? "Chưa có")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

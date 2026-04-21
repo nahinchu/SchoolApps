@@ -1,0 +1,365 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<SchoolApp.Models.Student>
+@{
+    ViewData["Title"] = "Danh sách học viên";
+    var role = Context.Session.GetString("Role");
+    var isAdmin = role == "Admin";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">🎓 Danh sách học viên</h2>
+        @if (isAdmin)
+        {
+            <button type="button" class="btn btn-success"
+                    data-bs-toggle="modal" data-bs-target="#studentModal"
+                    onclick="openCreateModal()">
+                ➕ Thêm học viên
+            </button>
+        }
+    </div>
+
+    <form id="searchForm" method="get" class="mb-3">
+        <div class="input-group w-50">
+            <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
+                   class="form-control" placeholder="🔍 Tìm theo tên, email, SĐT..." />
+            <button type="submit" class="btn btn-primary">Tìm</button>
+        </div>
+    </form>
+
+    <div id="studentTableContainer">
+        @await Html.PartialAsync("_StudentTable", Model)
+    </div>
+</div>
+
+<!-- ==================== MODAL CREATE / EDIT ==================== -->
+<div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="studentModalLabel">Thêm học viên</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modalResult" class="mb-3"></div>
+                <form id="studentForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="StudentId" name="StudentId" value="0" />
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="FullName" class="form-label fw-semibold">
+                                Họ và tên <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="FullName" name="FullName"
+                                   class="form-control" placeholder="Nhập họ tên (2–100 ký tự)" />
+                            <div class="invalid-feedback" id="err-FullName"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Email" class="form-label fw-semibold">
+                                Email <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" id="Email" name="Email"
+                                   class="form-control" placeholder="example@email.com" />
+                            <div class="invalid-feedback" id="err-Email"></div>
+                        </div>
+                    </div>
+
+                    <div class="row" id="passwordRow">
+                        <div class="col-md-6 mb-3">
+                            <label for="Password" class="form-label fw-semibold">
+                                Mật khẩu <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" id="Password" name="Password"
+                                   class="form-control" placeholder="Tối thiểu 6 ký tự" />
+                            <div class="invalid-feedback" id="err-Password"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Phone" class="form-label fw-semibold">
+                                Số điện thoại <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="Phone" name="Phone"
+                                   class="form-control" placeholder="9–15 ký tự" />
+                            <div class="invalid-feedback" id="err-Phone"></div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="DateOfBirth" class="form-label fw-semibold">
+                                Ngày sinh <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" id="DateOfBirth" name="DateOfBirth"
+                                   class="form-control" />
+                            <div class="invalid-feedback" id="err-DateOfBirth"></div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Address" class="form-label fw-semibold">Địa chỉ</label>
+                            <input type="text" id="Address" name="Address"
+                                   class="form-control" placeholder="Nhập địa chỉ..." />
+                            <div class="invalid-feedback" id="err-Address"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="btnSaveStudent">
+                    💾 Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ==================== MODAL CHI TIẾT ==================== -->
+<div class="modal fade" id="studentDetailModal" tabindex="-1" aria-labelledby="studentDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="studentDetailModalLabel">👤 Chi tiết học viên</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="studentDetailBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Đang tải...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
+    <script>
+        var isEditMode = false;
+               
+        // ====== MỞ MODAL CHI TIẾT ======
+        function openDetailModal(id) {
+            // Hiện spinner trong khi chờ
+            $('#studentDetailBody').html(`
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Đang tải...</p>
+                </div>
+            `);
+            $('#studentDetailModal').modal('show');
+
+            $.get('@Url.Action("GetStudentDetails", "Student")/' + id, function (data) {
+                // Xây dựng bảng enrollments
+                var enrollHtml = '';
+                if (data.enrollments.length === 0) {
+                    enrollHtml = '<tr><td colspan="3" class="text-center text-muted">Chưa đăng ký khóa học nào</td></tr>';
+                } else {
+                    $.each(data.enrollments, function (_, e) {
+                        enrollHtml += `
+                            <tr>
+                                <td>${e.courseName}</td>
+                                <td>${e.enrollDate}</td>
+                                <td>${e.grade}</td>
+                            </tr>`;
+                    });
+                }
+
+                $('#studentDetailBody').html(`
+                    <dl class="row mb-3">
+                        <dt class="col-sm-4 text-muted">Họ và tên</dt>
+                        <dd class="col-sm-8 fw-semibold">${data.fullName}</dd>
+
+                        <dt class="col-sm-4 text-muted">Email</dt>
+                        <dd class="col-sm-8">${data.email}</dd>
+
+                        <dt class="col-sm-4 text-muted">Số điện thoại</dt>
+                        <dd class="col-sm-8">${data.phone}</dd>
+
+                        <dt class="col-sm-4 text-muted">Ngày sinh</dt>
+                        <dd class="col-sm-8">${data.dateOfBirth}</dd>
+
+                        <dt class="col-sm-4 text-muted">Địa chỉ</dt>
+                        <dd class="col-sm-8">${data.address}</dd>
+
+                        <dt class="col-sm-4 text-muted">Ngày đăng ký</dt>
+                        <dd class="col-sm-8">${data.registeredDate}</dd>
+                    </dl>
+
+                    <h6 class="fw-bold border-bottom pb-2">📚 Khóa học đã đăng ký</h6>
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Khóa học</th>
+                                <th>Ngày đăng ký</th>
+                                <th>Điểm</th>
+                            </tr>
+                        </thead>
+                        <tbody>${enrollHtml}</tbody>
+                    </table>
+                `);
+            }).fail(function () {
+                $('#studentDetailBody').html(
+                    '<div class="alert alert-danger">Không thể tải thông tin học viên!</div>'
+                );
+            });
+        }
+        // ====== XÓA TẤT CẢ LỖI ======
+        function clearErrors() {
+            $('#modalResult').html('');
+            $('#studentForm .form-control').removeClass('is-invalid');
+            $('#studentForm [id^="err-"]').text('');
+        }
+
+        // ====== MỞ MODAL TẠO MỚI ======
+        function openCreateModal() {
+            isEditMode = false;
+            $('#studentModalLabel').text('➕ Thêm học viên mới');
+            $('#btnSaveStudent').text('💾 Lưu');
+            $('#studentForm')[0].reset();
+            $('#StudentId').val(0);
+            clearErrors();
+
+            // Hiện lại Email và Password (bị ẩn khi ở mode Edit)
+            $('#passwordRow').show();
+            $('#Email').closest('.col-md-6').show();
+            $('#Email').prop('disabled', false).attr('name', 'Email');
+            $('#Password').prop('disabled', false).attr('name', 'Password');
+        }
+
+        // ====== MỞ MODAL CHỈNH SỬA ======
+        function openEditModal(id) {
+            isEditMode = true;
+            $('#studentModalLabel').text('✏️ Sửa học viên');
+            $('#btnSaveStudent').text('💾 Cập nhật');
+            clearErrors();
+
+            $.get('@Url.Action("GetStudent", "Student")/' + id, function (data) {
+                $('#StudentId').val(data.studentId);
+                $('#FullName').val(data.fullName);
+                $('#Email').val(data.email);
+                $('#Phone').val(data.phone);
+                $('#DateOfBirth').val(data.dateOfBirth);
+                $('#Address').val(data.address);
+
+                // Ẩn Password khi sửa (không cho đổi pass ở đây)
+                $('#passwordRow').hide();
+                $('#Password').prop('disabled', true).removeAttr('name');
+
+                // Disable Email khi sửa (không cho đổi email)
+                $('#Email').prop('disabled', true).removeAttr('name');
+
+                $('#studentModal').modal('show');
+            }).fail(function () {
+                alert('Không thể tải thông tin học viên!');
+            });
+        }
+
+        $(function () {
+            // ====== XÓA LỖI KHI GÕ LẠI ======
+            $(document).on('input change', '#studentForm input, #studentForm textarea', function () {
+                $(this).removeClass('is-invalid');
+                $('#err-' + $(this).attr('id')).text('');
+                $('#modalResult').html('');
+            });
+
+            // ====== LƯU (CREATE hoặc EDIT) ======
+            $('#btnSaveStudent').on('click', function () {
+                clearErrors();
+
+                var url = isEditMode
+                    ? '@Url.Action("EditAjax", "Student")'
+                    : '@Url.Action("CreateAjax", "Student")';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: $('#studentForm').serialize(),
+                    success: function (res) {
+                        if (res.success) {
+                            $('#studentModal').modal('hide');
+                            showToast(res.message, 'success');
+                            loadStudents(1);
+                        } else if (res.errors) {
+                            $.each(res.errors, function (field, messages) {
+                                $('#' + field).addClass('is-invalid');
+                                $('#err-' + field).text(messages.join(', '));
+                            });
+                        } else {
+                            $('#modalResult').html(
+                                '<div class="alert alert-danger">' + res.message + '</div>'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 403) alert('Bạn không có quyền Admin!');
+                        else alert('Lỗi: ' + xhr.statusText);
+                    }
+                });
+            });
+
+            // ====== TÌM KIẾM AJAX ======
+            $('#searchForm').on('submit', function (e) {
+                e.preventDefault();
+                loadStudents(1);
+            });
+
+            // ====== PHÂN TRANG AJAX ======
+            $(document).on('click', '.ajax-page-link', function (e) {
+                e.preventDefault();
+                var match = $(this).attr('href').match(/page=(\d+)/);
+                loadStudents(match ? match[1] : 1);
+            });
+
+            // ====== XÓA AJAX ======
+            $(document).on('click', '.btn-delete-student', function () {
+                if (!confirm('Bạn có chắc muốn xóa học viên này?')) return;
+                var id = $(this).data('id');
+                var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+                $.ajax({
+                    url: '@Url.Action("DeleteAjax", "Student")',
+                    type: 'POST',
+                    data: { id: id, __RequestVerificationToken: token },
+                    success: function (res) {
+                        if (res.success) {
+                            showToast(res.message, 'success');
+                            loadStudents(1);
+                        } else {
+                            showToast(res.message, 'danger');
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 403) alert('Bạn không có quyền Admin!');
+                        else alert('Lỗi: ' + xhr.statusText);
+                    }
+                });
+            });
+
+            // ====== LOAD BẢNG ======
+            function loadStudents(page) {
+                var searchTerm = $('#searchForm input[name="searchTerm"]').val();
+                $.ajax({
+                    url: '@Url.Action("Index", "Student")',
+                    type: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    data: { searchTerm: searchTerm, page: page },
+                    success: function (html) {
+                        $('#studentTableContainer').html(html);
+                    },
+                    error: function (xhr) {
+                        alert('Lỗi tải dữ liệu: ' + xhr.statusText);
+                    }
+                });
+            }
+
+            // ====== TOAST THÔNG BÁO ======
+            window.showToast = function (message, type) {
+                var toast = $('<div class="alert alert-' + type +
+                    ' alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index:9999">' +
+                    message +
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                $('body').append(toast);
+                setTimeout(function () { toast.alert('close'); }, 3000);
+            };
+        });
+    </script>
+}
