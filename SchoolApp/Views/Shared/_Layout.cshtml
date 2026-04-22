@@ -3,87 +3,220 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="SchoolApp – Nền tảng quản lý học tập hiện đại" />
     <title>@ViewData["Title"] - SchoolApp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="~/css/Schoolapp.css" rel="stylesheet" />
+    @RenderSection("Styles", required: false)
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">SchoolApp</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Course" asp-action="Index">Khóa học</a>
-                    </li>
-                    @if (Context.Session.GetString("Role") == "Admin")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Student" asp-action="Index">Học viên</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Enrollment" asp-action="Index">Đăng ký học</a>
-                        </li>
-                    }
-                    @if (Context.Session.GetString("Role") == "Student")
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Enrollment" asp-action="MyEnrollments">Khóa học của tôi</a>
-                        </li>
-                    }
-                </ul>
-                <ul class="navbar-nav">
-                    @if (Context.Session.GetString("StudentName") != null)
-                    {
-                        var role = Context.Session.GetString("Role");
-                        <li class="nav-item">
-                            <span class="nav-link text-warning">
-                                Xin chào @Context.Session.GetString("StudentName")
-                                @if (role == "Admin")
-                                {
-                                    <span class="badge bg-danger ms-1">Admin</span>
-                                }
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">Đăng xuất</a>
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <header class="sa-header" id="sa-header">
+    <div class="container">
+        <a class="sa-brand" asp-controller="Home"asp-action="Index" aria-label="SchoolApp - Trang chủ">
+            <div class="sa-brand-icon">🎓</div>
+            <span class="sa-brand-name">School<span>App</span></span>
+        </a>
 
-    <div class="container mt-4">
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["Success"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-        @if (TempData["Error"] != null)
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                @TempData["Error"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        }
-        @RenderBody()
+        <button class="sa-toggler" id="sa-toggler" aria-label="Mở menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="sa-nav-container" id="sa-nav-container">
+            <ul class="sa-nav" role="navigation" aria-label="Điều hướng chính">
+                <li>
+                    <a class="sa-nav-link" asp-controller="Course"asp-action="Index">
+                        <i class="alert-warning ni-book nav-icon"></i>
+                        Khóa học
+
+                    </a>
+                </li>
+                @if (Context.Session.GetString("Role") == "Admin")
+                {
+                    <li>
+                        <a class="sa-nav-link" asp-controller="Student" asp-action="Index">
+                            <i class="="tabindex=" bi-people nav-icon"></i>
+                            Học viên
+                        </a>
+                    </li
+                    <li>
+                        <a class="sa-nav-link" asp-controller="Enrollment" asp-action="Index">
+                            <i class=""tabindex=" bi-jpurnal-check nav-icon"></i>
+                            Đăng ký học
+                        </a>
+                    </li>
+                }
+
+                @if (Context.Session.GetString("Role")=="Student")
+                {
+                    <li>
+                        <a class="sa-nav-link" asp-controller="Enrollment" asp-action="MyEnrollments">
+                            <i class="bg-info bi-motarboard nav-icon"></i>
+                            Khóa học của tôi 
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <ul class="sa-user-section" aria-label="Tài khoản">
+                @if (Context.Session.GetString("StudentName") != null)
+                {
+                    var studentName = Context.Session.GetString("StudentName");
+                    var role = Context.Session.GetString("Role");
+                    var initials = studentName?.Length > 0 ? studentName[0].ToString().ToUpper() : "U";
+                    <li>
+                        <div class="sa-greeting">
+                            <div class="sa-greeting-avatar">@initials</div>
+                            <span>Xin chào,<strong>@studentName</strong></span>
+                            @if (role == "Admin")
+                            {
+                                <span class="sa-badge-admin">Admin</span>
+                            }
+                        </div>
+                    </li>
+
+                    <li>
+                        <a class="sa-btn-logout" asp-controller="Account" asp-action="Logout">
+                            <i class="bg-info bg-info-box-arrow-right"></i>
+                            Đăng xuất
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a class="sa-btn-login" asp-controller="Account" asp-action="Login">
+                            <i class="bi bi-person-fill"></i>
+                            Đăng nhập
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
     </div>
 
-    <footer class="bg-dark text-white text-center p-3 mt-5">
-        © 2026 - SchoolApp
-    </footer>
+    </header>
 
+
+    <main class-"sa-main" id="sa-main"role="main">
+        <div class="container">
+            @if (TempData["Success"] != null)
+            {
+                <div class="sa-alert sa-arlert-success" role="alert" id="alert-success">
+                    <span class="sa-alert-icocn"><i class="bi bi-check-circle-fill"></i></span>
+                    <span>@TempData["Success"]</span>
+                    <button class="sa-alert-close" onclick="="dismissAlert('alert-success')" aria-label="Đóng">
+                        <i class=""bi bi-x"></i>
+                    </button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="sa-alert sa-alert-danger" role="alert" id="alert-error">
+                    <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
+                    <span>@TempData["Error"]</span>
+                        <button class="sa-alert-close" onclick="dismissAlert('alert-error')"aria-label="Đóng">
+                            <i class="bi bi-x"></i>
+                            </button>
+                 </div>
+            }
+            
+        @RenderBody()
+        </div>
+    </main>
+   <footer class="sa-footer" role="contentinfo">
+
+        <div class="sa-footer-top">
+            <div class="container">
+                <div class="sa-footer-grid">
+
+                    @* Cot 1: Brand *@
+                    <div>
+                        <a class="sa-footer-brand" asp-controller="Home" asp-action="Index">
+                            <div class="sa-brand-icon" style="width:34px;height:34px;font-size:16px;">&#127891;</div>
+                            <span class="sa-footer-brand-name">School<span>App</span></span>
+                        </a>
+                        <p class="sa-footer-desc">
+                            Nen tang quan ly hoc tap hien dai, ket noi hoc vien va giao vien
+                            trong mot khong gian hoc thuat chuyen nghiep.
+                        </p>
+                    </div>
+
+                    @* Cot 2: Kham pha *@
+                    <div>
+                        <p class="sa-footer-heading">Kham pha</p>
+                        <ul class="sa-footer-links">
+                            <li><a asp-controller="Home" asp-action="Index">Trang chu</a></li>
+                            <li><a asp-controller="Course" asp-action="Index">Khoa hoc</a></li>
+                            @if (Context.Session.GetString("Role") == "Admin")
+                            {
+                                <li><a asp-controller="Student" asp-action="Index">Hoc vien</a></li>
+                                <li><a asp-controller="Enrollment" asp-action="Index">Dang ky hoc</a></li>
+                            }
+                        </ul>
+                    </div>
+
+                    @* Cot 3: Tai khoan *@
+                    <div>
+                        <p class="sa-footer-heading">Tai khoan</p>
+                        <ul class="sa-footer-links">
+                            @if (Context.Session.GetString("StudentName") == null)
+                            {
+                                <li><a asp-controller="Account" asp-action="Login">Dang nhap</a></li>
+                                <li><a asp-controller="Account" asp-action="Register">Dang ky</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-controller="Enrollment" asp-action="MyEnrollments">Khoa hoc cua toi</a></li>
+                                <li><a asp-controller="Account" asp-action="Logout">Dang xuat</a></li>
+                            }
+                        </ul>
+                    </div>
+
+                    @* Cot 4: Lien he *@
+                    <div>
+                        <p class="sa-footer-heading">Lien he</p>
+                        <ul class="sa-footer-links">
+                            <li>
+                                <a href="mailto:support@schoolapp.vn">
+                                    <i class="bi bi-envelope"></i> support@schoolapp.vn
+                                </a>
+                            </li>
+                            <li>
+                                <a href="tel:+842812345678">
+                                    <i class="bi bi-telephone"></i> 028 1234 5678
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <i class="bi bi-geo-alt"></i> TP. Ho Chi Minh, Viet Nam
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="sa-footer-divider"></div>
+
+        <div class="container">
+            <div class="sa-footer-bottom">
+                <p class="sa-footer-copy">
+                    &copy; 2026 <strong>SchoolApp</strong>. Bao luu moi quyen.
+                </p>
+                <p class="sa-footer-tagline">Kien thuc la hanh trinh, khong phai dich den.</p>
+            </div>
+        </div>
+
+    </footer>
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

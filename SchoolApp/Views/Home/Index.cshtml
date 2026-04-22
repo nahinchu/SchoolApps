@@ -1,8 +1,40 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Trang chu";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<div class="home-wrapper">
+
+    <img src="~/images/Welcome.gif" alt="SchoolApp" class="home-gif" />
+
+    <div class="home-nav-buttons">
+        <a asp-controller="Course" asp-action="Index" class="home-nav-btn home-nav-btn-primary">
+            <i class="bi bi-book-fill"></i> Khóa học
+        </a>
+
+        @if (Context.Session.GetString("Role") == "Admin")
+        {
+            <a asp-controller="Student" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
+                <i class="bi bi-people-fill"></i> Học viên
+            </a>
+            <a asp-controller="Enrollment" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
+                <i class="bi bi-journal-check"></i> Đăng ký học
+            </a>
+        }
+
+        @if (Context.Session.GetString("Role") == "Student")
+        {
+            <a asp-controller="Enrollment" asp-action="MyEnrollments" class="home-nav-btn home-nav-btn-outline">
+                <i class="bi bi-mortarboard-fill"></i> Khóa học của tôi
+            </a>
+        }
+
+        @if (Context.Session.GetString("StudentName") == null)
+        {
+            <a asp-controller="Account" asp-action="Login" class="home-nav-btn home-nav-btn-outline">
+                <i class="bi bi-person-fill"></i> Đăng nhập
+            </a>
+        }
+    </div>
+
 </div>

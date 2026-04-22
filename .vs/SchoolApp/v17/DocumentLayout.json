@@ -3,12 +3,28 @@
   "WorkspaceRootPath": "C:\\Training\\SchoolApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\views\\course\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\course\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\wwwroot\\css\\schoolapp.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\wwwroot\\css\\schoolapp.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\views\\enrollment\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\enrollment\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\views\\course\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\course\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\controllers\\enrollmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -99,16 +115,8 @@
       "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\controllers\\coursecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
@@ -191,10 +199,6 @@
       "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|c:\\training\\schoolapp\\schoolapp\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{508E4508-F9C4-4690-87B0-E2CFD63779B6}|SchoolApp\\SchoolApp.csproj|solutionrelative:schoolapp\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -230,24 +234,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "LoginViewModel.cs",
-              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\LoginViewModel.cs",
-              "RelativeDocumentMoniker": "SchoolApp\\Models\\LoginViewModel.cs",
-              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\LoginViewModel.cs",
-              "RelativeToolTip": "SchoolApp\\Models\\LoginViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-10T03:49:32.463Z",
+              "DocumentIndex": 4,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "SchoolApp\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "SchoolApp\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAJkAAAAAAAAAAAAuwLEAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-10T03:54:17.71Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\Index.cshtml",
+              "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\Index.cshtml",
+              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\Index.cshtml",
+              "RelativeToolTip": "SchoolApp\\Views\\Enrollment\\Index.cshtml",
+              "ViewState": "AgIAAA8AAAAAAAAAAADwvzcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-13T06:37:47.666Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Schoolapp.css",
+              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\css\\Schoolapp.css",
+              "RelativeDocumentMoniker": "SchoolApp\\wwwroot\\css\\Schoolapp.css",
+              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\css\\Schoolapp.css",
+              "RelativeToolTip": "SchoolApp\\wwwroot\\css\\Schoolapp.css",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAAEwAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-04-22T06:22:52.219Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "EnrollmentController.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Controllers\\EnrollmentController.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Controllers\\EnrollmentController.cs",
@@ -255,51 +285,24 @@
               "RelativeToolTip": "SchoolApp\\Controllers\\EnrollmentController.cs",
               "ViewState": "AgIAAKYAAAAAAAAAAAAuwNEAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-13T06:34:47.677Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:34:47.677Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\Index.cshtml",
-              "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\Index.cshtml",
-              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\Index.cshtml",
-              "RelativeToolTip": "SchoolApp\\Views\\Enrollment\\Index.cshtml",
-              "ViewState": "AgIAABsAAAAAAAAAAADwvzcAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T06:37:47.666Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "_EnrollmentTable.cshtml",
-              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
-              "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
-              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
-              "RelativeToolTip": "SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEkAAAAGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-15T08:39:20.992Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Course\\Index.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Course\\Index.cshtml",
               "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Course\\Index.cshtml",
               "RelativeToolTip": "SchoolApp\\Views\\Course\\Index.cshtml",
-              "ViewState": "AgIAACQBAAAAAAAAAAAAwCYBAAA5AAAAAAAAAA==",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAiwCYBAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-04-10T04:11:28.56Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "ErrorViewModel.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\ErrorViewModel.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Models\\ErrorViewModel.cs",
@@ -307,12 +310,49 @@
               "RelativeToolTip": "SchoolApp\\Models\\ErrorViewModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-10T03:02:37.287Z",
+              "WhenOpened": "2026-04-10T03:02:37.287Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "SchoolApp\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "SchoolApp\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-10T02:28:02.722Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "site.css",
+              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\css\\site.css",
+              "RelativeDocumentMoniker": "SchoolApp\\wwwroot\\css\\site.css",
+              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\css\\site.css",
+              "RelativeToolTip": "SchoolApp\\wwwroot\\css\\site.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-04-15T10:11:23.168Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
+              "Title": "_EnrollmentTable.cshtml",
+              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
+              "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
+              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
+              "RelativeToolTip": "SchoolApp\\Views\\Enrollment\\_EnrollmentTable.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEkAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-04-15T08:39:20.992Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "UnitOfWork.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\UnitOfWork\\UnitOfWork.cs",
               "RelativeDocumentMoniker": "SchoolApp\\UnitOfWork\\UnitOfWork.cs",
@@ -320,12 +360,23 @@
               "RelativeToolTip": "SchoolApp\\UnitOfWork\\UnitOfWork.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-13T08:00:25.018Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T08:00:25.018Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
+              "Title": "LoginViewModel.cs",
+              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\LoginViewModel.cs",
+              "RelativeDocumentMoniker": "SchoolApp\\Models\\LoginViewModel.cs",
+              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\LoginViewModel.cs",
+              "RelativeToolTip": "SchoolApp\\Models\\LoginViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-10T03:49:32.463Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "IUnitOfWork.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\UnitOfWork\\IUnitOfWork.cs",
               "RelativeDocumentMoniker": "SchoolApp\\UnitOfWork\\IUnitOfWork.cs",
@@ -333,12 +384,11 @@
               "RelativeToolTip": "SchoolApp\\UnitOfWork\\IUnitOfWork.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-13T08:00:13.818Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T08:00:13.818Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "Enrollment.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\Enrollment.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Models\\Enrollment.cs",
@@ -346,12 +396,11 @@
               "RelativeToolTip": "SchoolApp\\Models\\Enrollment.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAswBYAAABAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-10T02:32:32.316Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T02:32:32.316Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "EnrollmentRepository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\EnrollmentRepository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\EnrollmentRepository.cs",
@@ -359,12 +408,11 @@
               "RelativeToolTip": "SchoolApp\\Repositories\\EnrollmentRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-13T07:59:26.152Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T07:59:26.152Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 14,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Student\\Index.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Student\\Index.cshtml",
@@ -372,12 +420,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Student\\Index.cshtml",
               "ViewState": "AgIAAA8AAAAAAAAAAAAAAMAAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T06:19:43.135Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:19:43.135Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 15,
               "Title": "Edit.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\Edit.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\Edit.cshtml",
@@ -385,12 +432,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Enrollment\\Edit.cshtml",
               "ViewState": "AgIAAAUAAAAAAAAAAAAIwC4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T06:38:07.528Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:38:07.528Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "MyEnrollments.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\MyEnrollments.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\MyEnrollments.cshtml",
@@ -398,12 +444,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Enrollment\\MyEnrollments.cshtml",
               "ViewState": "AgIAADcAAAAAAAAAAAAIwEQAAABfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T06:59:32.773Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:59:32.773Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 21,
               "Title": "Edit.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Student\\Edit.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Student\\Edit.cshtml",
@@ -411,12 +456,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Student\\Edit.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T06:20:28.235Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:20:28.235Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 17,
               "Title": "_StudentTable.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Student\\_StudentTable.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Student\\_StudentTable.cshtml",
@@ -424,12 +468,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Student\\_StudentTable.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACkAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-15T08:31:34.331Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-15T08:31:34.331Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 18,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Student\\Create.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Student\\Create.cshtml",
@@ -437,12 +480,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Student\\Create.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T06:19:18.294Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:19:18.294Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 22,
               "Title": "Student.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\Student.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Models\\Student.cs",
@@ -450,12 +492,11 @@
               "RelativeToolTip": "SchoolApp\\Models\\Student.cs",
               "ViewState": "AgIAABQAAAAAAAAAAADwvzUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-10T02:31:50.88Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T02:31:50.88Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 19,
               "Title": "StudentController.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Controllers\\StudentController.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Controllers\\StudentController.cs",
@@ -463,12 +504,11 @@
               "RelativeToolTip": "SchoolApp\\Controllers\\StudentController.cs",
               "ViewState": "AgIAAMoAAAAAAAAAAAAuwOwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-13T06:13:02.184Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:13:02.184Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 20,
               "Title": "Details.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Student\\Details.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Student\\Details.cshtml",
@@ -476,12 +516,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Student\\Details.cshtml",
               "ViewState": "AgIAAAoAAAAAAAAAAAAuwCkAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T06:21:08.126Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T06:21:08.126Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 26,
               "Title": "Course.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Models\\Course.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Models\\Course.cs",
@@ -489,24 +528,11 @@
               "RelativeToolTip": "SchoolApp\\Models\\Course.cs",
               "ViewState": "AgIAABMAAAAAAAAAAAAmwCMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-10T02:29:31.885Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T02:29:31.885Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "SchoolApp\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "SchoolApp\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAABIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-10T03:54:17.71Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 27,
               "Title": "CourseController.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Controllers\\CourseController.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Controllers\\CourseController.cs",
@@ -514,12 +540,11 @@
               "RelativeToolTip": "SchoolApp\\Controllers\\CourseController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-10T04:08:50.92Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T04:08:50.92Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 23,
               "Title": "Edit.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Course\\Edit.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Course\\Edit.cshtml",
@@ -527,12 +552,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Course\\Edit.cshtml",
               "ViewState": "AgIAAAcAAAAAAAAAAAAuwFYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-10T07:10:00.782Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T07:10:00.782Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 24,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Course\\Create.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Course\\Create.cshtml",
@@ -540,12 +564,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Course\\Create.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAFUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-10T07:08:19.574Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T07:08:19.574Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 25,
               "Title": "_CourseTable.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Course\\_CourseTable.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Course\\_CourseTable.cshtml",
@@ -553,12 +576,11 @@
               "RelativeToolTip": "SchoolApp\\Views\\Course\\_CourseTable.cshtml",
               "ViewState": "AgIAADcAAAAAAAAAAAAYwEsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-13T09:31:17.464Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-13T09:31:17.464Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 30,
               "Title": "bootstrap.js",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
               "RelativeDocumentMoniker": "SchoolApp\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
@@ -570,7 +592,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 28,
               "Title": "bootstrap.min.css",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
               "RelativeDocumentMoniker": "SchoolApp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
@@ -582,19 +604,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "site.css",
-              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\css\\site.css",
-              "RelativeDocumentMoniker": "SchoolApp\\wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\css\\site.css",
-              "RelativeToolTip": "SchoolApp\\wwwroot\\css\\site.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-04-15T10:11:23.168Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 29,
               "Title": "bootstrap.css",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
               "RelativeDocumentMoniker": "SchoolApp\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
@@ -606,7 +616,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 31,
               "Title": "_ValidationScriptsPartial.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
@@ -618,7 +628,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 32,
               "Title": "_LoginPartial.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Shared\\_LoginPartial.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Shared\\_LoginPartial.cshtml",
@@ -630,7 +640,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 33,
               "Title": "_ViewStart.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\_ViewStart.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\_ViewStart.cshtml",
@@ -642,7 +652,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 34,
               "Title": "CourseRepository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\CourseRepository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\CourseRepository.cs",
@@ -654,7 +664,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 35,
               "Title": "AccountController.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Controllers\\AccountController.cs",
@@ -666,7 +676,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 36,
               "Title": "Details.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\Details.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\Details.cshtml",
@@ -678,7 +688,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 37,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Controllers\\HomeController.cs",
@@ -690,7 +700,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 38,
               "Title": "Repository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\Repository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\Repository.cs",
@@ -702,7 +712,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 39,
               "Title": "ICourseRepository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\ICourseRepository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\ICourseRepository.cs",
@@ -714,7 +724,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 40,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Enrollment\\Create.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Enrollment\\Create.cshtml",
@@ -726,7 +736,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 41,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Program.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Program.cs",
@@ -738,7 +748,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 42,
               "Title": "IEnrollmentRepository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\IEnrollmentRepository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\IEnrollmentRepository.cs",
@@ -750,7 +760,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 43,
               "Title": "StudentRepository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\StudentRepository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\StudentRepository.cs",
@@ -762,7 +772,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 44,
               "Title": "IStudentRepository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\IStudentRepository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\IStudentRepository.cs",
@@ -774,7 +784,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 45,
               "Title": "IRepository.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Repositories\\IRepository.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Repositories\\IRepository.cs",
@@ -786,7 +796,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 46,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Account\\Login.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\Account\\Login.cshtml",
@@ -798,7 +808,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 55,
               "Title": "20260413070637_MakeNotesNullable.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Migrations\\20260413070637_MakeNotesNullable.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Migrations\\20260413070637_MakeNotesNullable.cs",
@@ -810,7 +820,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 47,
               "Title": "AuthorizeAdminAttribute.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Filters\\AuthorizeAdminAttribute.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Filters\\AuthorizeAdminAttribute.cs",
@@ -822,7 +832,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 48,
               "Title": "_ViewImports.cshtml",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\_ViewImports.cshtml",
               "RelativeDocumentMoniker": "SchoolApp\\Views\\_ViewImports.cshtml",
@@ -834,19 +844,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "SchoolApp\\Views\\Home\\Index.cshtml",
-              "ToolTip": "C:\\Training\\SchoolApp\\SchoolApp\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "SchoolApp\\Views\\Home\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-04-10T02:28:02.722Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 54,
               "Title": "20260410034650_AddPasswordForStudent.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Migrations\\20260410034650_AddPasswordForStudent.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Migrations\\20260410034650_AddPasswordForStudent.cs",
@@ -858,7 +856,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 49,
               "Title": "AppDBContext.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Data\\AppDBContext.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Data\\AppDBContext.cs",
@@ -870,7 +868,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 51,
               "Title": "20260410030843_InitDB.cs",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Migrations\\20260410030843_InitDB.cs",
               "RelativeDocumentMoniker": "SchoolApp\\Migrations\\20260410030843_InitDB.cs",
@@ -882,7 +880,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 50,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\appsettings.json",
               "RelativeDocumentMoniker": "SchoolApp\\appsettings.json",
@@ -894,7 +892,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 52,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\appsettings.Development.json",
               "RelativeDocumentMoniker": "SchoolApp\\appsettings.Development.json",
@@ -906,7 +904,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 53,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Training\\SchoolApp\\SchoolApp\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "SchoolApp\\Properties\\launchSettings.json",

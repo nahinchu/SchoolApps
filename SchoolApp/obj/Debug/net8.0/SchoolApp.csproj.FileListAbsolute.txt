@@ -147,3 +147,4 @@ C:\Training\SchoolApp\SchoolApp\obj\Debug\net8.0\ref\SchoolApp.dll
 C:\Training\SchoolApp\SchoolApp\bin\Debug\net8.0\X.PagedList.dll
 C:\Training\SchoolApp\SchoolApp\bin\Debug\net8.0\X.PagedList.Mvc.Core.dll
 C:\Training\SchoolApp\SchoolApp\obj\Debug\net8.0\SchoolApp.MvcApplicationPartsAssemblyInfo.cs
+C:\Training\SchoolApp\SchoolApp\obj\Debug\net8.0\SchoolApp.sourcelink.json
