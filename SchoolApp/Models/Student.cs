@@ -17,6 +17,10 @@ namespace SchoolApp.Models
         [Display(Name = "Họ và tên")]
         public string FullName { get; set; }
 
+        [Required]
+        [Display(Name = "Vai trò")]
+        public string Role { get; set; }
+
         [Required(ErrorMessage = "Email là bắt buộc")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         [StringLength(150)]
@@ -35,23 +39,24 @@ namespace SchoolApp.Models
         [StringLength(15, MinimumLength = 9,
             ErrorMessage = "Số điện thoại phải từ 9 đến 15 ký tự")]
         [Display(Name = "Số điện thoại")]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         [DataType(DataType.Date)]
         [Display(Name = "Ngày sinh")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}",
                        ApplyFormatInEditMode = true)]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         [StringLength(300)]
         [Display(Name = "Địa chỉ")]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         [Display(Name = "Ngày đăng ký")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime RegisteredDate { get; set; } = DateTime.Now;
-
+        public virtual ICollection<LessonProgress> LessonProgresses { get; set; } = new List<LessonProgress>();
+        public virtual ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
         // Navigation property
         public virtual ICollection<Enrollment> Enrollments { get; set; }
             = new HashSet<Enrollment>();

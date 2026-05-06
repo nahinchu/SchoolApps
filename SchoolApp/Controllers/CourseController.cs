@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.UnitOfWork;
@@ -101,7 +100,6 @@ namespace SchoolApp.Controllers
             {
                 TempData["Error"] = "Không tìm thấy khóa học";
                 return RedirectToAction("Index");
-                //return Json(new { success = true, message = "Đã xóa khóa học!" });
             }
 
             bool hasEnrollments = _uow.Enrollments.Any(e => e.CourseId == id);
@@ -109,8 +107,6 @@ namespace SchoolApp.Controllers
             {
                 TempData["Error"] = "Không thể xóa: đã có học viên đăng ký.";
                 return RedirectToAction("Index");
-                //return Json(new { success = false, message = "Không thể xóa: đã có học viên đăng ký." });
-
             }
 
             _uow.Courses.Delete(course);
@@ -118,7 +114,6 @@ namespace SchoolApp.Controllers
 
             TempData["Success"] = "Đã xóa khóa học!";
             return RedirectToAction("Index");
-            //return Json(new { success = true, message = "Đã xóa khóa học!" });
         }
 
         [HttpPost]
@@ -128,7 +123,7 @@ namespace SchoolApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Where(X => X.Value.Errors.Count > 0)
+                var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
                    .ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToArray());
                 return Json(new { success = false, errors });
             }
@@ -145,7 +140,7 @@ namespace SchoolApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Where(X => X.Value.Errors.Count > 0)
+                var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
                    .ToDictionary(k => k.Key, v => v.Value.Errors.Select(e => e.ErrorMessage).ToArray());
                 return Json(new { success = false, errors });
             }
@@ -162,7 +157,10 @@ namespace SchoolApp.Controllers
             _uow.SaveChanges();
             return Json(new { success = true, message = "Cập nhật thành công!" });
         }
+
+        
         [HttpGet]
+        [AuthorizeUser]
         public IActionResult GetCourse(int id)
         {
             var course = _uow.Courses.GetById(id);
@@ -177,10 +175,11 @@ namespace SchoolApp.Controllers
                 isActive = course.IsActive
             });
         }
-        [HttpPost]  
+
+        [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteAjax(int id) 
+        public IActionResult DeleteAjax(int id)
         {
             var course = _uow.Courses.GetById(id);
             if (course == null)
@@ -194,9 +193,7 @@ namespace SchoolApp.Controllers
             }
             _uow.Courses.Delete(course);
             _uow.SaveChanges();
-            return Json(new { success = true, message = "Đã xóa khóa học!" });}
+            return Json(new { success = true, message = "Đã xóa khóa học!" });
         }
-
-
-
+    }
 }

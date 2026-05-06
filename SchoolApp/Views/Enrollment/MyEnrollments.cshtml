@@ -1,69 +1,123 @@
-﻿@model IEnumerable<SchoolApp.Models.Enrollment>
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<SchoolApp.Models.Enrollment>
 @{
     ViewData["Title"] = "Khóa học của tôi";
+    var studentName = Context.Session.GetString("StudentName");
+    var graded = Model.Where(e => e.Grade.HasValue).ToList();
+    decimal? avgGrade = graded.Any() ? graded.Average(e => e.Grade!.Value) : (decimal?)null;
+    string avgColor = (avgGrade.HasValue && avgGrade >= 5m) ? "var(--success)" : "var(--danger)";
 }
 
-<h2>Khóa học của tôi</h2>
-<hr />
+<div class="sa-page-hero mb-4">
+    <h1 style="font-family:var(--font-display); font-size:1.8rem; color:var(--white); margin-bottom:.25rem;">
+        🎓 Khóa học của tôi
+    </h1>
+    <p style="color:rgba(255,255,255,.55); font-size:.9rem;">
+        Xin chào <strong style="color:var(--gold-light);">@studentName</strong> — danh sách khóa học bạn đã đăng ký
+    </p>
+</div>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">
-        Bạn chưa đăng ký khóa học nào.
-        <a asp-controller="Course" asp-action="Index" class="alert-link">Xem danh sách khóa học</a>
+    <div class="sa-card" style="text-align:center; padding:3rem 1.5rem;">
+        <div style="font-size:3rem; margin-bottom:1rem;">📭</div>
+        <h3 style="font-family:var(--font-display); color:var(--text-mid); margin-bottom:.5rem;">
+            Bạn chưa đăng ký khóa học nào
+        </h3>
+        <p style="color:var(--text-light); margin-bottom:1.5rem;">
+            Khám phá các khóa học đang mở và bắt đầu học ngay hôm nay!
+        </p>
+        <a asp-controller="Course" asp-action="Index" class="sa-btn sa-btn-gold">
+            <i class="bi bi-book-fill"></i> Xem khóa học
+        </a>
     </div>
 }
 else
 {
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>#</th>
-                <th>Tên khóa học</th>
-                <th>Tín chỉ</th>
-                <th>Học phí</th>
-                <th>Ngày đăng ký</th>
-                <th>Điểm</th>
-                <th>Trạng thái</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{
-                int i = 1;
-            }
-            @foreach (var e in Model)
-            {
+    <div class="sa-table-wrap">
+        <table class="sa-table">
+            <thead>
                 <tr>
-                    <td>@i</td>
-                    <td>@e.Course?.CourseName</td>
-                    <td>@e.Course?.Credits</td>
-                    <td>@e.Course?.Fee.ToString("N0") VNĐ</td>
-                    <td>@e.EnrollDate.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        @if (e.Grade.HasValue)
-                        {
-                            <span class="badge bg-primary">@e.Grade.Value.ToString("0.00")</span>
-                        }
-                        else
-                        {
-                            <span class="text-muted">Chưa có</span>
-                        }
-                    </td>
-                    <td>
-                        @if (e.Course?.IsActive == true)
-                        {
-                            <span class="badge bg-success">Đang học</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Đã đóng</span>
-                        }
-                    </td>
+                    <th>#</th>
+                    <th>Khóa học</th>
+                    <th>Tín chỉ</th>
+                    <th>Ngày đăng ký</th>
+                    <th>Điểm</th>
+                    <th>Ghi chú</th>
                 </tr>
-                i++;
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @{
+                    int i = (Model.PageNumber - 1) * Model.PageSize + 1;
+                }
+                @foreach (var item in Model)
+                {
+                    string cls = item.Grade >= 8 ? "sa-badge-green"
+                    : item.Grade >= 5 ? "sa-badge-gold"
+                    : "sa-badge-red";
+                    <tr>
+                        <td>@i</td>
+                        <td><strong>@item.Course?.CourseName</strong></td>
+                        <td>@item.Course?.Credits</td>
+                        <td>@item.EnrollDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (item.Grade.HasValue)
+                            {
+                                <span class="sa-badge @cls">@item.Grade.Value.ToString("0.##")</span>
+                            }
+                            else
+                            {
+                                <span class="sa-badge sa-badge-navy">Chưa có</span>
+                            }
+                        </td>
+                        <td style="color:var(--text-light);">@(item.Notes ?? "—")</td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
 
-<a asp-controller="Course" asp-action="Index" class="btn btn-primary">Đăng ký thêm khóa học</a>
+        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+            <small style="color:var(--text-light);">
+                Trang @Model.PageNumber / @Model.PageCount
+                (Tổng: @Model.TotalItemCount khóa học)
+            </small>
+            @Html.PagedListPager(Model,
+            page => Url.Action("MyEnrollments", new { page }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link ajax-page-link" },
+                    UlElementClasses = new[] { "pagination mb-0" }
+                })
+    </div>
+</div>
+
+<div style="display:flex; gap:1rem; margin-top:1.25rem; flex-wrap:wrap;">
+    <div class="sa-card" style="flex:1; min-width:140px; text-align:center; padding:1.25rem;">
+        <div style="font-family:var(--font-display); font-size:1.8rem; font-weight:700; color:var(--navy);">
+            @Model.TotalItemCount
+        </div>
+        <div style="font-size:.78rem; color:var(--text-light); text-transform:uppercase; letter-spacing:.05em; margin-top:.2rem;">
+            Khóa đã đăng ký
+        </div>
+    </div>
+    <div class="sa-card" style="flex:1; min-width:140px; text-align:center; padding:1.25rem;">
+        <div style="font-family:var(--font-display); font-size:1.8rem; font-weight:700; color:var(--navy);">
+            @graded.Count
+        </div>
+        <div style="font-size:.78rem; color:var(--text-light); text-transform:uppercase; letter-spacing:.05em; margin-top:.2rem;">
+            Đã có điểm
+        </div>
+    </div>
+    <div class="sa-card" style="flex:1; min-width:140px; text-align:center; padding:1.25rem;">
+        <div style="font-family:var(--font-display); font-size:1.8rem; font-weight:700; color:@avgColor;">
+            @(avgGrade.HasValue? avgGrade.Value.ToString("0.#") : "—")
+        </div>
+        <div style="font-size:.78rem; color:var(--text-light); text-transform:uppercase; letter-spacing:.05em; margin-top:.2rem;">
+            Điểm trung bình
+        </div>
+    </div>
+</div>
+}
