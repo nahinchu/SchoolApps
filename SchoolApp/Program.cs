@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SchoolApp.Data;
+using SchoolApp.Services;
 using SchoolApp.UnitOfWork;
 
 namespace SchoolApp
@@ -18,10 +19,11 @@ namespace SchoolApp
             builder.Services.AddScoped<IUnitOfWork, SchoolApp.UnitOfWork.UnitOfWork>();
             builder.Services.AddSession();
 
-           
+            builder.Services.AddSingleton<IPasswordService, BCryptPasswordService>();
+
             var app = builder.Build();
 
-           
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {

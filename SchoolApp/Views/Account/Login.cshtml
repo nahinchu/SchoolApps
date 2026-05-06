@@ -1,28 +1,123 @@
-﻿@model LoginViewModel
-
+﻿@model SchoolApp.Models.LoginViewModel
 @{
     ViewData["Title"] = "Đăng nhập";
 }
 
-<h2>Đăng nhập</h2>
+<!-- Background -->
+<div style="
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 66px - 200px);
+    position: relative;
+    padding: 2rem 1rem;
+">
 
-@using (Html.BeginForm("Login", "Account", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
+    <!-- Vòng trang trí góc -->
+    <div style="
+        position:absolute; top:-80px; right:-80px;
+        width:300px; height:300px;
+        background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+        pointer-events:none;
+    "></div>
+    <div style="
+        position:absolute; bottom:-60px; left:-60px;
+        width:250px; height:250px;
+        background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+        pointer-events:none;
+    "></div>
 
-    <div class="mb-3">
-        @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Email)
+    <!-- Card -->
+    <div class="sa-card" style="width:100%; max-width:420px; position:relative;">
+
+        <!-- Header — nền vàng gold nổi bật logo -->
+        <div style="
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            border-radius: 12px 12px 0 0;
+            padding: 2rem 1.5rem 1.75rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        "
+
+            <!-- Logo nổi bật trên nền vàng -->
+            <div style="
+                width: 64px; height: 64px;
+                background: var(--navy);
+                border-radius: 16px;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 2rem;
+                margin: 0 auto .75rem;
+                box-shadow: 0 8px 24px rgba(13,27,42,0.3);
+                position: relative;
+            ">
+                🎓
+            </div>
+
+            <h2 style="
+                font-family: var(--font-display);
+                font-size: 1.6rem;
+                font-weight: 700;
+                color: var(--navy);
+                margin-bottom: .2rem;
+            ">
+                Đăng nhập
+            </h2>
+            <p style="color: rgba(13,27,42,0.6); font-size:.85rem;">
+                Chào mừng trở lại SchoolApp
+            </p>
+        </div>
+
+        <!-- Body -->
+        <div class="sa-card-body">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="sa-alert sa-alert-danger" style="margin-bottom:1rem;">
+                    <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
+                    <span>Sai email hoặc mật khẩu.</span>
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="sa-form-group">
+                    <label class="sa-label" asp-for="Email">
+                        Email <span style="color:var(--danger)">*</span>
+                    </label>
+                    <input class="sa-input" asp-for="Email"
+                           type="email" placeholder="example@email.com"
+                           autocomplete="email" />
+                    <span asp-validation-for="Email"
+                          style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                </div>
+
+                <div class="sa-form-group" style="margin-bottom:1.5rem;">
+                    <label class="sa-label" asp-for="Password">
+                        Mật khẩu <span style="color:var(--danger)">*</span>
+                    </label>
+                    <input class="sa-input" asp-for="Password"
+                           type="password" placeholder="Nhập mật khẩu..."
+                           autocomplete="current-password" />
+                    <span asp-validation-for="Password"
+                          style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                </div>
+
+                <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
+                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+                </button>
+            </form>
+
+            <p style="text-align:center; margin-top:1.25rem; font-size:.82rem; color:var(--text-light);">
+                Chưa có tài khoản?
+                <a asp-controller="Account" asp-action="Register"
+                   style="color:var(--gold); font-weight:600;">Đăng ký ngay</a>
+            </p>
+        </div>
+
     </div>
+</div>
 
-    <div class="mb-3">
-        @Html.LabelFor(m => m.Password)
-        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Password)
-    </div>
-
-    <button type="submit" class="btn btn-primary">Đăng nhập</button>
-
-    @Html.ValidationSummary()
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

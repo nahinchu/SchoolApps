@@ -5,82 +5,109 @@
     ViewData["Title"] = "Danh sách đăng ký";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">📋 Danh sách đăng ký học</h2>
-    </div>
+<!-- ==================== PAGE HERO ==================== -->
+<div class="sa-page-hero">
+    <h1>📋 Danh sách đăng ký học</h1>
+    <p>Quản lý đăng ký và chấm điểm học viên</p>
+</div>
 
-    <form id="searchForm" method="get" class="mb-3">
-        <div class="input-group w-50">
+<!-- ==================== TOOLBAR ==================== -->
+<div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <form id="searchForm" method="get" style="flex:1; max-width:450px; display:flex; gap:0;">
+        <div style="position:relative; flex:1;">
+            <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-light); font-size:.85rem;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="form-control" placeholder="🔍 Tìm theo tên học viên hoặc khóa học..." />
-            <button type="submit" class="btn btn-primary">Tìm</button>
+                   class="sa-input" placeholder="Tìm theo tên học viên hoặc khóa học..."
+                   style="padding-left:36px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);" />
         </div>
+        <button type="submit" class="sa-btn sa-btn-primary" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:9px 16px;">
+            Tìm
+        </button>
     </form>
+</div>
 
-    <div id="enrollmentTableContainer">
-        @await Html.PartialAsync("_EnrollmentTable", Model)
-    </div>
+<!-- ==================== TABLE ==================== -->
+<div id="enrollmentTableContainer">
+    @await Html.PartialAsync("_EnrollmentTable", Model)
 </div>
 
 <!-- ==================== MODAL CHẤM ĐIỂM ==================== -->
 <div class="modal fade" id="enrollmentModal" tabindex="-1" aria-labelledby="enrollmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="enrollmentModalLabel">✏️ Chấm điểm</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border:none; border-radius:var(--radius-md); box-shadow:var(--shadow-lg);">
+
+            <!-- Modal Header — navy + gold -->
+            <div class="modal-header" style="
+                background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+                padding:1.25rem 1.5rem; border:none;
+            ">
+                <h5 id="enrollmentModalLabel" style="
+                    font-family:var(--font-display); font-size:1.15rem; font-weight:600;
+                    color:var(--gold-light); margin:0;
+                ">
+                    ✏️ Chấm điểm
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
-            <div class="modal-body">
-                <div id="modalResult" class="mb-3"></div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding:1.5rem; background:var(--white);">
+                <div id="modalResult" style="margin-bottom:1rem;"></div>
                 <form id="enrollmentForm">
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="EnrollmentId" name="EnrollmentId" value="0" />
 
                     <!-- Thông tin chỉ đọc -->
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-muted">Học viên</label>
-                        <input type="text" id="StudentName" class="form-control bg-light"
-                               readonly />
+                    <div class="sa-form-group">
+                        <label class="sa-label">Học viên</label>
+                        <input type="text" id="StudentName" class="sa-input"
+                               readonly style="background:var(--off-white); color:var(--text-mid);" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-muted">Khóa học</label>
-                        <input type="text" id="CourseName" class="form-control bg-light"
-                               readonly />
+                    <div class="sa-form-group">
+                        <label class="sa-label">Khóa học</label>
+                        <input type="text" id="CourseName" class="sa-input"
+                               readonly style="background:var(--off-white); color:var(--text-mid);" />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-muted">Ngày đăng ký</label>
-                        <input type="text" id="EnrollDate" class="form-control bg-light"
-                               readonly />
+                    <div class="sa-form-group">
+                        <label class="sa-label">Ngày đăng ký</label>
+                        <input type="text" id="EnrollDate" class="sa-input"
+                               readonly style="background:var(--off-white); color:var(--text-mid);" />
                     </div>
 
-                    <hr />
+                    <div style="height:1px; background:var(--smoke); margin:1.25rem 0;"></div>
 
-                    <!-- Phần có thể chỉnh sửa -->
-                    <div class="mb-3">
-                        <label for="Grade" class="form-label fw-semibold">
-                            Điểm <span class="text-muted fw-normal">(0 – 10)</span>
+                    <!-- Phần chỉnh sửa -->
+                    <div class="sa-form-group">
+                        <label class="sa-label" for="Grade">
+                            Điểm <span style="color:var(--text-light); font-weight:400; text-transform:none;">(0 – 10)</span>
                         </label>
                         <input type="number" id="Grade" name="Grade"
-                               class="form-control" min="0" max="10" step="0.01"
+                               class="sa-input" min="0" max="10" step="0.01"
                                placeholder="Để trống nếu chưa chấm" />
                         <div class="invalid-feedback" id="err-Grade"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="Notes" class="form-label fw-semibold">Ghi chú</label>
+                    <div class="sa-form-group">
+                        <label class="sa-label" for="Notes">Ghi chú</label>
                         <textarea id="Notes" name="Notes"
-                                  class="form-control" rows="3"
+                                  class="sa-input" rows="3" style="resize:vertical;"
                                   placeholder="Nhập ghi chú..."></textarea>
                         <div class="invalid-feedback" id="err-Notes"></div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-warning" id="btnSaveEnrollment">
-                    💾 Lưu điểm
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="
+                padding:1rem 1.5rem;
+                background:var(--off-white);
+                border-top:1px solid var(--smoke);
+            ">
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-gold" id="btnSaveEnrollment">
+                    <i class="bi bi-check-lg"></i> Lưu điểm
                 </button>
             </div>
+
         </div>
     </div>
 </div>
@@ -88,24 +115,20 @@
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
     <script>
-        // ====== XÓA TẤT CẢ LỖI ======
         function clearErrors() {
             $('#modalResult').html('');
-            $('#enrollmentForm .form-control').removeClass('is-invalid');
+            $('#enrollmentForm .sa-input').removeClass('is-invalid');
             $('#enrollmentForm [id^="err-"]').text('');
         }
 
         // ====== MỞ MODAL CHẤM ĐIỂM ======
         function openEditModal(id) {
             clearErrors();
-
-            // Hiện spinner trong khi load
             $('#Grade').val('');
             $('#Notes').val('');
             $('#StudentName').val('Đang tải...');
             $('#CourseName').val('Đang tải...');
             $('#EnrollDate').val('');
-
             $('#enrollmentModal').modal('show');
 
             $.get('@Url.Action("GetEnrollment", "Enrollment")/' + id, function (data) {
@@ -117,12 +140,12 @@
                 $('#Notes').val(data.notes);
             }).fail(function () {
                 $('#enrollmentModal').modal('hide');
-                alert('Không thể tải thông tin đăng ký!');
+                showToast('Không thể tải thông tin đăng ký!', 'danger');
             });
         }
 
         $(function () {
-            // ====== XÓA LỖI KHI GÕ LẠI ======
+            // ====== XÓA LỖI KHI GÕ ======
             $(document).on('input change', '#enrollmentForm input, #enrollmentForm textarea', function () {
                 $(this).removeClass('is-invalid');
                 $('#err-' + $(this).attr('id')).text('');
@@ -132,7 +155,6 @@
             // ====== LƯU ĐIỂM ======
             $('#btnSaveEnrollment').on('click', function () {
                 clearErrors();
-
                 $.ajax({
                     url: '@Url.Action("EditAjax", "Enrollment")',
                     type: 'POST',
@@ -149,31 +171,31 @@
                             });
                         } else {
                             $('#modalResult').html(
-                                '<div class="alert alert-danger">' + res.message + '</div>'
+                                '<div class="sa-alert sa-alert-danger"><span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span><span>' + $('<span>').text(res.message).html() + '</span></div>'
                             );
                         }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) alert('Bạn không có quyền Admin!');
-                        else alert('Lỗi: ' + xhr.statusText);
+                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
+                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
                     }
                 });
             });
 
-            // ====== TÌM KIẾM AJAX ======
+            // ====== TÌM KIẾM ======
             $('#searchForm').on('submit', function (e) {
                 e.preventDefault();
                 loadEnrollments(1);
             });
 
-            // ====== PHÂN TRANG AJAX ======
+            // ====== PHÂN TRANG ======
             $(document).on('click', '.ajax-page-link', function (e) {
                 e.preventDefault();
                 var match = $(this).attr('href').match(/page=(\d+)/);
                 loadEnrollments(match ? match[1] : 1);
             });
 
-            // ====== XÓA AJAX ======
+            // ====== XÓA ======
             $(document).on('click', '.btn-delete-enrollment', function () {
                 if (!confirm('Bạn có chắc muốn xóa đăng ký này?')) return;
                 var id = $(this).data('id');
@@ -183,16 +205,12 @@
                     type: 'POST',
                     data: { id: id, __RequestVerificationToken: token },
                     success: function (res) {
-                        if (res.success) {
-                            showToast(res.message, 'success');
-                            loadEnrollments(1);
-                        } else {
-                            showToast(res.message, 'danger');
-                        }
+                        if (res.success) { showToast(res.message, 'success'); loadEnrollments(1); }
+                        else { showToast(res.message, 'danger'); }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) alert('Bạn không có quyền Admin!');
-                        else alert('Lỗi: ' + xhr.statusText);
+                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
+                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
                     }
                 });
             });
@@ -209,19 +227,22 @@
                         $('#enrollmentTableContainer').html(html);
                     },
                     error: function (xhr) {
-                        alert('Lỗi tải dữ liệu: ' + xhr.statusText);
+                        showToast('Lỗi tải dữ liệu: ' + xhr.statusText, 'danger');
                     }
                 });
             }
 
-            // ====== TOAST THÔNG BÁO ======
+            // ====== TOAST ======
             window.showToast = function (message, type) {
-                var toast = $('<div class="alert alert-' + type +
-                    ' alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index:9999">' +
-                    message +
-                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                var cls = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
+                var icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+                var toast = $('<div class="sa-alert ' + cls + '" style="position:fixed; top:1rem; right:1rem; z-index:9999; min-width:300px; max-width:450px; box-shadow:var(--shadow-md);">' +
+                    '<span class="sa-alert-icon"><i class="bi ' + icon + '"></i></span>' +
+                    '<span>' + $('<span>').text(message).html() + '</span>' +
+                    '<button class="sa-alert-close" onclick="$(this).parent().remove()"><i class="bi bi-x"></i></button>' +
+                    '</div>');
                 $('body').append(toast);
-                setTimeout(function () { toast.alert('close'); }, 3000);
+                setTimeout(function () { toast.fadeOut(300, function () { $(this).remove(); }); }, 3000);
             };
         });
     </script>

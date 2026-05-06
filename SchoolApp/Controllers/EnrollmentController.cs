@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.UnitOfWork;
@@ -90,23 +89,17 @@ namespace SchoolApp.Controllers
 
             if (studentId == null)
             {
-                //TempData["Error"] = "Vui lòng đăng nhập để đăng ký khóa học";
-                //return RedirectToAction("Login", "Account");
                 return Json(new { success = false, message = "Vui lòng đăng nhập" });
             }
 
             if (role == "Admin")
             {
-                //TempData["Error"] = "Admin không thể đăng ký khóa học";
-                //return RedirectToAction("Index", "Course");
                 return Json(new { success = false, message = "Admin không thể đăng ký khóa học" });
             }
 
             var course = _uow.Courses.GetById(courseId);
             if (course == null || !course.IsActive)
             {
-                //TempData["Error"] = "Khóa học không tồn tại hoặc đã đóng";
-                //return RedirectToAction("Index", "Course");
                 return Json(new { success = false, message = "Khóa học không tồn tại hoặc đã đóng" });
             }
 
@@ -115,8 +108,6 @@ namespace SchoolApp.Controllers
 
             if (exists)
             {
-                //TempData["Error"] = "Bạn đã đăng ký khóa học này rồi";
-                //return RedirectToAction("Index", "Course");
                 return Json(new { success = false, message = "Bạn đã đăng ký khóa học này rồi" });
             }
 
@@ -131,12 +122,10 @@ namespace SchoolApp.Controllers
             _uow.Enrollments.Add(enrollment);
             _uow.SaveChanges();
 
-            //TempData["Success"] = $"Đăng ký khóa học \"{course.CourseName}\" thành công!";
-            //return RedirectToAction("Index", "Course");
             return Json(new { success = true, message = $"Đăng ký khóa học \"{course.CourseName}\" thành công!" });
         }
 
-        public IActionResult MyEnrollments()
+        public IActionResult MyEnrollments(int page = 1)
         {
             var studentId = HttpContext.Session.GetInt32("StudentId");
             if (studentId == null)
@@ -145,10 +134,12 @@ namespace SchoolApp.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var myEnrollments = _uow.Enrollments.GetByStudent(studentId.Value).ToList();
+            int pageSize = 5;
+            var myEnrollments = _uow.Enrollments.GetByStudent(studentId.Value)
+                .ToPagedList(page, pageSize);
+
             return View(myEnrollments);
         }
-
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
@@ -185,7 +176,6 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EditAjax(Enrollment enrollment)
         {
-            // Chỉ validate Grade và Notes
             ModelState.Remove("StudentId");
             ModelState.Remove("CourseId");
             ModelState.Remove("Student");

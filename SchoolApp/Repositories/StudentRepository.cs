@@ -33,5 +33,14 @@ namespace SchoolApp.Repositories
         {
             return _dbSet.FirstOrDefault(s => s.Email == email && s.Password == password);
         }
+
+        public Student? GetByEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            return _context.Students
+                .FirstOrDefault(s => s.Email.ToLower() == email.ToLower());
+        }
     }
 }

@@ -7,97 +7,132 @@
     var isAdmin = role == "Admin";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">📚 Danh sách khóa học</h2>
-        @if (isAdmin)
-        {
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#courseModal"
-                    onclick="openCreateModal()">
-                ➕ Thêm khóa học
-            </button>
-        }
-    </div>
+<!-- ==================== PAGE HERO ==================== -->
+<div class="sa-page-hero">
+    <h1>📚 Danh sách khóa học</h1>
+    <p>Quản lý và khám phá các khóa học hiện có</p>
+</div>
 
-    <form id="searchForm" method="get" class="mb-3">
-        <div class="input-group w-50">
+<!-- ==================== TOOLBAR ==================== -->
+<div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <form id="searchForm" method="get" style="flex:1; max-width:400px; display:flex; gap:0;">
+        <div style="position:relative; flex:1;">
+            <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-light); font-size:.85rem;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="form-control" placeholder="🔍 Tìm khóa học..." />
-            <button type="submit" class="btn btn-primary">Tìm</button>
+                   class="sa-input" placeholder="Tìm khóa học..."
+                   style="padding-left:36px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);" />
         </div>
+        <button type="submit" class="sa-btn sa-btn-primary" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:9px 16px;">
+            Tìm
+        </button>
     </form>
 
-    <div id="courseTableContainer">
-        @await Html.PartialAsync("_CourseTable", Model)
-    </div>
+    @if (isAdmin)
+    {
+        <button type="button" class="sa-btn sa-btn-gold" data-bs-toggle="modal" data-bs-target="#courseModal"
+                onclick="openCreateModal()">
+            <i class="bi bi-plus-circle"></i> Thêm khóa học
+        </button>
+    }
+</div>
+
+<!-- ==================== TABLE ==================== -->
+<div id="courseTableContainer">
+    @await Html.PartialAsync("_CourseTable", Model)
 </div>
 
 <!-- ==================== MODAL CREATE / EDIT ==================== -->
 <div class="modal fade" id="courseModal" tabindex="-1" aria-labelledby="courseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="courseModalLabel">Thêm khóa học</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="border:none; border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--shadow-lg);">
+
+            <!-- Modal Header — navy + gold -->
+            <div class="modal-header" style="
+                background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+                padding:1.25rem 1.5rem; border:none;
+            ">
+                <h5 id="courseModalLabel" style="
+                    font-family:var(--font-display); font-size:1.15rem; font-weight:600;
+                    color:var(--gold-light); margin:0;
+                ">
+                    Thêm khóa học
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
-            <div class="modal-body">
-                <div id="modalResult" class="mb-3"></div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" style="padding:1.5rem; background:var(--white);">
+                <div id="modalResult" style="margin-bottom:1rem;"></div>
                 <form id="courseForm">
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="CourseId" name="CourseId" value="0" />
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="CourseName" class="form-label fw-semibold">
-                                Tên khóa học <span class="text-danger">*</span>
-                            </label>
-                            <input type="text" id="CourseName" name="CourseName"
-                                   class="form-control" placeholder="Nhập tên khóa học (3–200 ký tự)" />
-                            <div class="invalid-feedback" id="err-CourseName"></div>
+                        <div class="col-md-6">
+                            <div class="sa-form-group">
+                                <label class="sa-label" for="CourseName">
+                                    Tên khóa học <span style="color:var(--danger)">*</span>
+                                </label>
+                                <input type="text" id="CourseName" name="CourseName"
+                                       class="sa-input" placeholder="Nhập tên khóa học (3–200 ký tự)" />
+                                <div class="invalid-feedback" id="err-CourseName"></div>
+                            </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="Credits" class="form-label fw-semibold">
-                                Tín chỉ <span class="text-danger">*</span>
-                            </label>
-                            <input type="number" id="Credits" name="Credits"
-                                   class="form-control" min="1" max="10" placeholder="1–10" />
-                            <div class="invalid-feedback" id="err-Credits"></div>
+                        <div class="col-md-3">
+                            <div class="sa-form-group">
+                                <label class="sa-label" for="Credits">
+                                    Tín chỉ <span style="color:var(--danger)">*</span>
+                                </label>
+                                <input type="number" id="Credits" name="Credits"
+                                       class="sa-input" min="1" max="10" placeholder="1–10" />
+                                <div class="invalid-feedback" id="err-Credits"></div>
+                            </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="FeeDisplay" class="form-label fw-semibold">
-                                Học phí (VNĐ) <span class="text-danger">*</span>
-                            </label>
-                            <!-- Input hiển thị có dấu chấm — KHÔNG có name -->
-                            <input type="text" id="FeeDisplay"
-                                   class="form-control" placeholder="0–100.000.000"
-                                   inputmode="numeric" autocomplete="off" />
-                            <!-- Hidden input mang giá trị số thực để submit -->
-                            <input type="hidden" id="Fee" name="Fee" />
-                            <div class="invalid-feedback" id="err-Fee"></div>
+                        <div class="col-md-3">
+                            <div class="sa-form-group">
+                                <label class="sa-label" for="FeeDisplay">
+                                    Học phí (VNĐ) <span style="color:var(--danger)">*</span>
+                                </label>
+                                <input type="text" id="FeeDisplay"
+                                       class="sa-input" placeholder="0–100.000.000"
+                                       inputmode="numeric" autocomplete="off" />
+                                <input type="hidden" id="Fee" name="Fee" />
+                                <div class="invalid-feedback" id="err-Fee"></div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="Description" class="form-label fw-semibold">Mô tả</label>
+                    <div class="sa-form-group">
+                        <label class="sa-label" for="Description">Mô tả</label>
                         <textarea id="Description" name="Description"
-                                  class="form-control" rows="3"
+                                  class="sa-input" rows="3" style="resize:vertical;"
                                   placeholder="Mô tả khóa học (tối đa 1000 ký tự)..."></textarea>
                         <div class="invalid-feedback" id="err-Description"></div>
                     </div>
 
-                    <div class="form-check form-switch mb-3">
+                    <div class="form-check form-switch" style="margin-bottom:.5rem;">
                         <input type="checkbox" id="IsActive" name="IsActive" value="true"
                                class="form-check-input" checked />
-                        <label for="IsActive" class="form-check-label fw-semibold">Đang mở đăng ký</label>
+                        <label for="IsActive" class="form-check-label"
+                               style="font-size:.85rem; font-weight:500; color:var(--text-mid);">
+                            Đang mở đăng ký
+                        </label>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" id="btnSaveCourse">
-                    💾 Lưu
+
+            <!-- Modal Footer -->
+            <div class="modal-footer" style="
+                padding:1rem 1.5rem;
+                background:var(--off-white);
+                border-top:1px solid var(--smoke);
+            ">
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-primary" id="btnSaveCourse">
+                    <i class="bi bi-check-lg"></i> <span class="btn-text">Lưu</span>
                 </button>
             </div>
+
         </div>
     </div>
 </div>
@@ -114,36 +149,26 @@
             return raw.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         }
 
-        // Lắng nghe nhập học phí — format realtime
         $(document).on('input', '#FeeDisplay', function () {
             var input = this;
             var oldVal = input.value;
             var pos = input.selectionStart;
-
-            // Đếm số chữ số trước con trỏ trong chuỗi cũ
             var digitsBeforeCursor = oldVal.substring(0, pos).replace(/\D/g, '').length;
-
             var formatted = formatFeeDisplay(oldVal);
             input.value = formatted;
-
-            // Tính lại vị trí con trỏ sau format
             var newPos = 0, digitCount = 0;
             for (var i = 0; i < formatted.length; i++) {
                 if (formatted[i] !== '.') digitCount++;
                 if (digitCount === digitsBeforeCursor) { newPos = i + 1; break; }
             }
             input.setSelectionRange(newPos, newPos);
-
-            // Đồng bộ hidden input (số thực)
             $('#Fee').val(formatted.replace(/\./g, ''));
-
-            // Xóa lỗi
             $('#FeeDisplay').removeClass('is-invalid');
             $('#err-Fee').text('');
             $('#modalResult').html('');
         });
 
-        // ====== XÓA LỖI KHI GÕ LẠI (các field khác) ======
+        // ====== XÓA LỖI KHI GÕ LẠI ======
         $(document).on('input change', '#courseForm input:not(#FeeDisplay), #courseForm textarea', function () {
             $(this).removeClass('is-invalid');
             var fieldId = $(this).attr('id') || $(this).attr('name');
@@ -151,10 +176,9 @@
             $('#modalResult').html('');
         });
 
-        // ====== XÓA TẤT CẢ LỖI ======
         function clearErrors() {
             $('#modalResult').html('');
-            $('#courseForm .form-control').removeClass('is-invalid');
+            $('#courseForm .sa-input').removeClass('is-invalid');
             $('#FeeDisplay').removeClass('is-invalid');
             $('#courseForm [id^="err-"]').text('');
         }
@@ -169,14 +193,14 @@
             $('#FeeDisplay').val('');
             $('#Fee').val('');
             clearErrors();
-            $('#btnSaveCourse').text('💾 Lưu');
+            $('#btnSaveCourse .btn-text').text('Lưu');
         }
 
         // ====== MỞ MODAL CHỈNH SỬA ======
         function openEditModal(id) {
             isEditMode = true;
             $('#courseModalLabel').text('✏️ Sửa khóa học');
-            $('#btnSaveCourse').text('💾 Cập nhật');
+            $('#btnSaveCourse .btn-text').text('Cập nhật');
             clearErrors();
 
             $.get('@Url.Action("GetCourse", "Course")/' + id, function (data) {
@@ -189,14 +213,13 @@
                 $('#IsActive').prop('checked', data.isActive);
                 $('#courseModal').modal('show');
             }).fail(function () {
-                alert('Không thể tải thông tin khóa học!');
+                showToast('Không thể tải thông tin khóa học!', 'danger');
             });
         }
 
         $(function () {
-            // ====== LƯU (CREATE hoặc EDIT) ======
+            // ====== LƯU ======
             $('#btnSaveCourse').on('click', function () {
-                // Đồng bộ số thực vào hidden trước khi submit
                 $('#Fee').val($('#FeeDisplay').val().replace(/\./g, ''));
                 clearErrors();
 
@@ -224,31 +247,31 @@
                             });
                         } else {
                             $('#modalResult').html(
-                                '<div class="alert alert-danger">' + res.message + '</div>'
+                                '<div class="sa-alert sa-alert-danger"><span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span><span>' + $('<span>').text(res.message).html() + '</span></div>'
                             );
                         }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) alert('Bạn không có quyền Admin!');
-                        else alert('Lỗi: ' + xhr.statusText);
+                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
+                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
                     }
                 });
             });
 
-            // ====== TÌM KIẾM AJAX ======
+            // ====== TÌM KIẾM ======
             $('#searchForm').on('submit', function (e) {
                 e.preventDefault();
                 loadCourses(1);
             });
 
-            // ====== PHÂN TRANG AJAX ======
+            // ====== PHÂN TRANG ======
             $(document).on('click', '.ajax-page-link', function (e) {
                 e.preventDefault();
                 var match = $(this).attr('href').match(/page=(\d+)/);
                 loadCourses(match ? match[1] : 1);
             });
 
-            // ====== XÓA AJAX ======
+            // ====== XÓA ======
             $(document).on('click', '.btn-delete-course', function () {
                 if (!confirm('Bạn có chắc muốn xóa khóa học này?')) return;
                 var id = $(this).data('id');
@@ -258,44 +281,36 @@
                     type: 'POST',
                     data: { id: id, __RequestVerificationToken: token },
                     success: function (res) {
-                        if (res.success) {
-                            showToast(res.message, 'success');
-                            loadCourses(1);
-                        } else {
-                            showToast(res.message, 'danger');
-                        }
+                        if (res.success) { showToast(res.message, 'success'); loadCourses(1); }
+                        else { showToast(res.message, 'danger'); }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) alert('Bạn không có quyền Admin!');
-                        else alert('Lỗi: ' + xhr.statusText);
+                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
+                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
                     }
                 });
             });
-                    // ====== ĐĂNG KÝ KHÓA HỌC (Student) ======
-        $(document).on('click', '.btn-register-course', function () {
-            if (!confirm('Bạn có chắc muốn đăng ký khóa học này?')) return;
 
-            var courseId = $(this).data('id');
-            var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
-
-            $.ajax({
-                url: '@Url.Action("Register", "Enrollment")',
-                type: 'POST',
-                data: { courseId: courseId, __RequestVerificationToken: token },
-                success: function (res) {
-                    if (res.success) {
-                        showToast(res.message, 'success');
-                        loadCourses(1); // Reload bảng
-                    } else {
-                        showToast(res.message, 'danger');
+            // ====== ĐĂNG KÝ KHÓA HỌC (Student) ======
+            $(document).on('click', '.btn-register-course', function () {
+                if (!confirm('Bạn có chắc muốn đăng ký khóa học này?')) return;
+                var courseId = $(this).data('id');
+                var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+                $.ajax({
+                    url: '@Url.Action("Register", "Enrollment")',
+                    type: 'POST',
+                    data: { courseId: courseId, __RequestVerificationToken: token },
+                    success: function (res) {
+                        if (res.success) { showToast(res.message, 'success'); loadCourses(1); }
+                        else { showToast(res.message, 'danger'); }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 403) showToast('Bạn không có quyền!', 'danger');
+                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
                     }
-                },
-                error: function (xhr) {
-                    if (xhr.status === 403) alert('Bạn không có quyền!');
-                    else alert('Lỗi: ' + xhr.statusText); 
-                }
+                });
             });
-        });
+
             // ====== LOAD BẢNG ======
             function loadCourses(page) {
                 var searchTerm = $('#searchForm input[name="searchTerm"]').val();
@@ -310,14 +325,17 @@
                 });
             }
 
-            // ====== TOAST THÔNG BÁO ======
+            // ====== TOAST ======
             window.showToast = function (message, type) {
-                var toast = $('<div class="alert alert-' + type +
-                    ' alert-dismissible fade show position-fixed top-0 end-0 m-3" style="z-index:9999">' +
-                    message +
-                    '<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+                var cls = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
+                var icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+                var toast = $('<div class="sa-alert ' + cls + '" style="position:fixed; top:1rem; right:1rem; z-index:9999; min-width:300px; max-width:450px; box-shadow:var(--shadow-md);">' +
+                    '<span class="sa-alert-icon"><i class="bi ' + icon + '"></i></span>' +
+                    '<span>' + $('<span>').text(message).html() + '</span>' +
+                    '<button class="sa-alert-close" onclick="$(this).parent().remove()"><i class="bi bi-x"></i></button>' +
+                    '</div>');
                 $('body').append(toast);
-                setTimeout(function () { toast.alert('close'); }, 3000);
+                setTimeout(function () { toast.fadeOut(300, function () { $(this).remove(); }); }, 3000);
             };
         });
     </script>
