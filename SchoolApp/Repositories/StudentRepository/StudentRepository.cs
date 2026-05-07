@@ -2,7 +2,7 @@
 using SchoolApp.Data;
 using SchoolApp.Models;
 
-namespace SchoolApp.Repositories
+namespace SchoolApp.Repositories.StudentRepository
 {
     public class StudentRepository : Repository<Student>, IStudentRepository
     {

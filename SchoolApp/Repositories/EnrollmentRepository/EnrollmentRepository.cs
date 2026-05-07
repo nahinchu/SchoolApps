@@ -2,7 +2,7 @@
 using SchoolApp.Data;
 using SchoolApp.Models;
 
-namespace SchoolApp.Repositories
+namespace SchoolApp.Repositories.EnrollmentRepository
 {
     public class EnrollmentRepository : Repository<Enrollment>, IEnrollmentRepository
     {
@@ -39,6 +39,10 @@ namespace SchoolApp.Repositories
                 .Include(e => e.Student)
                 .Include(e => e.Course)
                 .FirstOrDefault(e => e.EnrollmentId == id);
+        }
+        public bool IsEnrolled(int studentId, int courseId)
+        {
+            return _dbSet.Any(e => e.StudentId == studentId && e.CourseId == courseId);
         }
     }
 }

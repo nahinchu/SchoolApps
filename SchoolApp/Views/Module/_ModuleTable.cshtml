@@ -1,0 +1,91 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<SchoolApp.Models.Module>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:70px" class="text-center">Thứ tự</th>
+            <th>Tên chương</th>
+            <th>Mô tả</th>
+            <th class="text-center">Trạng thái</th>
+            <th class="text-center" style="width:110px">Bài học</th>
+            <th style="width:260px">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-folder-x display-4"></i><br>
+                    Chưa có chương nào trong khóa học này.
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center fw-bold">@item.OrderIndex</td>
+                    <td><strong>@item.Title</strong></td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            <span class="text-muted small">@(item.Description.Length > 90 ? item.Description.Substring(0, 90) + "..." : item.Description)</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted fst-italic">Không có mô tả</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (item.IsPublished)
+                        {
+                            <span class="badge bg-success px-3 py-2">Đang mở</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary px-3 py-2">Ẩn</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <strong>@item.Lessons.Count</strong>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-warning me-1"
+                                onclick="openEditModal(@item.ModuleId)">
+                            <i class="bi bi-pencil"></i> Sửa
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger me-1 btn-delete-module"
+                                data-id="@item.ModuleId">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <a asp-controller="Lesson" asp-action="Index" asp-route-moduleId="@item.ModuleId"
+                           class="btn btn-sm btn-primary">
+                            <i class="bi bi-list-ul"></i> Bài học
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <span class="text-muted">
+        Trang @Model.PageNumber / @Model.PageCount
+        (Tổng: @Model.TotalItemCount chương)
+    </span>
+    @Html.PagedListPager(Model, page => Url.Action("Index", new {
+    courseId = ViewData["CourseId"],
+        searchTerm = ViewData["SearchTerm"],
+        page
+        }), new PagedListRenderOptions
+    {
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link ajax-page-link" },
+        UlElementClasses = new[] { "pagination" }
+    })
+</div>

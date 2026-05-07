@@ -45,6 +45,7 @@ else
                     <th>Ngày đăng ký</th>
                     <th>Điểm</th>
                     <th>Ghi chú</th>
+                    <th class="text-center" style="width:140px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,6 +73,12 @@ else
                             }
                         </td>
                         <td style="color:var(--text-light);">@(item.Notes ?? "—")</td>
+                        <td class="text-center">
+                            <a asp-controller="Learn" asp-action="Course" asp-route-id="@item.CourseId"
+                               class="sa-btn sa-btn-gold" style="padding:.4rem .9rem; font-size:.85rem;">
+                                <i class="bi bi-play-fill"></i> Vào học
+                            </a>
+                        </td>
                     </tr>
                     i++;
                 }

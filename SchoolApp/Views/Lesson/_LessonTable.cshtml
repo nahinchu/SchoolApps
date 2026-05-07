@@ -1,0 +1,102 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<SchoolApp.Models.Lesson>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:70px" class="text-center">Thứ tự</th>
+            <th>Tiêu đề bài học</th>
+            <th>Loại</th>
+            <th class="text-center">Thời lượng</th>
+            <th class="text-center">Trạng thái</th>
+            <th style="width:220px">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-journal-x display-4"></i><br>
+                    Chưa có bài học nào trong chương này.
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center fw-bold">@item.OrderIndex</td>
+                    <td><strong>@item.Title</strong></td>
+                    <td>
+                        @switch (item.Type)
+                        {
+                            case SchoolApp.Models.Enums.LessonType.Video:
+                                <span class="badge bg-primary">📹 Video</span>
+                                break;
+                            case SchoolApp.Models.Enums.LessonType.Text:
+                                <span class="badge bg-success">📝 Bài viết</span>
+                                break;
+                            case SchoolApp.Models.Enums.LessonType.Mixed:
+                                <span class="badge bg-warning">📹 + 📝</span>
+                                break;
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (item.DurationMinutes > 0)
+                        {
+                            <span>@item.DurationMinutes phút</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                    <td class="text-center">
+                        @if (item.IsPublished)
+                        {
+                            <span class="badge bg-success px-3 py-2">Đang mở</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary px-3 py-2">Ẩn</span>
+                        }
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-warning me-1"
+                                onclick="openEditModal(@item.LessonId)">
+                            <i class="bi bi-pencil"></i> Sửa
+                        </button>
+                        <button type="button" class="btn btn-sm btn-danger btn-delete-lesson"
+                                data-id="@item.LessonId">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <a href="@Url.Action("Manage", "Quiz", new { lessonId = item.LessonId })"
+                           class="btn btn-sm btn-info">
+                            <i class="bi bi-patch-question"></i> Quiz
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <span class="text-muted">
+        Trang @Model.PageNumber / @Model.PageCount
+        (Tổng: @Model.TotalItemCount bài học)
+    </span>
+    @Html.PagedListPager(Model, page => Url.Action("Index", new {
+    moduleId = ViewData["ModuleId"],
+        searchTerm = ViewData["SearchTerm"],
+        page
+        }), new PagedListRenderOptions
+    {
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link ajax-page-link" },
+        UlElementClasses = new[] { "pagination" }
+    })
+</div>

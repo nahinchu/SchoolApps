@@ -1,0 +1,60 @@
+﻿@using SchoolApp.Models
+@model IEnumerable<Question>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th style="width:60px" class="text-center">Thứ tự</th>
+            <th>Nội dung câu hỏi</th>
+            <th style="width:140px">Loại</th>
+            <th style="width:80px" class="text-center">Điểm</th>
+            <th style="width:80px" class="text-center">Đáp án</th>
+            <th style="width:160px" class="text-center">Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-question-circle display-4 d-block mb-2"></i>
+                    Chưa có câu hỏi nào. Hãy thêm câu hỏi đầu tiên!
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-center fw-bold">@item.OrderIndex</td>
+                    <td>@item.Content</td>
+                    <td>
+                        @switch (item.Type)
+                        {
+                            case SchoolApp.Models.Enums.QuestionType.SingleChoice:
+                                <span class="badge bg-primary">Một đáp án</span>
+                                break;
+                            case SchoolApp.Models.Enums.QuestionType.MultiChoice:
+                                <span class="badge bg-warning text-dark">Nhiều đáp án</span>
+                                break;
+                            case SchoolApp.Models.Enums.QuestionType.TrueFalse:
+                                <span class="badge bg-info text-dark">Đúng/Sai</span>
+                                break;
+                        }
+                    </td>
+                    <td class="text-center">@item.Points</td>
+                    <td class="text-center">@item.Options.Count</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-warning me-1" onclick="editQuestion(@item.QuestionId)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteQuestion(@item.QuestionId)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,442 @@
+﻿@using SchoolApp.Models
+@model Quiz?
+
+@{
+    ViewData["Title"] = "Quản lý Quiz";
+    var lessonId = (int)ViewData["LessonId"]!;
+    var lessonTitle = ViewData["LessonTitle"] as string;
+}
+
+<div class="sa-page-hero">
+    <h1>📋 Quiz - @lessonTitle</h1>
+    <p>Quản lý câu hỏi và cài đặt bài kiểm tra</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div id="quizContainer">
+            @if (Model == null || Model.QuizId == 0)
+            {
+                <div class="text-center py-5" id="noQuizBlock">
+                    <h4>Chưa có bài kiểm tra cho bài học này</h4>
+                    <button class="sa-btn sa-btn-gold mt-3" onclick="openQuizSettingsModal(0)">
+                        <i class="bi bi-plus-circle"></i> Tạo bài kiểm tra mới
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex justify-content-between align-items-center mb-4" id="quizHeaderBlock">
+                    <h4>
+                        <span id="quizTitleDisplay">@Model.Title</span>
+                        <span class="badge bg-info" id="questionCountBadge">@Model.Questions.Count câu hỏi</span>
+                    </h4>
+                    <div>
+                        <button class="btn btn-warning btn-sm me-2" onclick="openQuizSettingsModal(@Model.QuizId)">
+                            <i class="bi bi-pencil"></i> Sửa cài đặt
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteQuiz(@Model.QuizId)">
+                            <i class="bi bi-trash"></i> Xóa Quiz
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model != null && Model.QuizId > 0)
+        {
+            <div id="questionsTableContainer"></div>
+
+            <button class="sa-btn sa-btn-primary mt-3" onclick="openCreateQuestionModal()">
+                <i class="bi bi-plus-circle"></i> Thêm câu hỏi mới
+            </button>
+        }
+    </div>
+</div>
+
+<!-- ====================== MODAL QUIZ SETTINGS ====================== -->
+<div class="modal fade" id="quizModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-navy text-white">
+                <h5 class="modal-title" id="quizModalLabel">Cài đặt Quiz</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="quizForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="qz_QuizId" name="QuizId" value="0" />
+                    <input type="hidden" id="qz_LessonId" name="LessonId" value="@lessonId" />
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="sa-label">Tiêu đề Quiz <span class="text-danger">*</span></label>
+                            <input type="text" id="qz_Title" name="Title" class="sa-input" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="sa-label">Điểm đạt (%)</label>
+                            <input type="number" id="qz_PassingScore" name="PassingScore" class="sa-input" value="70" min="1" max="100" />
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-4">
+                            <label class="sa-label">Thời gian (phút, 0 = không giới hạn)</label>
+                            <input type="number" id="qz_TimeLimitMinutes" name="TimeLimitMinutes" class="sa-input" value="0" min="0" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="sa-label">Số lần làm tối đa (0 = không giới hạn)</label>
+                            <input type="number" id="qz_MaxAttempts" name="MaxAttempts" class="sa-input" value="0" min="0" />
+                        </div>
+                        <div class="col-md-4 pt-4">
+                            <div class="form-check">
+                                <input type="checkbox" id="qz_IsPublished" name="IsPublished" value="true" class="form-check-input" checked />
+                                <label class="form-check-label" for="qz_IsPublished">Công bố Quiz</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input type="checkbox" id="qz_AllowRetry" name="AllowRetry" value="true" class="form-check-input" checked />
+                                <label class="form-check-label" for="qz_AllowRetry">Cho phép làm lại</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input type="checkbox" id="qz_ShowAnswersAfterSubmit" name="ShowAnswersAfterSubmit" value="true" class="form-check-input" checked />
+                                <label class="form-check-label" for="qz_ShowAnswersAfterSubmit">Hiển thị đáp án sau khi nộp</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="sa-label">Mô tả / Hướng dẫn</label>
+                        <textarea id="qz_Description" name="Description" class="sa-input" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-primary" id="btnSaveQuiz">
+                    <i class="bi bi-check-lg"></i> Lưu Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====================== MODAL QUESTION + OPTIONS ====================== -->
+<div class="modal fade" id="questionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-navy text-white">
+                <h5 class="modal-title" id="questionModalLabel">Thêm / Sửa Câu Hỏi</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="questionForm">
+                    <input type="hidden" id="q_QuestionId" value="0" />
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="sa-label">Nội dung câu hỏi <span class="text-danger">*</span></label>
+                            <textarea id="q_Content" class="sa-input" rows="3" required></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="sa-label">Loại câu hỏi</label>
+                            <select id="q_Type" class="sa-input">
+                                <option value="0">Một đáp án</option>
+                                <option value="1">Nhiều đáp án</option>
+                                <option value="2">Đúng / Sai</option>
+                            </select>
+
+                            <label class="sa-label mt-3">Điểm</label>
+                            <input type="number" id="q_Points" class="sa-input" value="1" min="1" max="20" />
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="sa-label">Giải thích đáp án (tùy chọn)</label>
+                        <textarea id="q_Explanation" class="sa-input" rows="2"></textarea>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Đáp án</h6>
+                        <small class="text-muted">Đánh dấu vào ô <strong>Đúng</strong> cho đáp án chính xác</small>
+                    </div>
+                    <div id="optionsContainer" class="mt-2"></div>
+
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOptionField()">
+                        <i class="bi bi-plus"></i> Thêm đáp án
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-primary" id="btnSaveQuestion">
+                    <i class="bi bi-check-lg"></i> Lưu Câu Hỏi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
+
+    <script>
+        // =========================================================
+        // STATE
+        // =========================================================
+        let currentQuizId   = @((Model?.QuizId ?? 0));
+        let currentLessonId = @((int)ViewData["LessonId"]!);
+        let isEditQuestion  = false;
+
+        // =========================================================
+        // HELPERS
+        // =========================================================
+        function getAntiForgeryToken() {
+            return $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+        }
+
+        function ajaxJson(url, data) {
+            return $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'RequestVerificationToken': getAntiForgeryToken() },
+                data: JSON.stringify(data)
+            });
+        }
+
+        window.showToast = function (message, type = 'success') {
+            const cls = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
+            const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+            const toast = $(`
+                <div class="sa-alert ${cls}" style="position:fixed;top:1rem;right:1rem;z-index:9999;min-width:320px;">
+                    <span class="sa-alert-icon"><i class="bi ${icon}"></i></span>
+                    <span>${message}</span>
+                    <button class="sa-alert-close" onclick="$(this).parent().remove()"><i class="bi bi-x"></i></button>
+                </div>`);
+            $('body').append(toast);
+            setTimeout(() => toast.fadeOut(400, () => toast.remove()), 3000);
+        };
+
+        // =========================================================
+        // LOAD QUESTIONS LIST
+        // =========================================================
+        function loadQuestions() {
+            if (currentQuizId === 0) return;
+            $.get('@Url.Action("GetQuestions", "Quiz")', { quizId: currentQuizId }, function (html) {
+                $('#questionsTableContainer').html(html);
+                // update badge
+                const count = $('#questionsTableContainer tbody tr').filter(function () {
+                    return $(this).find('td[colspan]').length === 0;
+                }).length;
+                $('#questionCountBadge').text(count + ' câu hỏi');
+            });
+        }
+
+        // =========================================================
+        // QUIZ SETTINGS MODAL
+        // =========================================================
+        function openQuizSettingsModal(quizId) {
+            $('#quizForm')[0].reset();
+            $('#qz_QuizId').val(quizId || 0);
+            $('#qz_LessonId').val(currentLessonId);
+
+            if (quizId && quizId > 0) {
+                $('#quizModalLabel').text('✏️ Sửa cài đặt Quiz');
+                $.get('@Url.Action("GetQuiz", "Quiz")', { id: quizId }, function (data) {
+                    $('#qz_Title').val(data.title);
+                    $('#qz_Description').val(data.description || '');
+                    $('#qz_PassingScore').val(data.passingScore);
+                    $('#qz_TimeLimitMinutes').val(data.timeLimitMinutes);
+                    $('#qz_MaxAttempts').val(data.maxAttempts);
+                    $('#qz_IsPublished').prop('checked', data.isPublished);
+                    $('#qz_AllowRetry').prop('checked', data.allowRetry);
+                    $('#qz_ShowAnswersAfterSubmit').prop('checked', data.showAnswersAfterSubmit);
+                    $('#quizModal').modal('show');
+                }).fail(function () {
+                    showToast('Không tải được thông tin Quiz!', 'danger');
+                });
+            } else {
+                $('#quizModalLabel').text('➕ Tạo bài kiểm tra mới');
+                $('#qz_PassingScore').val(70);
+                $('#qz_IsPublished').prop('checked', true);
+                $('#qz_AllowRetry').prop('checked', true);
+                $('#qz_ShowAnswersAfterSubmit').prop('checked', true);
+                $('#quizModal').modal('show');
+            }
+        }
+
+        $('#btnSaveQuiz').on('click', function () {
+            // serialize() bỏ qua checkbox khi unchecked => bổ sung thủ công
+            const formData = $('#quizForm').serializeArray();
+            ['IsPublished', 'AllowRetry', 'ShowAnswersAfterSubmit'].forEach(function (name) {
+                if (!formData.some(f => f.name === name)) {
+                    formData.push({ name: name, value: 'false' });
+                }
+            });
+
+            $.ajax({
+                url: '@Url.Action("SaveQuiz", "Quiz")',
+                type: 'POST',
+                data: $.param(formData),
+                success: function (res) {
+                    if (res.success) {
+                        $('#quizModal').modal('hide');
+                        showToast(res.message, 'success');
+                        // Reload trang để render đúng phần header + question list
+                        setTimeout(() => location.reload(), 600);
+                    } else {
+                        showToast(res.message || 'Lưu thất bại', 'danger');
+                    }
+                },
+                error: function () { showToast('Lỗi kết nối!', 'danger'); }
+            });
+        });
+
+        function deleteQuiz(quizId) {
+            if (!confirm('Xóa bài kiểm tra này? Toàn bộ câu hỏi sẽ bị xóa theo.')) return;
+            $.ajax({
+                url: '@Url.Action("Delete", "Quiz")',
+                type: 'POST',
+                data: { id: quizId, __RequestVerificationToken: getAntiForgeryToken() },
+                success: function (res) {
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => location.reload(), 600);
+                    } else {
+                        showToast(res.message, 'danger');
+                    }
+                }
+            });
+        }
+
+        // =========================================================
+        // QUESTION MODAL
+        // =========================================================
+        function openCreateQuestionModal() {
+            if (currentQuizId === 0) {
+                showToast('Vui lòng tạo Quiz trước khi thêm câu hỏi', 'danger');
+                return;
+            }
+            isEditQuestion = false;
+            $('#questionModalLabel').text('➕ Thêm câu hỏi mới');
+            $('#btnSaveQuestion').html('<i class="bi bi-check-lg"></i> Lưu Câu Hỏi');
+            $('#questionForm')[0].reset();
+            $('#q_QuestionId').val(0);
+            $('#optionsContainer').html('');
+            addOptionField();
+            addOptionField();
+            $('#questionModal').modal('show');
+        }
+
+        function editQuestion(questionId) {
+            isEditQuestion = true;
+            $('#questionModalLabel').text('✏️ Sửa câu hỏi');
+            $('#btnSaveQuestion').html('<i class="bi bi-check-lg"></i> Cập nhật');
+            $('#optionsContainer').html('');
+
+            $.get('@Url.Action("GetQuestion", "Quiz")', { id: questionId }, function (data) {
+                $('#q_QuestionId').val(data.questionId);
+                $('#q_Content').val(data.content);
+                $('#q_Type').val(data.type);
+                $('#q_Points').val(data.points);
+                $('#q_Explanation').val(data.explanation || '');
+                if (data.options && data.options.length > 0) {
+                    data.options.forEach(o => addOptionField(o.content, o.isCorrect));
+                } else {
+                    addOptionField();
+                    addOptionField();
+                }
+                $('#questionModal').modal('show');
+            }).fail(function () {
+                showToast('Không tải được thông tin câu hỏi!', 'danger');
+            });
+        }
+
+        function addOptionField(content = '', isCorrect = false) {
+            const safeContent = $('<div>').text(content).html();
+            const optionHtml = `
+                <div class="option-item input-group mb-2">
+                    <input type="text" class="form-control option-content" placeholder="Nội dung đáp án" value="${safeContent}">
+                    <div class="input-group-text">
+                        <input type="checkbox" class="option-correct form-check-input mt-0 me-2" ${isCorrect ? 'checked' : ''}>
+                        <span>Đúng</span>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger" onclick="$(this).closest('.option-item').remove()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>`;
+            $('#optionsContainer').append(optionHtml);
+        }
+
+        $('#btnSaveQuestion').on('click', function () {
+            const options = [];
+            $('.option-item').each(function () {
+                const content = $(this).find('.option-content').val().trim();
+                const isCorrect = $(this).find('.option-correct').is(':checked');
+                if (content) {
+                    options.push({ Content: content, IsCorrect: isCorrect });
+                }
+            });
+
+            const payload = {
+                QuestionId: parseInt($('#q_QuestionId').val()) || 0,
+                QuizId: currentQuizId,
+                Content: $('#q_Content').val(),
+                Type: parseInt($('#q_Type').val()),
+                Points: parseInt($('#q_Points').val()) || 1,
+                Explanation: $('#q_Explanation').val(),
+                Options: options
+            };
+
+            const url = isEditQuestion
+                ? '@Url.Action("EditQuestion", "Quiz")'
+                : '@Url.Action("CreateQuestion", "Quiz")';
+
+            ajaxJson(url, payload)
+                .done(function (res) {
+                    if (res.success) {
+                        $('#questionModal').modal('hide');
+                        showToast(res.message, 'success');
+                        loadQuestions();
+                    } else {
+                        showToast(res.message || 'Lưu thất bại', 'danger');
+                    }
+                })
+                .fail(function () { showToast('Lỗi kết nối!', 'danger'); });
+        });
+
+        function deleteQuestion(questionId) {
+            if (!confirm('Xóa câu hỏi này?')) return;
+            $.ajax({
+                url: '@Url.Action("DeleteQuestion", "Quiz")',
+                type: 'POST',
+                data: { id: questionId, __RequestVerificationToken: getAntiForgeryToken() },
+                success: function (res) {
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        loadQuestions();
+                    } else {
+                        showToast(res.message, 'danger');
+                    }
+                }
+            });
+        }
+
+        // =========================================================
+        // INIT
+        // =========================================================
+        $(function () {
+            if (currentQuizId > 0) {
+                loadQuestions();
+            }
+        });
+    </script>
+}

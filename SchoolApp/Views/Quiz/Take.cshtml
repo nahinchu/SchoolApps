@@ -1,0 +1,122 @@
+﻿@using SchoolApp.Models
+@using SchoolApp.Models.Enums
+@model Quiz
+
+@{
+    ViewData["Title"] = "Làm bài kiểm tra";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-1">@Model.Title</h3>
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="mb-0">@Model.Description</p>
+            }
+            <div class="mt-2 small">
+                <span class="me-3"><i class="bi bi-list-check"></i> @Model.Questions.Count câu hỏi</span>
+                @if (Model.TimeLimitMinutes > 0)
+                {
+                    <span class="me-3"><i class="bi bi-clock"></i> @Model.TimeLimitMinutes phút</span>
+                }
+                <span><i class="bi bi-trophy"></i> Điểm đạt: @Model.PassingScore%</span>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <form id="quizTakeForm">
+                @Html.AntiForgeryToken()
+
+                @foreach (var q in Model.Questions.OrderBy(q => q.OrderIndex))
+                {
+                    var inputType = q.Type == QuestionType.MultiChoice ? "checkbox" : "radio";
+
+                    <div class="mb-5 question-block" data-question-id="@q.QuestionId" data-question-type="@((int)q.Type)">
+                        <h5>
+                            <strong>Câu @q.OrderIndex:</strong> @q.Content
+                            <span class="badge bg-secondary ms-2">@q.Points điểm</span>
+                            @if (q.Type == QuestionType.MultiChoice)
+                            {
+                                <span class="badge bg-warning text-dark">Có thể chọn nhiều</span>
+                            }
+                        </h5>
+
+                        <div class="mt-3">
+                            @foreach (var opt in q.Options.OrderBy(o => o.OrderIndex))
+                            {
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input quiz-option"
+                                           type="@inputType"
+                                           name="question_@q.QuestionId"
+                                           value="@opt.AnswerOptionId"
+                                           id="opt_@opt.AnswerOptionId">
+                                    <label class="form-check-label" for="opt_@opt.AnswerOptionId">
+                                        @opt.Content
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </form>
+        </div>
+
+        <div class="card-footer text-end">
+            <button onclick="submitQuiz(@Model.QuizId)" class="btn btn-success btn-lg px-5">
+                <i class="bi bi-check-circle"></i> Nộp bài
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function getAntiForgeryToken() {
+            return $('#quizTakeForm input[name="__RequestVerificationToken"]').val();
+        }
+
+        function submitQuiz(quizId) {
+            if (!confirm('Bạn chắc chắn muốn nộp bài?')) return;
+
+            // Build answers: { questionId: [optionId, optionId, ...] }
+            const answers = {};
+            $('.question-block').each(function () {
+                const qId = parseInt($(this).data('question-id'));
+                const selected = [];
+                $(this).find('.quiz-option:checked').each(function () {
+                    selected.push(parseInt($(this).val()));
+                });
+                if (selected.length > 0) {
+                    answers[qId] = selected;
+                }
+            });
+
+            const payload = { QuizId: quizId, Answers: answers };
+
+            $.ajax({
+                url: '@Url.Action("SubmitQuiz", "Quiz")',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'RequestVerificationToken': getAntiForgeryToken() },
+                data: JSON.stringify(payload),
+                success: function (res) {
+                    if (res.success) {
+                        alert(
+                            'Nộp bài thành công!\n' +
+                            'Điểm: ' + res.score + '/' + res.maxScore + ' (' + res.percent + '%)\n' +
+                            (res.passed ? '✅ ĐẠT' : '❌ Chưa đạt') + '\n' +
+                            res.message
+                        );
+                        window.location.href = '/Learn/Course';
+                    } else {
+                        alert(res.message || 'Có lỗi xảy ra');
+                    }
+                },
+                error: function () {
+                    alert('Lỗi kết nối khi nộp bài. Vui lòng thử lại.');
+                }
+            });
+        }
+    </script>
+}
