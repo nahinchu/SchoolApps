@@ -15,15 +15,16 @@
 
 <!-- ==================== TOOLBAR ==================== -->
 <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-    <form id="searchForm" method="get" style="flex:1; max-width:400px; display:flex; gap:0;">
+    <form id="searchForm" method="get" style="flex:1; max-width:420px; display:flex; gap:0;">
         <div style="position:relative; flex:1;">
-            <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-light); font-size:.85rem;"></i>
+            <i class="bi bi-search" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-light);"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="sa-input" placeholder="Tìm khóa học..."
-                   style="padding-left:36px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);" />
+                   class="sa-input" placeholder="Tìm theo tên khóa học..."
+                   style="padding-left:42px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);" />
         </div>
-        <button type="submit" class="sa-btn sa-btn-primary" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:9px 16px;">
-            Tìm
+        <button type="submit" class="sa-btn sa-btn-primary"
+                style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:10px 20px;">
+            <i class="bi bi-search"></i>
         </button>
     </form>
 
@@ -31,7 +32,7 @@
     {
         <button type="button" class="sa-btn sa-btn-gold" data-bs-toggle="modal" data-bs-target="#courseModal"
                 onclick="openCreateModal()">
-            <i class="bi bi-plus-circle"></i> Thêm khóa học
+            <i class="bi bi-plus-circle me-2"></i> Thêm khóa học mới
         </button>
     }
 </div>

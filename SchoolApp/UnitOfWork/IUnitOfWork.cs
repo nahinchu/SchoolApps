@@ -1,4 +1,10 @@
 ﻿using SchoolApp.Repositories;
+using SchoolApp.Repositories.CourseRepository;
+using SchoolApp.Repositories.EnrollmentRepository;
+using SchoolApp.Repositories.LessonRepository;
+using SchoolApp.Repositories.ModuleRepository;
+using SchoolApp.Repositories.StudentRepository;
+using SchoolApp.Repositories.LearnRepository;
 
 namespace SchoolApp.UnitOfWork
 {
@@ -7,14 +13,13 @@ namespace SchoolApp.UnitOfWork
         ICourseRepository Courses { get; }
         IStudentRepository Students { get; }
         IEnrollmentRepository Enrollments { get; }
-        //IRepository<Module> Modules { get; }
-        //IRepository<Lesson> Lessons { get; }
-        //IRepository<Quiz> Quizzes { get; }
-        //IRepository<Question> Questions { get; }
-        //IRepository<AnswerOption> AnswerOptions { get; }
-        //IRepository<LessonProgress> LessonProgresses { get; }
-        //IRepository<QuizAttempt> QuizAttempts { get; }
-        //IRepository<QuizAnswer> QuizAnswers { get; }
+        IModuleRepository Modules { get; }
+        ILessonRepository Lessons { get; }
+        IQuizRepository Quizzes { get; }
+        IQuestionRepository Questions { get; }
+        IAnswerOptionRepository AnswerOptions { get; }
+        ILessonProgressRepository LessonProgresses { get; }
+
         int SaveChanges();
     }
 }

@@ -195,5 +195,14 @@ namespace SchoolApp.Controllers
             _uow.SaveChanges();
             return Json(new { success = true, message = "Đã xóa khóa học!" });
         }
+        [AuthorizeAdmin]
+        public IActionResult Modules(int id)
+        {
+            var course = _uow.Courses.GetById(id);
+            if (course == null) return NotFound();
+
+            ViewData["CourseName"] = course.CourseName;
+            return RedirectToAction("Index", "Module", new { courseId = id });
+        }
     }
 }

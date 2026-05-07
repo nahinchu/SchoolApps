@@ -1,70 +1,94 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Course>
+
 @{
     var role = Context.Session.GetString("Role");
     var isAdmin = role == "Admin";
     var isStudent = role == "Student";
     var studentId = Context.Session.GetInt32("StudentId");
-    var searchTerm = ViewData["SearchTerm"] as string;
 }
 
-<table class="table table-bordered">
+<table class="table table-bordered table-hover align-middle">
     <thead class="table-dark">
         <tr>
-            <th>Tên</th>
-            <th>Tín chỉ</th>
-            <th>Học phí</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
+            <th style="width:50px" class="text-center">#</th>
+            <th>Tên khóa học</th>
+            <th class="text-center">Tín chỉ</th>
+            <th class="text-end">Học phí</th>
+            <th class="text-center">Trạng thái</th>
+            <th style="width:280px">Thao tác</th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Any())
         {
-            <tr><td colspan="5" class="text-center">Không có khóa học nào</td></tr>
+            <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox display-4"></i><br>
+                    Không có khóa học nào
+                </td>
+            </tr>
         }
         else
         {
             foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.CourseName</td>
-                    <td>@item.Credits</td>
-                    <td>@item.Fee.ToString("N0") VNĐ</td>
+                    <td class="text-center fw-bold">@item.CourseId</td>
                     <td>
+                        <strong>@item.CourseName</strong>
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            <div class="text-muted small mt-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                @item.Description
+                            </div>
+                        }
+                    </td>
+                    <td class="text-center">@item.Credits</td>
+                    <td class="text-end fw-semibold">@item.Fee.ToString("N0") <small>VNĐ</small></td>
+                    <td class="text-center">
                         @if (item.IsActive)
                         {
-                            <span class="badge bg-success">Đang mở</span>
+                            <span class="badge bg-success px-3 py-2">Đang mở</span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">Đóng</span>
+                            <span class="badge bg-secondary px-3 py-2">Đã đóng</span>
                         }
                     </td>
                     <td>
                         @if (isAdmin)
                         {
-                            <button type="button" class="btn btn-sm btn-warning"
+                            <button type="button" class="btn btn-sm btn-warning me-1"
                                     onclick="openEditModal(@item.CourseId)">
-                                Sửa
+                                <i class="bi bi-pencil"></i> Sửa
                             </button>
-                            <button type="button" class="btn btn-sm btn-danger btn-delete-course"
+                            <button type="button" class="btn btn-sm btn-danger me-1 btn-delete-course"
                                     data-id="@item.CourseId">
-                                Xóa
+                                <i class="bi bi-trash"></i>
                             </button>
+                            <a asp-controller="Module" asp-action="Index" asp-route-courseId="@item.CourseId"
+                               class="btn btn-sm btn-primary">
+                                <i class="bi bi-folder2"></i> Chương
+                            </a>
                         }
                         else if (isStudent && item.IsActive)
                         {
                             <button type="button" class="btn btn-sm btn-success btn-register-course"
                                     data-id="@item.CourseId">
-                                📚 Đăng ký
+                                <i class="bi bi-plus-circle"></i> Đăng ký
                             </button>
                         }
                         else if (studentId == null)
                         {
-                            <a asp-controller="Account" asp-action="Login" class="btn btn-sm btn-outline-success">
-                                Đăng nhập để đăng ký
+                            <a asp-controller="Account" asp-action="Login"
+                               class="btn btn-sm btn-outline-success me-1">
+                                Đăng nhập
+                            </a>
+                            <a asp-controller="Module" asp-action="Index" asp-route-courseId="@item.CourseId"
+                               class="btn btn-sm btn-primary">
+                                <i class="bi bi-folder2"></i> Xem
                             </a>
                         }
                     </td>
@@ -74,8 +98,8 @@
     </tbody>
 </table>
 
-<div class="d-flex justify-content-between align-items-center">
-    <span>
+<div class="d-flex justify-content-between align-items-center mt-3">
+    <span class="text-muted">
         Trang @Model.PageNumber / @Model.PageCount
         (Tổng: @Model.TotalItemCount khóa học)
     </span>
