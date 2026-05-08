@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolApp.DTOs;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.UnitOfWork;
@@ -130,56 +131,62 @@ namespace SchoolApp.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateAjax(Module module)
+        public IActionResult CreateAjax([FromForm] ModuleSaveDto dto)
         {
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                );
+                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray());
                 return Json(new { success = false, errors });
             }
 
-            if (module.OrderIndex == 0)
+            var module = new Module
             {
-                var maxOrder = _uow.Modules
-                    .Find(m => m.CourseId == module.CourseId)
-                    .Max(m => (int?)m.OrderIndex) ?? 0;
-                module.OrderIndex = maxOrder + 1;
-            }
+                CourseId = dto.CourseId,
+                Title = dto.Title.Trim(),
+                Description = dto.Description?.Trim(),
+                OrderIndex = dto.OrderIndex == 0
+                    ? (_uow.Modules.Find(m => m.CourseId == dto.CourseId).Max(m => (int?)m.OrderIndex) ?? 0) + 1
+                    : dto.OrderIndex,
+                IsPublished = dto.IsPublished
+            };
 
             _uow.Modules.Add(module);
             _uow.SaveChanges();
 
-            return Json(new { success = true, message = "Thêm chương thành công!" });
+            return Json(new { success = true, message = "Thêm chương thành công!", moduleId = module.ModuleId });
         }
 
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult EditAjax(Module module)
+        public IActionResult EditAjax([FromForm] ModuleSaveDto dto)
         {
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                );
+                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray());
+
                 return Json(new { success = false, errors });
             }
 
-            var existing = _uow.Modules.GetById(module.ModuleId);
+            var existing = _uow.Modules.GetById(dto.ModuleId);
             if (existing == null)
                 return Json(new { success = false, message = "Không tìm thấy chương" });
 
-            existing.Title = module.Title;
-            existing.Description = module.Description;
-            existing.OrderIndex = module.OrderIndex;
-            existing.IsPublished = module.IsPublished;
+            existing.Title = dto.Title.Trim();
+            existing.Description = dto.Description?.Trim();
+            existing.OrderIndex = dto.OrderIndex;
+            existing.IsPublished = dto.IsPublished;
+
+            // Không cho thay đổi CourseId khi edit (an toàn)
+            // existing.CourseId = dto.CourseId;
 
             _uow.SaveChanges();
-            return Json(new { success = true, message = "Cập nhật thành công!" });
+
+            return Json(new { success = true, message = "Cập nhật chương thành công!" });
         }
 
         [HttpGet]

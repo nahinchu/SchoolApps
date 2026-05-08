@@ -19,7 +19,9 @@ namespace SchoolApp.Models
         [StringLength(1000)]
         [Display(Name = "Giải thích đáp án")]
         public string? Explanation { get; set; }
-
+        [StringLength(100)]
+        [Display(Name = "Tag / Chủ đề")]
+        public string? Tag { get; set; }
         [Required(ErrorMessage = "Loại câu hỏi là bắt buộc")]
         [Display(Name = "Loại câu hỏi")]
         public QuestionType Type { get; set; } = QuestionType.SingleChoice;
@@ -35,12 +37,11 @@ namespace SchoolApp.Models
         public int OrderIndex { get; set; }
 
         // ── FK: thuộc về Quiz nào ──
-        [Required(ErrorMessage = "Bài kiểm tra là bắt buộc")]
         [Display(Name = "Bài kiểm tra")]
-        public int QuizId { get; set; }
+        public int? QuizId { get; set; }
 
         [ForeignKey(nameof(QuizId))]
-        public virtual Quiz Quiz { get; set; } = null!;
+        public virtual Quiz? Quiz { get; set; }
 
         // ── Navigation ──
         public virtual ICollection<AnswerOption> Options { get; set; } = new List<AnswerOption>();

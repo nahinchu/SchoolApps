@@ -19,7 +19,8 @@ namespace SchoolApp.UnitOfWork
         IQuestionRepository Questions { get; }
         IAnswerOptionRepository AnswerOptions { get; }
         ILessonProgressRepository LessonProgresses { get; }
-
+        IQuizAttemptRepository QuizAttempts { get; } 
+        IQuizAnswerRepository  QuizAnswers  { get; }
         int SaveChanges();
     }
 }

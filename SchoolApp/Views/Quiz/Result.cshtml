@@ -1,0 +1,157 @@
+﻿@using SchoolApp.Models
+@using SchoolApp.Models.Enums
+@model QuizAttempt
+
+@{
+    ViewData["Title"] = "Kết quả bài kiểm tra";
+    var quiz = Model.Quiz;
+    var percent = Model.MaxScore > 0
+        ? (int)Math.Round((double)Model.Score * 100 / Model.MaxScore)
+        : 0;
+
+    // Group selected answers by QuestionId
+    var selectedByQuestion = Model.Answers
+        .GroupBy(a => a.QuestionId)
+        .ToDictionary(g => g.Key, g => g.Select(a => a.SelectedOptionId).ToHashSet());
+}
+
+<div class="container mt-4">
+
+    <!-- Score summary card -->
+    <div class="card shadow mb-4">
+        <div class="card-body text-center py-5">
+            @if (Model.Passed)
+            {
+                <div class="display-1 text-success mb-3">
+                    <i class="bi bi-trophy-fill"></i>
+                </div>
+                <h2 class="text-success">Chúc mừng! Bạn đã đạt yêu cầu</h2>
+            }
+            else
+            {
+                <div class="display-1 text-warning mb-3">
+                    <i class="bi bi-emoji-frown"></i>
+                </div>
+                <h2 class="text-warning">Chưa đạt điểm tối thiểu</h2>
+            }
+
+            <div class="row mt-4 justify-content-center">
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+                        <div class="text-muted small">Điểm</div>
+                        <div class="fs-2 fw-bold">@Model.Score / @Model.MaxScore</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+                        <div class="text-muted small">Phần trăm</div>
+                        <div class="fs-2 fw-bold @(Model.Passed ? "text-success" : "text-danger")">@percent%</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+                        <div class="text-muted small">Yêu cầu</div>
+                        <div class="fs-2 fw-bold">@quiz.PassingScore%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-3 text-muted small">
+                <i class="bi bi-calendar"></i>
+                Lần thứ @Model.AttemptNumber &middot;
+                Bắt đầu: @Model.StartedAt.ToLocalTime().ToString("HH:mm dd/MM/yyyy") &middot;
+                @if (Model.FinishedAt.HasValue)
+                {
+                    var dur = Model.FinishedAt.Value - Model.StartedAt;
+                    <span>Thời gian làm: @((int)dur.TotalMinutes) phút @dur.Seconds giây</span>
+                }
+            </div>
+
+            <div class="mt-4">
+                <a href="@Url.Action("MyAttempts", "Quiz", new { quizId = quiz.QuizId })" class="btn btn-outline-primary">
+                    <i class="bi bi-list"></i> Xem lịch sử
+                </a>
+                @if (quiz.AllowRetry && (quiz.MaxAttempts == 0 || Model.AttemptNumber < quiz.MaxAttempts))
+                {
+                    <a href="@Url.Action("Take", "Quiz", new { id = quiz.QuizId })" class="btn btn-primary ms-2">
+                        <i class="bi bi-arrow-repeat"></i> Làm lại
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (quiz.ShowAnswersAfterSubmit)
+    {
+        <h4 class="mb-3"><i class="bi bi-list-check"></i> Xem lại đáp án</h4>
+
+        @foreach (var q in quiz.Questions.OrderBy(qq => qq.OrderIndex))
+        {
+            var selectedIds = selectedByQuestion.TryGetValue(q.QuestionId, out var sel)
+            ? sel : new HashSet<int>();
+            var correctIds = q.Options.Where(o => o.IsCorrect)
+            .Select(o => o.AnswerOptionId).ToHashSet();
+            bool questionCorrect = correctIds.Count > 0 && correctIds.SetEquals(selectedIds);
+
+            <div class="card mb-3 @(questionCorrect ? "border-success" : "border-danger")">
+                <div class="card-header @(questionCorrect ? "bg-success-subtle" : "bg-danger-subtle") d-flex justify-content-between">
+                    <div>
+                        <strong>Câu @q.OrderIndex:</strong> @q.Content
+                        <span class="badge bg-secondary ms-2">@q.Points điểm</span>
+                    </div>
+                    <div>
+                        @if (questionCorrect)
+                        {
+                            <span class="badge bg-success"><i class="bi bi-check-lg"></i> Đúng</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger"><i class="bi bi-x-lg"></i> Sai</span>
+                        }
+                    </div>
+                </div>
+                <div class="card-body">
+                    @foreach (var opt in q.Options.OrderBy(o => o.OrderIndex))
+                    {
+                        bool isSelected = selectedIds.Contains(opt.AnswerOptionId);
+                        bool isCorrect = opt.IsCorrect;
+
+                        string css = "";
+                        string icon = "";
+
+                        if (isCorrect && isSelected) { css = "text-success fw-bold"; icon = "bi-check-circle-fill"; }
+                        else if (isCorrect && !isSelected) { css = "text-success"; icon = "bi-check-circle"; }
+                        else if (!isCorrect && isSelected) { css = "text-danger"; icon = "bi-x-circle-fill"; }
+                        else { css = "text-muted"; icon = "bi-circle"; }
+
+                        <div class="@css mb-1">
+                            <i class="bi @icon"></i> @opt.Content
+                            @if (isCorrect && !isSelected)
+                            {
+                                <small>(đáp án đúng)</small>
+                            }
+                            @if (!isCorrect && isSelected)
+                            {
+                                <small>(bạn đã chọn)</small>
+                            }
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(q.Explanation))
+                    {
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <i class="bi bi-info-circle text-primary"></i>
+                            <strong>Giải thích:</strong> @q.Explanation
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Bài kiểm tra này không hiển thị đáp án sau khi nộp.
+        </div>
+    }
+</div>

@@ -23,6 +23,8 @@ namespace SchoolApp.UnitOfWork
         public IQuestionRepository Questions { get; private set; }
         public IAnswerOptionRepository AnswerOptions { get; private set; }
         public ILessonProgressRepository LessonProgresses { get; private set; }
+        public IQuizAttemptRepository QuizAttempts { get; }   
+        public IQuizAnswerRepository  QuizAnswers  { get; }
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
@@ -35,6 +37,8 @@ namespace SchoolApp.UnitOfWork
             Questions = new QuestionRepository(context);
             AnswerOptions = new AnswerOptionRepository(context);
             LessonProgresses = new LessonProgressRepository(context);
+            QuizAttempts = new QuizAttemptRepository(context);
+            QuizAnswers = new QuizAnswerRepository(context);
         }
 
         public int SaveChanges()
