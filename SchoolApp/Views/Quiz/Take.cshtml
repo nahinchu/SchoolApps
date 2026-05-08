@@ -4,24 +4,49 @@
 
 @{
     ViewData["Title"] = "Làm bài kiểm tra";
+    int attemptCount = (int)(ViewData["AttemptCount"] ?? 0);
+    int attemptsRemaining = (int)(ViewData["AttemptsRemaining"] ?? -1);
 }
 
 <div class="container mt-4">
+
+    @if (TempData["QuizError"] != null)
+    {
+        <div class="alert alert-warning">@TempData["QuizError"]</div>
+    }
+
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-1">@Model.Title</h3>
-            @if (!string.IsNullOrWhiteSpace(Model.Description))
-            {
-                <p class="mb-0">@Model.Description</p>
-            }
-            <div class="mt-2 small">
-                <span class="me-3"><i class="bi bi-list-check"></i> @Model.Questions.Count câu hỏi</span>
-                @if (Model.TimeLimitMinutes > 0)
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div>
+                <h3 class="mb-1">@Model.Title</h3>
+                @if (!string.IsNullOrWhiteSpace(Model.Description))
                 {
-                    <span class="me-3"><i class="bi bi-clock"></i> @Model.TimeLimitMinutes phút</span>
+                    <p class="mb-0">@Model.Description</p>
                 }
-                <span><i class="bi bi-trophy"></i> Điểm đạt: @Model.PassingScore%</span>
+                <div class="mt-2 small">
+                    <span class="me-3"><i class="bi bi-list-check"></i> @Model.Questions.Count câu hỏi</span>
+                    @if (Model.TimeLimitMinutes > 0)
+                    {
+                        <span class="me-3"><i class="bi bi-clock"></i> @Model.TimeLimitMinutes phút</span>
+                    }
+                    <span class="me-3"><i class="bi bi-trophy"></i> Đạt: @Model.PassingScore%</span>
+                    @if (attemptsRemaining > 0)
+                    {
+                        <span><i class="bi bi-arrow-repeat"></i> Còn @attemptsRemaining lượt</span>
+                    }
+                    else if (attemptsRemaining == -1 && Model.AllowRetry)
+                    {
+                        <span><i class="bi bi-arrow-repeat"></i> Không giới hạn lượt</span>
+                    }
+                </div>
             </div>
+
+            @if (Model.TimeLimitMinutes > 0)
+            {
+                <div id="timerBox" class="bg-white text-dark rounded px-3 py-2 fw-bold fs-4 shadow-sm">
+                    <i class="bi bi-stopwatch"></i> <span id="timerDisplay">--:--</span>
+                </div>
+            }
         </div>
 
         <div class="card-body">
@@ -62,35 +87,197 @@
             </form>
         </div>
 
-        <div class="card-footer text-end">
-            <button onclick="submitQuiz(@Model.QuizId)" class="btn btn-success btn-lg px-5">
-                <i class="bi bi-check-circle"></i> Nộp bài
-            </button>
+        <div class="card-footer d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="small text-muted">
+                <span id="answeredCount">0</span> / @Model.Questions.Count câu đã trả lời
+                <span class="ms-3 text-success" id="autosaveStatus" style="display:none;">
+                    <i class="bi bi-cloud-check"></i> Đã lưu nháp
+                </span>
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-danger me-2" onclick="clearDraft()">
+                    <i class="bi bi-eraser"></i> Xoá nháp
+                </button>
+                <button type="button" id="btnSubmitQuiz" class="btn btn-success btn-lg px-5" onclick="submitQuiz(@Model.QuizId)">
+                    <i class="bi bi-check-circle"></i> Nộp bài
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
+        // =========================================================
+        // CONFIG
+        // =========================================================
+        const QUIZ_ID = @Model.QuizId;
+        const TIME_LIMIT_MIN = @Model.TimeLimitMinutes;
+        const TOTAL_QUESTIONS = @Model.Questions.Count;
+        const DRAFT_KEY = `quiz_draft_${QUIZ_ID}`;
+        const START_KEY = `quiz_start_${QUIZ_ID}`;
+
+        let submitted = false;
+        let timerInterval = null;
+
+        // =========================================================
+        // TOAST (giống Manage.cshtml)
+        // =========================================================
+        function showToast(message, type = 'success') {
+            const cls = type === 'success' ? 'alert-success' : 'alert-danger';
+            const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+            const $toast = $(`
+                <div class="alert ${cls} alert-dismissible fade show" role="alert"
+                     style="position:fixed;top:1rem;right:1rem;z-index:9999;min-width:320px;box-shadow:0 4px 12px rgba(0,0,0,.15);">
+                    <i class="bi ${icon}"></i> ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>`);
+            $('body').append($toast);
+            setTimeout(() => $toast.fadeOut(400, () => $toast.remove()), 3500);
+        }
+
         function getAntiForgeryToken() {
             return $('#quizTakeForm input[name="__RequestVerificationToken"]').val();
         }
 
-        function submitQuiz(quizId) {
-            if (!confirm('Bạn chắc chắn muốn nộp bài?')) return;
+        // =========================================================
+        // ANSWER COUNTER
+        // =========================================================
+        function updateAnsweredCount() {
+            const answered = $('.question-block').filter(function () {
+                return $(this).find('.quiz-option:checked').length > 0;
+            }).length;
+            $('#answeredCount').text(answered);
+        }
 
-            // Build answers: { questionId: [optionId, optionId, ...] }
+        // =========================================================
+        // AUTOSAVE (localStorage)
+        // =========================================================
+        function collectAnswers() {
             const answers = {};
             $('.question-block').each(function () {
-                const qId = parseInt($(this).data('question-id'));
+                const qId = $(this).data('question-id');
                 const selected = [];
                 $(this).find('.quiz-option:checked').each(function () {
                     selected.push(parseInt($(this).val()));
                 });
-                if (selected.length > 0) {
-                    answers[qId] = selected;
-                }
+                if (selected.length > 0) answers[qId] = selected;
             });
+            return answers;
+        }
+
+        function saveDraft() {
+            try {
+                const draft = {
+                    answers: collectAnswers(),
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+                $('#autosaveStatus').fadeIn().delay(1500).fadeOut();
+            } catch (e) { /* localStorage có thể bị disable */ }
+        }
+
+        function restoreDraft() {
+            try {
+                const raw = localStorage.getItem(DRAFT_KEY);
+                if (!raw) return;
+                const draft = JSON.parse(raw);
+                if (!draft.answers) return;
+
+                let restoredCount = 0;
+                Object.keys(draft.answers).forEach(qId => {
+                    const optIds = draft.answers[qId];
+                    optIds.forEach(optId => {
+                        const $input = $(`#opt_${optId}`);
+                        if ($input.length > 0) {
+                            $input.prop('checked', true);
+                            restoredCount++;
+                        }
+                    });
+                });
+
+                if (restoredCount > 0) {
+                    showToast(`Đã khôi phục ${restoredCount} đáp án từ lần làm trước`, 'success');
+                    updateAnsweredCount();
+                }
+            } catch (e) { /* corrupted draft, bỏ qua */ }
+        }
+
+        function clearDraft() {
+            if (!confirm('Xoá toàn bộ đáp án đã chọn?')) return;
+            $('.quiz-option').prop('checked', false);
+            localStorage.removeItem(DRAFT_KEY);
+            updateAnsweredCount();
+            showToast('Đã xoá nháp', 'success');
+        }
+
+        // =========================================================
+        // TIMER
+        // =========================================================
+        function initTimer() {
+            if (TIME_LIMIT_MIN <= 0) return;
+
+            // Lấy thời gian bắt đầu từ localStorage để đồng bộ qua các lần refresh
+            let startTime = localStorage.getItem(START_KEY);
+            if (!startTime) {
+                startTime = new Date().toISOString();
+                localStorage.setItem(START_KEY, startTime);
+            }
+
+            const endTime = new Date(startTime).getTime() + TIME_LIMIT_MIN * 60 * 1000;
+
+            timerInterval = setInterval(function () {
+                const remaining = endTime - Date.now();
+
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    $('#timerDisplay').text('00:00');
+                    $('#timerBox').removeClass('bg-white').addClass('bg-danger text-white');
+                    if (!submitted) {
+                        showToast('Hết giờ! Đang tự động nộp bài...', 'danger');
+                        setTimeout(() => submitQuiz(QUIZ_ID, true), 1200);
+                    }
+                    return;
+                }
+
+                const min = Math.floor(remaining / 60000);
+                const sec = Math.floor((remaining % 60000) / 1000);
+                const pad = n => String(n).padStart(2, '0');
+                $('#timerDisplay').text(`${pad(min)}:${pad(sec)}`);
+
+                // Đổi màu khi sắp hết giờ
+                if (remaining < 60000) {
+                    $('#timerBox').removeClass('bg-white').addClass('bg-danger text-white');
+                } else if (remaining < 5 * 60000) {
+                    $('#timerBox').removeClass('bg-white bg-danger text-white').addClass('bg-warning');
+                }
+            }, 1000);
+        }
+
+        // =========================================================
+        // SUBMIT
+        // =========================================================
+        function submitQuiz(quizId, autoSubmit = false) {
+            if (submitted) return;
+
+            const answers = collectAnswers();
+            const answeredCount = Object.keys(answers).length;
+
+            if (!autoSubmit) {
+                if (answeredCount === 0) {
+                    showToast('Bạn chưa trả lời câu nào!', 'danger');
+                    return;
+                }
+                const unanswered = TOTAL_QUESTIONS - answeredCount;
+                const msg = unanswered > 0
+                    ? `Bạn còn ${unanswered} câu chưa trả lời. Nộp bài ngay?`
+                    : 'Bạn chắc chắn muốn nộp bài?';
+                if (!confirm(msg)) return;
+            }
+
+            submitted = true;
+            $('#btnSubmitQuiz').prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm"></span> Đang nộp...');
 
             const payload = { QuizId: quizId, Answers: answers };
 
@@ -102,21 +289,52 @@
                 data: JSON.stringify(payload),
                 success: function (res) {
                     if (res.success) {
-                        alert(
-                            'Nộp bài thành công!\n' +
-                            'Điểm: ' + res.score + '/' + res.maxScore + ' (' + res.percent + '%)\n' +
-                            (res.passed ? '✅ ĐẠT' : '❌ Chưa đạt') + '\n' +
-                            res.message
-                        );
-                        window.location.href = '/Learn/Course';
+                        // Cleanup
+                        localStorage.removeItem(DRAFT_KEY);
+                        localStorage.removeItem(START_KEY);
+                        if (timerInterval) clearInterval(timerInterval);
+
+                        // Redirect sang trang Result
+                        window.location.href = res.resultUrl;
                     } else {
-                        alert(res.message || 'Có lỗi xảy ra');
+                        submitted = false;
+                        $('#btnSubmitQuiz').prop('disabled', false)
+                            .html('<i class="bi bi-check-circle"></i> Nộp bài');
+                        showToast(res.message || 'Có lỗi xảy ra', 'danger');
                     }
                 },
                 error: function () {
-                    alert('Lỗi kết nối khi nộp bài. Vui lòng thử lại.');
+                    submitted = false;
+                    $('#btnSubmitQuiz').prop('disabled', false)
+                        .html('<i class="bi bi-check-circle"></i> Nộp bài');
+                    showToast('Lỗi kết nối khi nộp bài. Vui lòng thử lại.', 'danger');
                 }
             });
         }
+
+        // =========================================================
+        // INIT
+        // =========================================================
+        $(function () {
+            // Restore draft trước, sau đó mới gắn handler để tránh trigger autosave
+            restoreDraft();
+            updateAnsweredCount();
+
+            // Autosave khi đổi đáp án
+            $('.quiz-option').on('change', function () {
+                updateAnsweredCount();
+                saveDraft();
+            });
+
+            // Cảnh báo khi rời trang
+            window.addEventListener('beforeunload', function (e) {
+                if (!submitted && Object.keys(collectAnswers()).length > 0) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+
+            initTimer();
+        });
     </script>
 }

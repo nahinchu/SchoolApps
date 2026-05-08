@@ -13,4 +13,4 @@ namespace SchoolApp.Models.Enums
         [Display(Name = "Đúng / Sai")]
         TrueFalse = 2
     }
-}
+}   

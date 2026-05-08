@@ -145,7 +145,6 @@ namespace SchoolApp.Data
             {
                 // 1 attempt + 1 question = 1 answer (tránh trùng)
                 entity.HasIndex(qa => new { qa.QuizAttemptId, qa.QuestionId })
-                      .IsUnique()
                       .HasDatabaseName("IX_QuizAnswer_Attempt_Question");
 
                 entity.HasOne(qa => qa.Attempt)

@@ -47,9 +47,17 @@
         {
             <div id="questionsTableContainer"></div>
 
-            <button class="sa-btn sa-btn-primary mt-3" onclick="openCreateQuestionModal()">
-                <i class="bi bi-plus-circle"></i> Thêm câu hỏi mới
-            </button>
+            <div class="d-flex justify-content-between mt-3">
+                <button class="sa-btn sa-btn-primary" onclick="openCreateQuestionModal()">
+                    <i class="bi bi-plus-circle"></i> Thêm câu hỏi mới
+                </button>
+                <button class="sa-btn sa-btn-outline" onclick="openBankModal()">
+                    <i class="bi bi-bank"></i> Thêm từ ngân hàng
+                </button>
+                <small class="text-muted align-self-end">
+                    <i class="bi bi-info-circle"></i> Kéo thả vào cột <i class="bi bi-grip-vertical"></i> để đổi thứ tự câu hỏi
+                </small>
+            </div>
         }
     </div>
 </div>
@@ -146,7 +154,7 @@
                         </div>
                         <div class="col-md-4">
                             <label class="sa-label">Loại câu hỏi</label>
-                            <select id="q_Type" class="sa-input">
+                            <select id="q_Type" class="sa-input" onchange="onQuestionTypeChange()">
                                 <option value="0">Một đáp án</option>
                                 <option value="1">Nhiều đáp án</option>
                                 <option value="2">Đúng / Sai</option>
@@ -165,11 +173,11 @@
                     <hr />
                     <div class="d-flex justify-content-between align-items-center">
                         <h6 class="mb-0">Đáp án</h6>
-                        <small class="text-muted">Đánh dấu vào ô <strong>Đúng</strong> cho đáp án chính xác</small>
+                        <small class="text-muted" id="optionsHint">Đánh dấu vào ô <strong>Đúng</strong> cho đáp án chính xác</small>
                     </div>
                     <div id="optionsContainer" class="mt-2"></div>
 
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOptionField()">
+                    <button type="button" id="btnAddOption" class="btn btn-sm btn-outline-primary mt-2" onclick="addOptionField()">
                         <i class="bi bi-plus"></i> Thêm đáp án
                     </button>
                 </form>
@@ -184,8 +192,100 @@
     </div>
 </div>
 
+<!-- ====================== MODAL IMPORT===================== -->
+
+<div class="modal fade" id="bankImportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header bg-navy text-white">
+                <h5 class="modal-title">🗃️ Chọn câu hỏi từ ngân hàng</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+
+                @* ── TOOLBAR ─────────────────────────────────────────── *@
+                <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
+                    <div style="position:relative; flex:1; min-width:200px;">
+                        <i class="bi bi-search"
+                           style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#aaa;"></i>
+                        <input type="text" id="bankSearchInput" class="sa-input"
+                               placeholder="Tìm nội dung câu hỏi..."
+                               oninput="filterBankTable()"
+                               style="padding-left:32px;" />
+                    </div>
+                    <select id="bankTagFilter" class="sa-input" style="max-width:180px;"
+                            onchange="filterBankTable()">
+                        <option value="">-- Tất cả tag --</option>
+                    </select>
+                    <select id="bankTypeFilter" class="sa-input" style="max-width:170px;"
+                            onchange="filterBankTable()">
+                        <option value="">-- Tất cả loại --</option>
+                        <option value="0">Một đáp án</option>
+                        <option value="1">Nhiều đáp án</option>
+                        <option value="2">Đúng / Sai</option>
+                    </select>
+                </div>
+
+                @* ── BẢNG ─────────────────────────────────────────────── *@
+                <div style="max-height:420px; overflow-y:auto;">
+                    <table class="table table-bordered table-hover align-middle mb-0">
+                        <thead class="table-dark" style="position:sticky;top:0;z-index:1;">
+                            <tr>
+                                <th style="width:40px;">
+                                    <input type="checkbox" id="checkAll"
+                                           class="form-check-input mt-0"
+                                           onchange="toggleCheckAll(this)" />
+                                </th>
+                                <th>Nội dung câu hỏi</th>
+                                <th style="width:130px;">Loại</th>
+                                <th style="width:70px;" class="text-center">Điểm</th>
+                                <th style="width:100px;">Tag</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bankImportBody">
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    <div class="spinner-border spinner-border-sm me-2"></div>
+                                    Đang tải...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                @* ── FOOTER INFO ──────────────────────────────────────── *@
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <small class="text-muted">
+                        Hiển thị <strong id="bankVisibleCount">0</strong> câu —
+                        Đã chọn: <strong id="bankSelectedCount" class="text-primary">0</strong> câu
+                    </small>
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Câu hỏi sẽ được sao chép vào quiz, bản gốc trong ngân hàng không thay đổi
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Huỷ</button>
+                <button type="button" class="sa-btn sa-btn-primary" id="btnImportBank"
+                        onclick="importFromBank()" disabled>
+                    <i class="bi bi-download me-1"></i>
+                    Import <span id="importCount">0</span> câu vào quiz
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
+
+    <!-- SortableJS cho drag-drop reorder -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
     <script>
         // =========================================================
@@ -194,6 +294,7 @@
         let currentQuizId   = @((Model?.QuizId ?? 0));
         let currentLessonId = @((int)ViewData["LessonId"]!);
         let isEditQuestion  = false;
+        let sortableInstance = null;
 
         // =========================================================
         // HELPERS
@@ -232,11 +333,58 @@
             if (currentQuizId === 0) return;
             $.get('@Url.Action("GetQuestions", "Quiz")', { quizId: currentQuizId }, function (html) {
                 $('#questionsTableContainer').html(html);
-                // update badge
-                const count = $('#questionsTableContainer tbody tr').filter(function () {
-                    return $(this).find('td[colspan]').length === 0;
-                }).length;
+
+                const count = $('#questionsTbody tr[data-question-id]').length;
                 $('#questionCountBadge').text(count + ' câu hỏi');
+
+                initSortable();
+            });
+        }
+
+        // =========================================================
+        // SORTABLE / REORDER
+        // =========================================================
+        function initSortable() {
+            const tbody = document.getElementById('questionsTbody');
+            if (!tbody) return;
+
+            // Destroy old instance nếu có
+            if (sortableInstance) {
+                sortableInstance.destroy();
+                sortableInstance = null;
+            }
+
+            sortableInstance = Sortable.create(tbody, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'table-warning',
+                onEnd: function () {
+                    const ids = $('#questionsTbody tr[data-question-id]')
+                        .map(function () { return parseInt($(this).data('question-id')); })
+                        .get();
+
+                    if (ids.length === 0) return;
+
+                    // Cập nhật UI ngay (optimistic)
+                    $('#questionsTbody tr[data-question-id]').each(function (i) {
+                        $(this).find('.order-cell').text(i + 1);
+                    });
+
+                    ajaxJson('@Url.Action("ReorderQuestions", "Quiz")',
+                        { QuizId: currentQuizId, QuestionIds: ids })
+                        .done(function (res) {
+                            if (res.success) {
+                                showToast(res.message || 'Đã cập nhật thứ tự', 'success');
+                            } else {
+                                showToast(res.message || 'Lỗi cập nhật thứ tự', 'danger');
+                                loadQuestions(); // rollback bằng cách reload
+                            }
+                        })
+                        .fail(function () {
+                            showToast('Lỗi kết nối', 'danger');
+                            loadQuestions();
+                        });
+                }
             });
         }
 
@@ -273,14 +421,8 @@
             }
         }
 
-        $('#btnSaveQuiz').on('click', function () {
-            // serialize() bỏ qua checkbox khi unchecked => bổ sung thủ công
+                       $('#btnSaveQuiz').on('click', function () {
             const formData = $('#quizForm').serializeArray();
-            ['IsPublished', 'AllowRetry', 'ShowAnswersAfterSubmit'].forEach(function (name) {
-                if (!formData.some(f => f.name === name)) {
-                    formData.push({ name: name, value: 'false' });
-                }
-            });
 
             $.ajax({
                 url: '@Url.Action("SaveQuiz", "Quiz")',
@@ -290,13 +432,15 @@
                     if (res.success) {
                         $('#quizModal').modal('hide');
                         showToast(res.message, 'success');
-                        // Reload trang để render đúng phần header + question list
-                        setTimeout(() => location.reload(), 600);
+                        setTimeout(() => location.reload(), 700);
                     } else {
+                        console.log(res.errors);
                         showToast(res.message || 'Lưu thất bại', 'danger');
                     }
                 },
-                error: function () { showToast('Lỗi kết nối!', 'danger'); }
+                error: function () {
+                    showToast('Lỗi kết nối!', 'danger');
+                }
             });
         });
 
@@ -320,6 +464,35 @@
         // =========================================================
         // QUESTION MODAL
         // =========================================================
+               function onQuestionTypeChange() {
+            const type = parseInt($('#q_Type').val());
+            const isTrueFalse = type === 2;
+
+            if (isTrueFalse) {
+                $('#btnAddOption').hide();
+                $('#optionsHint').html('Câu Đúng/Sai có cố định 2 đáp án. Chỉ được chọn 1 đáp án đúng.');
+
+                // ✅ Chỉ hard-code khi TẠO MỚI, còn edit thì giữ nguyên options đã load
+                if (!isEditQuestion && $('#optionsContainer .option-item').length === 0) {
+                    $('#optionsContainer').html('');
+                    addOptionField('Đúng', true, 0);   // Mặc định "Đúng" là đúng
+                    addOptionField('Sai', false, 0);
+                }
+
+                // Force radio
+                $('#optionsContainer .option-correct').attr('type', 'radio').attr('name', 'tf_correct');
+            }
+            else {
+                $('#btnAddOption').show();
+                $('#optionsHint').html(
+                    type === 1
+                        ? 'Đánh dấu vào ô <strong>Đúng</strong> cho TẤT CẢ đáp án chính xác'
+                        : 'Đánh dấu vào ô <strong>Đúng</strong> cho 1 đáp án chính xác'
+                );
+                $('#optionsContainer .option-correct').attr('type', 'checkbox').removeAttr('name');
+            }
+        }
+
         function openCreateQuestionModal() {
             if (currentQuizId === 0) {
                 showToast('Vui lòng tạo Quiz trước khi thêm câu hỏi', 'danger');
@@ -330,9 +503,11 @@
             $('#btnSaveQuestion').html('<i class="bi bi-check-lg"></i> Lưu Câu Hỏi');
             $('#questionForm')[0].reset();
             $('#q_QuestionId').val(0);
+            $('#q_Type').val(0);
             $('#optionsContainer').html('');
             addOptionField();
             addOptionField();
+            onQuestionTypeChange();
             $('#questionModal').modal('show');
         }
 
@@ -348,22 +523,24 @@
                 $('#q_Type').val(data.type);
                 $('#q_Points').val(data.points);
                 $('#q_Explanation').val(data.explanation || '');
+
                 if (data.options && data.options.length > 0) {
-                    data.options.forEach(o => addOptionField(o.content, o.isCorrect));
+                    data.options.forEach(o => addOptionField(o.content, o.isCorrect, o.answerOptionId));
                 } else {
                     addOptionField();
                     addOptionField();
                 }
+                onQuestionTypeChange();
                 $('#questionModal').modal('show');
             }).fail(function () {
                 showToast('Không tải được thông tin câu hỏi!', 'danger');
             });
         }
 
-        function addOptionField(content = '', isCorrect = false) {
+        function addOptionField(content = '', isCorrect = false, answerOptionId = 0) {
             const safeContent = $('<div>').text(content).html();
             const optionHtml = `
-                <div class="option-item input-group mb-2">
+                <div class="option-item input-group mb-2" data-option-id="${answerOptionId}">
                     <input type="text" class="form-control option-content" placeholder="Nội dung đáp án" value="${safeContent}">
                     <div class="input-group-text">
                         <input type="checkbox" class="option-correct form-check-input mt-0 me-2" ${isCorrect ? 'checked' : ''}>
@@ -377,12 +554,20 @@
         }
 
         $('#btnSaveQuestion').on('click', function () {
+            const type = parseInt($('#q_Type').val());
+
             const options = [];
             $('.option-item').each(function () {
                 const content = $(this).find('.option-content').val().trim();
                 const isCorrect = $(this).find('.option-correct').is(':checked');
+                const optionId = parseInt($(this).data('option-id')) || 0;
+
                 if (content) {
-                    options.push({ Content: content, IsCorrect: isCorrect });
+                    options.push({
+                        AnswerOptionId: optionId,
+                        Content: content,
+                        IsCorrect: isCorrect
+                    });
                 }
             });
 
@@ -390,7 +575,7 @@
                 QuestionId: parseInt($('#q_QuestionId').val()) || 0,
                 QuizId: currentQuizId,
                 Content: $('#q_Content').val(),
-                Type: parseInt($('#q_Type').val()),
+                Type: type,
                 Points: parseInt($('#q_Points').val()) || 1,
                 Explanation: $('#q_Explanation').val(),
                 Options: options
@@ -429,7 +614,26 @@
                 }
             });
         }
+                window.copyToBank = function (questionId) {
+            if (!confirm('Lưu câu hỏi này vào ngân hàng?')) return;
 
+            $.ajax({
+                url: '@Url.Action("CopyToBank", "Quiz")',
+                type: 'POST',
+                data: {
+                    questionId: questionId,
+                    __RequestVerificationToken: getAntiForgeryToken()
+                },
+                success: function (res) {
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                    } else {
+                        showToast(res.message, 'danger');
+                    }
+                },
+                error: () => showToast('Lỗi kết nối!', 'danger')
+            });
+        };
         // =========================================================
         // INIT
         // =========================================================
@@ -438,5 +642,168 @@
                 loadQuestions();
             }
         });
+
+                // ── STATE ─────────────────────────────────────────────────────────────
+        let allBankQuestions = [];
+
+        // ── MỞ MODAL ──────────────────────────────────────────────────────────
+        window.openBankModal = function () {
+            if (currentQuizId === 0) {
+                showToast('Vui lòng tạo Quiz trước!', 'danger');
+                return;
+            }
+
+            // Reset UI
+            $('#bankSearchInput').val('');
+            $('#bankTagFilter').val('');
+            $('#bankTypeFilter').val('');
+            $('#checkAll').prop('checked', false);
+            updateImportButton();
+
+            // Load data rồi mở modal
+            $.get('/QuestionBank/GetAll')
+                .done(function (data) {
+                    allBankQuestions = data;
+                    populateTagFilter(data);
+                    renderBankTable(data);
+                    $('#bankImportModal').modal('show');
+                })
+                .fail(() => showToast('Không tải được ngân hàng câu hỏi!', 'danger'));
+        };
+
+        // ── RENDER TAG FILTER ──────────────────────────────────────────────────
+        function populateTagFilter(list) {
+            const tags = [...new Set(list.map(q => q.tag).filter(Boolean))].sort();
+            const sel  = $('#bankTagFilter');
+            sel.find('option:not(:first)').remove();
+            tags.forEach(t => sel.append(`<option value="${t}">${t}</option>`));
+        }
+
+        // ── RENDER BẢNG ───────────────────────────────────────────────────────
+        function renderBankTable(list) {
+            const typeLabel = { 0: 'Một đáp án', 1: 'Nhiều đáp án', 2: 'Đúng / Sai' };
+            const typeBadge = {
+                0: 'bg-primary',
+                1: 'bg-warning text-dark',
+                2: 'bg-info text-dark'
+            };
+
+            const tbody = $('#bankImportBody');
+
+            if (list.length === 0) {
+                tbody.html(`
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">
+                            <i class="bi bi-inbox d-block fs-2 mb-1"></i>
+                            Không có câu hỏi nào phù hợp
+                        </td>
+                    </tr>`);
+                $('#bankVisibleCount').text(0);
+                return;
+            }
+
+            tbody.html(list.map(q => `
+                <tr data-id="${q.questionId}"
+                    data-content="${(q.content ?? '').toLowerCase()}"
+                    data-tag="${q.tag ?? ''}"
+                    data-type="${q.type}">
+                    <td>
+                        <input type="checkbox" class="form-check-input bank-cb mt-0"
+                               value="${q.questionId}"
+                               onchange="updateImportButton()" />
+                    </td>
+                    <td>
+                        <div class="fw-medium">${escapeHtml(q.content)}</div>
+                        ${q.optionCount ? `<small class="text-muted">${q.optionCount} đáp án</small>` : ''}
+                    </td>
+                    <td>
+                        <span class="badge ${typeBadge[q.type] ?? 'bg-secondary'}">
+                            ${typeLabel[q.type] ?? ''}
+                        </span>
+                    </td>
+                    <td class="text-center">${q.points}</td>
+                    <td>
+                        ${q.tag
+                            ? `<span class="badge bg-secondary"><i class="bi bi-tag me-1"></i>${escapeHtml(q.tag)}</span>`
+                            : ''}
+                    </td>
+                </tr>`).join(''));
+
+            $('#bankVisibleCount').text(list.length);
+            updateImportButton();
+        }
+
+        // ── FILTER ────────────────────────────────────────────────────────────
+        function filterBankTable() {
+            const kw   = $('#bankSearchInput').val().toLowerCase().trim();
+            const tag  = $('#bankTagFilter').val();
+            const type = $('#bankTypeFilter').val();
+
+            const filtered = allBankQuestions.filter(q => {
+                const matchKw   = !kw   || (q.content ?? '').toLowerCase().includes(kw);
+                const matchTag  = !tag  || q.tag === tag;
+                const matchType = type === '' || String(q.type) === type;
+                return matchKw && matchTag && matchType;
+            });
+
+            renderBankTable(filtered);
+        }
+
+        // ── CHECK ALL ─────────────────────────────────────────────────────────
+        window.toggleCheckAll = function (master) {
+            $('.bank-cb').prop('checked', master.checked);
+            updateImportButton();
+        };
+
+        // ── CẬP NHẬT NÚT IMPORT ──────────────────────────────────────────────
+        function updateImportButton() {
+            const count = $('.bank-cb:checked').length;
+            $('#bankSelectedCount').text(count);
+            $('#importCount').text(count);
+            $('#btnImportBank').prop('disabled', count === 0);
+        }
+
+        // ── IMPORT ────────────────────────────────────────────────────────────
+        window.importFromBank = function () {
+            const ids = $('.bank-cb:checked').map(function () {
+                return parseInt($(this).val());
+            }).get();
+
+            if (ids.length === 0) {
+                showToast('Chưa chọn câu hỏi nào!', 'danger');
+                return;
+            }
+
+            $('#btnImportBank').prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-1"></span> Đang import...');
+
+            $.ajax({
+                url: '/QuestionBank/ImportToQuiz',
+                type: 'POST',
+                contentType: 'application/json',
+                headers: { 'RequestVerificationToken': getAntiForgeryToken() },
+                data: JSON.stringify({ quizId: currentQuizId, bankQuestionIds: ids }),
+                success: function (res) {
+                    if (res.success) {
+                        $('#bankImportModal').modal('hide');
+                        showToast(res.message, 'success');
+                        loadQuestions();   // reload bảng câu hỏi quiz
+                    } else {
+                        showToast(res.message || 'Import thất bại!', 'danger');
+                    }
+                },
+                error: () => showToast('Lỗi kết nối!', 'danger'),
+                complete: function () {
+                    $('#btnImportBank').prop('disabled', false)
+                        .html('<i class="bi bi-download me-1"></i> Import <span id="importCount">' + ids.length + '</span> câu vào quiz');
+                }
+            });
+        };
+
+        // ── HELPER ────────────────────────────────────────────────────────────
+        function escapeHtml(str) {
+            return $('<div>').text(str ?? '').html();
+        }
     </script>
 }
+                

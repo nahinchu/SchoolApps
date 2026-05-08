@@ -1,9 +1,10 @@
 ﻿@using SchoolApp.Models
 @model IEnumerable<Question>
 
-<table class="table table-bordered table-hover align-middle">
+<table class="table table-bordered table-hover align-middle" id="questionsTable">
     <thead class="table-dark">
         <tr>
+            <th style="width:40px"></th>
             <th style="width:60px" class="text-center">Thứ tự</th>
             <th>Nội dung câu hỏi</th>
             <th style="width:140px">Loại</th>
@@ -12,11 +13,11 @@
             <th style="width:160px" class="text-center">Thao tác</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="questionsTbody">
         @if (!Model.Any())
         {
             <tr>
-                <td colspan="6" class="text-center py-5 text-muted">
+                <td colspan="7" class="text-center py-5 text-muted">
                     <i class="bi bi-question-circle display-4 d-block mb-2"></i>
                     Chưa có câu hỏi nào. Hãy thêm câu hỏi đầu tiên!
                 </td>
@@ -26,8 +27,11 @@
         {
             foreach (var item in Model)
             {
-                <tr>
-                    <td class="text-center fw-bold">@item.OrderIndex</td>
+                <tr data-question-id="@item.QuestionId">
+                    <td class="text-center text-muted drag-handle" style="cursor:grab;" title="Kéo để đổi thứ tự">
+                        <i class="bi bi-grip-vertical"></i>
+                    </td>
+                    <td class="text-center fw-bold order-cell">@item.OrderIndex</td>
                     <td>@item.Content</td>
                     <td>
                         @switch (item.Type)
@@ -51,6 +55,11 @@
                         </button>
                         <button class="btn btn-sm btn-danger" onclick="deleteQuestion(@item.QuestionId)">
                             <i class="bi bi-trash"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success"
+                                onclick="copyToBank(@item.QuestionId)"
+                                title="Lưu vào ngân hàng câu hỏi">
+                            <i class="bi bi-bank"></i>
                         </button>
                     </td>
                 </tr>

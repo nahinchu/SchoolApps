@@ -1,0 +1,441 @@
+﻿@* Views/QuestionBank/Index.cshtml *@
+@model IEnumerable<SchoolApp.Models.Question>
+@{
+    ViewData["Title"] = "Ngân hàng câu hỏi";
+    var currentTag = ViewData["CurrentTag"] as string;
+    var allTags = ViewData["AllTags"] as List<string> ?? new();
+}
+
+<div class="sa-page-hero">
+    <h1>🗃️ Ngân hàng câu hỏi</h1>
+    <p>Quản lý câu hỏi dùng chung cho nhiều bài kiểm tra</p>
+</div>
+
+@* ── TOOLBAR ──────────────────────────────────────────────────────── *@
+<div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <div style="display:flex; gap:.5rem; align-items:center; flex:1; max-width:400px;">
+        <div style="position:relative; flex:1;">
+            <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-light);"></i>
+            <input type="text" id="searchInput" class="sa-input"
+                   placeholder="Tìm nội dung câu hỏi..."
+                   oninput="filterTable()"
+                   style="padding-left:36px;" />
+        </div>
+    </div>
+    <button class="sa-btn sa-btn-gold" onclick="openModal(0)">
+        <i class="bi bi-plus-circle"></i> Thêm câu hỏi
+    </button>
+</div>
+
+@* ── FILTER TAG ───────────────────────────────────────────────────── *@
+@if (allTags.Any())
+{
+    <div style="display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem;">
+        <a href="/QuestionBank/Index"
+           class="sa-btn @(currentTag == null ? "sa-btn-primary" : "sa-btn-outline")"
+           style="padding:.25rem .75rem; font-size:.85rem;">
+            Tất cả
+            <span class="badge bg-white text-dark ms-1">@Model.Count()</span>
+        </a>
+        @foreach (var tag in allTags)
+        {
+            <a href="/QuestionBank/Index?tag=@Uri.EscapeDataString(tag)"
+               class="sa-btn @(currentTag == tag ? "sa-btn-primary" : "sa-btn-outline")"
+               style="padding:.25rem .75rem; font-size:.85rem;">
+                <i class="bi bi-tag me-1"></i>@tag
+                <span class="badge bg-white text-dark ms-1">@Model.Count(q => q.Tag == tag)</span>
+            </a>
+        }
+    </div>
+}
+
+@* ── THỐNG KÊ ─────────────────────────────────────────────────────── *@
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="card border-0 text-center py-3" style="background:rgba(var(--navy-rgb),.06)">
+            <div class="fs-3 fw-bold" style="color:var(--navy)">@Model.Count()</div>
+            <div class="small text-muted">Tổng câu hỏi</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 text-center py-3" style="background:rgba(25,135,84,.08)">
+            <div class="fs-3 fw-bold text-success">@allTags.Count</div>
+            <div class="small text-muted">Chủ đề / Tag</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 text-center py-3" style="background:rgba(13,110,253,.08)">
+            <div class="fs-3 fw-bold text-primary">
+                @Model.Count(q => q.Type == SchoolApp.Models.Enums.QuestionType.SingleChoice)
+            </div>
+            <div class="small text-muted">Một đáp án</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card border-0 text-center py-3" style="background:rgba(255,193,7,.12)">
+            <div class="fs-3 fw-bold text-warning">
+                @Model.Count(q => q.Type == SchoolApp.Models.Enums.QuestionType.MultiChoice)
+            </div>
+            <div class="small text-muted">Nhiều đáp án</div>
+        </div>
+    </div>
+</div>
+
+@* ── BẢNG ─────────────────────────────────────────────────────────── *@
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-bordered table-hover align-middle mb-0" id="bankTable">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width:50px" class="text-center">#</th>
+                    <th>Nội dung câu hỏi</th>
+                    <th style="width:140px">Loại</th>
+                    <th style="width:80px" class="text-center">Điểm</th>
+                    <th style="width:80px" class="text-center">Đáp án</th>
+                    <th style="width:110px">Tag</th>
+                    <th style="width:130px" class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                            Chưa có câu hỏi nào trong ngân hàng
+                        </td>
+                    </tr>
+                }
+                @{
+                    int stt = 1;
+                }
+                @foreach (var q in Model)
+                {
+                    <tr data-content="@q.Content.ToLower()" data-tag="@(q.Tag ?? "")">
+                        <td class="text-center text-muted">@(stt++)</td>
+                        <td>
+                            <div class="fw-medium">@q.Content</div>
+                            @if (!string.IsNullOrWhiteSpace(q.Explanation))
+                            {
+                                <small class="text-info">
+                                    <i class="bi bi-info-circle me-1"></i>Có giải thích
+                                </small>
+                            }
+                        </td>
+                        <td>
+                            @switch (q.Type)
+                            {
+                                case SchoolApp.Models.Enums.QuestionType.SingleChoice:
+                                    <span class="badge bg-primary">Một đáp án</span>
+                                    break;
+                                case SchoolApp.Models.Enums.QuestionType.MultiChoice:
+                                    <span class="badge bg-warning text-dark">Nhiều đáp án</span>
+                                    break;
+                                case SchoolApp.Models.Enums.QuestionType.TrueFalse:
+                                    <span class="badge bg-info text-dark">Đúng / Sai</span>
+                                    break;
+                            }
+                        </td>
+                        <td class="text-center">@q.Points</td>
+                        <td class="text-center">@q.Options.Count</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(q.Tag))
+                            {
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-tag me-1"></i>@q.Tag
+                                </span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-warning me-1"
+                                    onclick="openModal(@q.QuestionId)"
+                                    title="Sửa">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger"
+                                    onclick="deleteQuestion(@q.QuestionId)"
+                                    title="Xóa">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (Model.Any())
+    {
+        <div class="card-footer bg-transparent text-muted small px-3 py-2">
+            Hiển thị <span id="visibleCount">@Model.Count()</span> / @Model.Count() câu hỏi
+        </div>
+    }
+</div>
+
+@* ══════════════════════════════════════════════════════════════════
+   MODAL THÊM / SỬA
+══════════════════════════════════════════════════════════════════ *@
+<div class="modal fade" id="bankModal" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+
+            <div class="modal-header bg-navy text-white">
+                <h5 class="modal-title" id="bankModalLabel">Thêm câu hỏi</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="bankForm">
+                    <input type="hidden" id="f_id" value="0" />
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label class="sa-label">Nội dung câu hỏi <span class="text-danger">*</span></label>
+                            <textarea id="f_content" class="sa-input" rows="3"
+                                      placeholder="Nhập nội dung câu hỏi..."></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="sa-label">Loại câu hỏi</label>
+                            <select id="f_type" class="sa-input" onchange="onTypeChange()">
+                                <option value="0">Một đáp án</option>
+                                <option value="1">Nhiều đáp án</option>
+                                <option value="2">Đúng / Sai</option>
+                            </select>
+
+                            <label class="sa-label mt-3">Điểm</label>
+                            <input type="number" id="f_points" class="sa-input"
+                                   value="1" min="1" max="100" />
+
+                            <label class="sa-label mt-3">Tag / Chủ đề</label>
+                            <input type="text" id="f_tag" class="sa-input"
+                                   placeholder="vd: Chương 1, Đại số..."
+                                   list="tagSuggestions" />
+                            <datalist id="tagSuggestions">
+                                @foreach (var tag in allTags)
+                                {
+                                    <option value="@tag" />
+                                }
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <label class="sa-label">Giải thích đáp án (tuỳ chọn)</label>
+                        <textarea id="f_explanation" class="sa-input" rows="2"
+                                  placeholder="Giải thích tại sao đáp án đúng..."></textarea>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">Đáp án</h6>
+                        <div>
+                            <small class="text-muted me-3" id="optionsHint">
+                                Đánh dấu vào ô <strong>Đúng</strong> cho đáp án chính xác
+                            </small>
+                            <button type="button" id="btnAddOpt"
+                                    class="btn btn-sm btn-outline-primary"
+                                    onclick="addOptionField()">
+                                <i class="bi bi-plus"></i> Thêm đáp án
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="optionsContainer" class="mt-2"></div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Huỷ</button>
+                <button type="button" class="sa-btn sa-btn-primary" id="btnSave">
+                    <i class="bi bi-check-lg"></i> Lưu câu hỏi
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
+
+    <script>
+        let isBankEdit = false;
+
+        function getToken() {
+            return $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+        }
+
+        function ajaxJson(url, data) {
+            return $.ajax({
+                url, type: 'POST',
+                contentType: 'application/json',
+                headers: { 'RequestVerificationToken': getToken() },
+                data: JSON.stringify(data)
+            });
+        }
+
+        // ── gán lên window để onclick="" trong HTML gọi được ──────────
+        window.filterTable = function () {
+            const kw = $('#searchInput').val().toLowerCase().trim();
+            let visible = 0;
+            $('#bankTable tbody tr[data-content]').each(function () {
+                const match = !kw || $(this).data('content').includes(kw);
+                $(this).toggle(match);
+                if (match) visible++;
+            });
+            $('#visibleCount').text(visible);
+        };
+
+        window.openModal = function (id) {
+            $('#f_id').val(0);
+            $('#f_content').val('');
+            $('#f_type').val(0);
+            $('#f_points').val(1);
+            $('#f_tag').val('');
+            $('#f_explanation').val('');
+            $('#optionsContainer').html('');
+
+            if (id === 0) {
+                isBankEdit = false;
+                $('#bankModalLabel').text('➕ Thêm câu hỏi vào ngân hàng');
+                $('#btnSave').html('<i class="bi bi-check-lg"></i> Lưu câu hỏi');
+                window.addOptionField();
+                window.addOptionField();
+                window.onTypeChange();
+                $('#bankModal').modal('show');
+            } else {
+                isBankEdit = true;
+                $('#bankModalLabel').text('✏️ Sửa câu hỏi');
+                $('#btnSave').html('<i class="bi bi-check-lg"></i> Cập nhật');
+
+                $.get('/QuestionBank/GetQuestion', { id })
+                    .done(function (data) {
+                        $('#f_id').val(data.questionId);
+                        $('#f_content').val(data.content);
+                        $('#f_type').val(data.type);
+                        $('#f_points').val(data.points);
+                        $('#f_tag').val(data.tag ?? '');
+                        $('#f_explanation').val(data.explanation ?? '');
+                        data.options.forEach(o =>
+                            window.addOptionField(o.content, o.isCorrect, o.answerOptionId));
+                        window.onTypeChange();
+                        $('#bankModal').modal('show');
+                    })
+                    .fail(() => showToast('Không tải được câu hỏi!', 'danger'));
+            }
+        };
+
+        window.onTypeChange = function () {
+            const type = parseInt($('#f_type').val());
+            const isTF = type === 2;
+
+            if (isTF) {
+                $('#btnAddOpt').hide();
+                $('#optionsHint').html('Câu Đúng/Sai có cố định 2 đáp án.');
+                if (!isBankEdit && $('#optionsContainer .option-item').length === 0) {
+                    window.addOptionField('Đúng', true,  0);
+                    window.addOptionField('Sai',  false, 0);
+                }
+                $('#optionsContainer .option-correct')
+                    .attr('type', 'radio').attr('name', 'tf_correct');
+            } else {
+                $('#btnAddOpt').show();
+                $('#optionsHint').html(
+                    type === 1
+                        ? 'Đánh dấu vào ô <strong>Đúng</strong> cho TẤT CẢ đáp án chính xác'
+                        : 'Đánh dấu vào ô <strong>Đúng</strong> cho 1 đáp án chính xác'
+                );
+                $('#optionsContainer .option-correct')
+                    .attr('type', 'checkbox').removeAttr('name');
+            }
+        };
+
+        window.addOptionField = function (content = '', isCorrect = false, answerOptionId = 0) {
+            const safeContent = $('<div>').text(content).html();
+            const html = `
+                <div class="option-item input-group mb-2" data-option-id="${answerOptionId}">
+                    <input type="text" class="form-control option-content"
+                           placeholder="Nội dung đáp án..." value="${safeContent}" />
+                    <div class="input-group-text">
+                        <input type="checkbox" class="option-correct form-check-input mt-0 me-2"
+                               ${isCorrect ? 'checked' : ''} />
+                        <span>Đúng</span>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger"
+                            onclick="$(this).closest('.option-item').remove()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>`;
+            $('#optionsContainer').append(html);
+        };
+
+        window.deleteQuestion = function (id) {
+            if (!confirm('Xoá câu hỏi này khỏi ngân hàng?')) return;
+            $.ajax({
+                url: '/QuestionBank/Delete',
+                type: 'POST',
+                data: { id, __RequestVerificationToken: getToken() },
+                success: function (res) {
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        setTimeout(() => location.reload(), 600);
+                    } else {
+                        showToast(res.message, 'danger');
+                    }
+                },
+                error: () => showToast('Lỗi kết nối!', 'danger')
+            });
+        };
+
+        function showToast(message, type = 'success') {
+            const cls  = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
+            const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
+            const toast = $(`
+                <div class="sa-alert ${cls}"
+                     style="position:fixed;top:1rem;right:1rem;z-index:9999;min-width:320px;">
+                    <span class="sa-alert-icon"><i class="bi ${icon}"></i></span>
+                    <span>${message}</span>
+                    <button class="sa-alert-close" onclick="$(this).parent().remove()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>`);
+            $('body').append(toast);
+            setTimeout(() => toast.fadeOut(400, () => toast.remove()), 3000);
+        }
+
+        $(function () {
+            $('#btnSave').on('click', function () {
+                const options = [];
+                $('.option-item').each(function () {
+                    const content   = $(this).find('.option-content').val().trim();
+                    const isCorrect = $(this).find('.option-correct').is(':checked');
+                    const optId     = parseInt($(this).data('option-id')) || 0;
+                    if (content) options.push({ answerOptionId: optId, content, isCorrect });
+                });
+
+                const dto = {
+                    questionId:  parseInt($('#f_id').val()) || 0,
+                    quizId:      null,
+                    content:     $('#f_content').val().trim(),
+                    type:        parseInt($('#f_type').val()),
+                    points:      parseInt($('#f_points').val()) || 1,
+                    tag:         $('#f_tag').val().trim(),
+                    explanation: $('#f_explanation').val().trim(),
+                    options
+                };
+
+                ajaxJson('/QuestionBank/Save', dto)
+                    .done(function (res) {
+                        if (res.success) {
+                            $('#bankModal').modal('hide');
+                            showToast(res.message, 'success');
+                            setTimeout(() => location.reload(), 700);
+                        } else {
+                            showToast(res.message || 'Lưu thất bại', 'danger');
+                        }
+                    })
+                    .fail(() => showToast('Lỗi kết nối!', 'danger'));
+            });
+        });
+    </script>
+}

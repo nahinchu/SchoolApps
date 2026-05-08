@@ -50,6 +50,12 @@
                                 Đăng ký học
                             </a>
                         </li>
+                        <li>
+                            <a class="sa-nav-link" asp-controller="QuestionBank" asp-action="Index">
+                                <i class="bi bi-bank nav-icon"></i>
+                                Ngân hàng câu hỏi
+                            </a>
+                        </li>
                     }
 
                     @if (Context.Session.GetString("Role") == "Student")

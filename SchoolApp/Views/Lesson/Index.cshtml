@@ -8,6 +8,38 @@
     var courseId = ViewData["CourseId"] != null ? (int)ViewData["CourseId"] : 0;
 }
 
+@* ============================================================
+   ✅ FIX: Toggle "Công bố bài học" hiển thị xanh khi bật, xám khi tắt
+   (override custom CSS đang style nó màu đỏ trong scope toàn cục)
+   ============================================================ *@
+<style>
+    #lessonModal .form-switch .form-check-input {
+        width: 2.5em;
+        height: 1.25em;
+        cursor: pointer;
+    }
+
+        #lessonModal .form-switch .form-check-input:checked {
+            background-color: #198754 !important;
+            border-color: #198754 !important;
+        }
+
+        #lessonModal .form-switch .form-check-input:not(:checked) {
+            background-color: #adb5bd !important;
+            border-color: #adb5bd !important;
+        }
+
+        #lessonModal .form-switch .form-check-input:focus {
+            border-color: #198754 !important;
+            box-shadow: 0 0 0 .2rem rgba(25, 135, 84, .25) !important;
+        }
+
+    #lessonModal .form-check-label {
+        cursor: pointer;
+        margin-left: .5rem;
+    }
+</style>
+
 <div class="sa-page-hero">
     <h1>📝 Bài học - @moduleName</h1>
     <p>Quản lý nội dung bài học trong chương</p>
@@ -91,7 +123,7 @@
 
                     <div class="form-check form-switch mt-3">
                         <input type="checkbox" id="IsPublished" name="IsPublished" value="true" class="form-check-input" checked />
-                        <label class="form-check-label">Công bố bài học (Học viên có thể xem)</label>
+                        <label class="form-check-label" for="IsPublished">Công bố bài học (Học viên có thể xem)</label>
                     </div>
                 </form>
             </div>
@@ -214,7 +246,7 @@
                     url: '@Url.Action("Index", "Lesson")',
                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
                     data: { moduleId: currentModuleId, searchTerm: searchTerm, page: page },
-                    success: function (html) {
+                    success: function (html) {  
                         $('#lessonTableContainer').html(html);
                     }
                 });

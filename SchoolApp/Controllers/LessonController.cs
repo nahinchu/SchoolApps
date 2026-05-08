@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolApp.DTOs;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
@@ -125,53 +126,71 @@ namespace SchoolApp.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateAjax(Lesson lesson)
+        public IActionResult CreateAjax([FromForm] LessonSaveDto dto)
         {
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
+                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray());
                 return Json(new { success = false, errors });
             }
 
-            if (lesson.OrderIndex == 0)
-                lesson.OrderIndex = _uow.Lessons.GetMaxOrderIndex(lesson.ModuleId) + 1;
-
-            lesson.CreatedAt = DateTime.UtcNow;
+            var lesson = new Lesson
+            {
+                ModuleId = dto.ModuleId,
+                Title = dto.Title.Trim(),
+                Type = dto.Type,
+                VideoUrl = dto.VideoUrl?.Trim(),
+                HtmlContent = dto.HtmlContent?.Trim(),
+                AttachmentPath = dto.AttachmentPath?.Trim(),
+                OrderIndex = dto.OrderIndex == 0
+                            ? _uow.Lessons.GetMaxOrderIndex(dto.ModuleId) + 1
+                            : dto.OrderIndex,
+                DurationMinutes = dto.DurationMinutes,
+                IsPublished = dto.IsPublished,
+                CreatedAt = DateTime.UtcNow
+            };
 
             _uow.Lessons.Add(lesson);
             _uow.SaveChanges();
-            return Json(new { success = true, message = "Thêm bài học thành công!" });
+
+            return Json(new { success = true, message = "Thêm bài học thành công!", lessonId = lesson.LessonId });
         }
 
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult EditAjax(Lesson lesson)
+        public IActionResult EditAjax([FromForm] LessonSaveDto dto)
         {
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray());
+                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray());
+
                 return Json(new { success = false, errors });
             }
 
-            var existing = _uow.Lessons.GetById(lesson.LessonId);
+            var existing = _uow.Lessons.GetById(dto.LessonId);
             if (existing == null)
                 return Json(new { success = false, message = "Không tìm thấy bài học" });
 
-            existing.Title = lesson.Title;
-            existing.Type = lesson.Type;
-            existing.VideoUrl = lesson.VideoUrl;
-            existing.HtmlContent = lesson.HtmlContent;
-            existing.AttachmentPath = lesson.AttachmentPath;
-            existing.DurationMinutes = lesson.DurationMinutes;
-            existing.OrderIndex = lesson.OrderIndex;
-            existing.IsPublished = lesson.IsPublished;
+            // Cập nhật thông tin
+            existing.Title = dto.Title.Trim();
+            existing.Type = dto.Type;
+            existing.VideoUrl = dto.VideoUrl?.Trim();
+            existing.HtmlContent = dto.HtmlContent?.Trim();
+            existing.AttachmentPath = dto.AttachmentPath?.Trim();
+            existing.DurationMinutes = dto.DurationMinutes;
+            existing.OrderIndex = dto.OrderIndex;
+            existing.IsPublished = dto.IsPublished;
+
+            // KHÔNG thay đổi ModuleId khi edit (an toàn hơn)
+            // existing.ModuleId = dto.ModuleId;
 
             _uow.SaveChanges();
+
             return Json(new { success = true, message = "Cập nhật bài học thành công!" });
         }
 
