@@ -1,78 +1,214 @@
-﻿@{
+@{
     ViewData["Title"] = "Trang chủ";
+    var role = Context.Session.GetString("Role");
+    var studentName = Context.Session.GetString("StudentName");
 }
 
-<!-- HERO SECTION -->
-<div style="display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:3rem 0; flex-wrap:wrap;">
+@if (role == "Admin")
+{
+    <!-- ===== ADMIN DASHBOARD ===== -->
+    <div class="sa-page-hero" style="margin-bottom:2rem;">
+        <h1><i class="bi bi-speedometer2" style="color:var(--gold);margin-right:.5rem;"></i>Bảng điều khiển quản trị</h1>
+        <p>Xin chào, <strong style="color:var(--gold-light);">@studentName</strong>! Quản lý toàn bộ hệ thống học tập từ đây.</p>
+    </div>
 
-    <!-- Bên trái: chữ -->
-    <div style="flex:1; min-width:280px;">
-        <h1 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3.2rem);
-                   color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
-            Chào mừng đến với<br>
-            <span style="color:var(--gold);">SchoolApp</span>
-        </h1>
-        <p style="color:var(--text-light); font-size:1rem; max-width:400px; margin-bottom:1.75rem; line-height:1.7;">
-            Nền tảng quản lý học tập hiện đại, kết nối học viên và giảng viên trong không gian chuyên nghiệp.
-        </p>
+    <div class="sa-dash-grid" style="margin-bottom:2.5rem;">
 
-        <div style="display:flex; flex-wrap:wrap; gap:.75rem;">
-            <a asp-controller="Course" asp-action="Index" class="home-nav-btn home-nav-btn-primary">
-                <i class="bi bi-book-fill"></i> Khóa học
-            </a>
-            @if (Context.Session.GetString("Role") == "Admin")
-            {
-                <a asp-controller="Student" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
-                    <i class="bi bi-people-fill"></i> Học viên
-                </a>
-                <a asp-controller="Enrollment" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
-                    <i class="bi bi-journal-check"></i> Đăng ký học
-                </a>
-            }
-            @if (Context.Session.GetString("Role") == "Student")
-            {
-                <a asp-controller="Enrollment" asp-action="MyEnrollments" class="home-nav-btn home-nav-btn-outline">
+        <a asp-controller="Course" asp-action="Index" class="sa-dash-card">
+            <div class="sa-dash-card-icon" style="background:linear-gradient(135deg,#1a4a7a,#243b55);">
+                <i class="bi bi-book-fill"></i>
+            </div>
+            <div class="sa-dash-card-body">
+                <div class="sa-dash-card-title">Khóa học</div>
+                <div class="sa-dash-card-desc">Tạo, chỉnh sửa và quản lý toàn bộ khóa học, chương học, bài học.</div>
+            </div>
+            <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
+        </a>
+
+        <a asp-controller="Student" asp-action="Index" class="sa-dash-card">
+            <div class="sa-dash-card-icon" style="background:linear-gradient(135deg,#1a5c3a,#27ae60);">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="sa-dash-card-body">
+                <div class="sa-dash-card-title">Học viên</div>
+                <div class="sa-dash-card-desc">Xem danh sách, thêm mới và quản lý thông tin học viên.</div>
+            </div>
+            <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
+        </a>
+
+        <a asp-controller="Enrollment" asp-action="Index" class="sa-dash-card">
+            <div class="sa-dash-card-icon" style="background:linear-gradient(135deg,#6d3a1a,#c0771a);">
+                <i class="bi bi-journal-check"></i>
+            </div>
+            <div class="sa-dash-card-body">
+                <div class="sa-dash-card-title">Đăng ký học</div>
+                <div class="sa-dash-card-desc">Quản lý việc đăng ký khóa học của học viên, cấp quyền truy cập.</div>
+            </div>
+            <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
+        </a>
+
+        <a asp-controller="QuestionBank" asp-action="Index" class="sa-dash-card">
+            <div class="sa-dash-card-icon" style="background:linear-gradient(135deg,#4a1a6d,#8e44ad);">
+                <i class="bi bi-bank2"></i>
+            </div>
+            <div class="sa-dash-card-body">
+                <div class="sa-dash-card-title">Ngân hàng câu hỏi</div>
+                <div class="sa-dash-card-desc">Quản lý thư viện câu hỏi dùng chung cho các bài kiểm tra.</div>
+            </div>
+            <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
+        </a>
+
+    </div>
+
+    <div class="sa-dash-stats">
+        <div class="sa-dash-stat-item">
+            <div class="sa-dash-stat-num">Khóa học</div>
+            <div class="sa-dash-stat-label">Quản lý nội dung</div>
+        </div>
+        <div class="sa-dash-stat-divider"></div>
+        <div class="sa-dash-stat-item">
+            <div class="sa-dash-stat-num">Học viên</div>
+            <div class="sa-dash-stat-label">Quản lý tài khoản</div>
+        </div>
+        <div class="sa-dash-stat-divider"></div>
+        <div class="sa-dash-stat-item">
+            <div class="sa-dash-stat-num">Bài kiểm tra</div>
+            <div class="sa-dash-stat-label">Quiz & câu hỏi</div>
+        </div>
+        <div class="sa-dash-stat-divider"></div>
+        <div class="sa-dash-stat-item">
+            <div class="sa-dash-stat-num">Đăng ký học</div>
+            <div class="sa-dash-stat-label">Phân quyền truy cập</div>
+        </div>
+    </div>
+}
+else if (role == "Student")
+{
+    <!-- ===== STUDENT DASHBOARD ===== -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:2.5rem 0 1.5rem; flex-wrap:wrap;">
+
+        <div style="flex:1; min-width:280px;">
+            <p style="color:var(--gold); font-size:.85rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.5rem;">
+                <i class="bi bi-mortarboard-fill"></i> Chào mừng trở lại
+            </p>
+            <h1 style="font-family:var(--font-display); font-size:clamp(1.8rem,3.5vw,2.8rem); color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
+                Xin chào, <span style="color:var(--gold);">@studentName</span>!
+            </h1>
+            <p style="color:var(--text-light); font-size:1rem; max-width:420px; margin-bottom:1.75rem; line-height:1.7;">
+                Tiếp tục hành trình học tập của bạn. Kiến thức là nền tảng cho mọi thành công.
+            </p>
+            <div style="display:flex; flex-wrap:wrap; gap:.75rem;">
+                <a asp-controller="Enrollment" asp-action="MyEnrollments" class="home-nav-btn home-nav-btn-primary">
                     <i class="bi bi-mortarboard-fill"></i> Khóa học của tôi
                 </a>
-            }
-            @if (Context.Session.GetString("StudentName") == null)
-            {
-                <a asp-controller="Account" asp-action="Login" class="home-nav-btn home-nav-btn-outline">
-                    <i class="bi bi-person-fill"></i> Đăng nhập
+                <a asp-controller="Course" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
+                    <i class="bi bi-search"></i> Duyệt khóa học
                 </a>
-            }
-        </div>
-    </div>
-
-    <!-- Bên phải: ảnh -->
-    <div style="flex:1; min-width:240px; display:flex; justify-content:center;">
-        <img src="~/images/Studying.gif" alt="SchoolApp" class="home-gif" />
-    </div>
-
-</div>
-
-<!-- STATS SECTION -->
-<div style="background:var(--navy); border-radius:var(--radius-lg); padding:2.5rem; margin-top:1rem;">
-    <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:1.5rem;">
-
-        <div style="text-align:center;">
-            <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">12+</div>
-            <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Khóa học</div>
+            </div>
         </div>
 
-        <div style="width:1px; height:50px; background:rgba(255,255,255,.1);"></div>
-
-        <div style="text-align:center;">
-            <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">200+</div>
-            <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Học viên</div>
-        </div>
-
-        <div style="width:1px; height:50px; background:rgba(255,255,255,.1);"></div>
-
-        <div style="text-align:center;">
-            <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">500+</div>
-            <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Lượt đăng ký</div>
+        <div style="flex:1; min-width:240px; display:flex; justify-content:center;">
+            <img src="~/images/Studying.gif" alt="Học tập" class="home-gif" />
         </div>
 
     </div>
-</div>
+
+    <div class="sa-student-feature-row">
+        <div class="sa-student-feature-item">
+            <div class="sa-student-feature-icon"><i class="bi bi-play-circle-fill"></i></div>
+            <div>
+                <div class="sa-student-feature-title">Học theo tiến độ</div>
+                <div class="sa-student-feature-desc">Hệ thống tự động theo dõi bài học đã xem và hoàn thành.</div>
+            </div>
+        </div>
+        <div class="sa-student-feature-item">
+            <div class="sa-student-feature-icon" style="background:linear-gradient(135deg,var(--gold),var(--gold-light));"><i class="bi bi-patch-question-fill" style="color:var(--navy);"></i></div>
+            <div>
+                <div class="sa-student-feature-title">Kiểm tra kiến thức</div>
+                <div class="sa-student-feature-desc">Làm quiz cuối mỗi bài, xem điểm và đáp án ngay sau khi nộp.</div>
+            </div>
+        </div>
+        <div class="sa-student-feature-item">
+            <div class="sa-student-feature-icon" style="background:linear-gradient(135deg,#1a5c3a,#27ae60);"><i class="bi bi-bar-chart-fill"></i></div>
+            <div>
+                <div class="sa-student-feature-title">Theo dõi kết quả</div>
+                <div class="sa-student-feature-desc">Xem lại các lần làm bài, so sánh điểm và cải thiện từng ngày.</div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <!-- ===== LANDING PAGE (chưa đăng nhập) ===== -->
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:3rem 0; flex-wrap:wrap;">
+
+        <div style="flex:1; min-width:280px;">
+            <h1 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3.2rem);
+                       color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
+                Chào mừng đến với<br>
+                <span style="color:var(--gold);">SchoolApp</span>
+            </h1>
+            <p style="color:var(--text-light); font-size:1rem; max-width:400px; margin-bottom:1.75rem; line-height:1.7;">
+                Nền tảng quản lý học tập hiện đại, kết nối học viên và giảng viên trong không gian chuyên nghiệp.
+            </p>
+            <div style="display:flex; flex-wrap:wrap; gap:.75rem;">
+                <a asp-controller="Account" asp-action="Register" class="home-nav-btn home-nav-btn-primary">
+                    <i class="bi bi-person-plus-fill"></i> Đăng ký miễn phí
+                </a>
+                <a asp-controller="Account" asp-action="Login" class="home-nav-btn home-nav-btn-outline">
+                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+                </a>
+                <a asp-controller="Course" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
+                    <i class="bi bi-book-fill"></i> Xem khóa học
+                </a>
+            </div>
+        </div>
+
+        <div style="flex:1; min-width:240px; display:flex; justify-content:center;">
+            <img src="~/images/Studying.gif" alt="SchoolApp" class="home-gif" />
+        </div>
+
+    </div>
+
+    <div class="sa-landing-features">
+        <div class="sa-landing-feature-item">
+            <div class="sa-landing-feature-icon"><i class="bi bi-book-half"></i></div>
+            <div class="sa-landing-feature-title">Nội dung phong phú</div>
+            <div class="sa-landing-feature-desc">Bài học dạng video, văn bản và tài liệu đính kèm.</div>
+        </div>
+        <div class="sa-landing-feature-item">
+            <div class="sa-landing-feature-icon"><i class="bi bi-patch-check-fill"></i></div>
+            <div class="sa-landing-feature-title">Kiểm tra & đánh giá</div>
+            <div class="sa-landing-feature-desc">Quiz tương tác với nhiều dạng câu hỏi, tính điểm tự động.</div>
+        </div>
+        <div class="sa-landing-feature-item">
+            <div class="sa-landing-feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="sa-landing-feature-title">Theo dõi tiến độ</div>
+            <div class="sa-landing-feature-desc">Hệ thống ghi nhận tiến trình học tập chi tiết theo từng bài.</div>
+        </div>
+        <div class="sa-landing-feature-item">
+            <div class="sa-landing-feature-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            <div class="sa-landing-feature-title">Bảo mật & an toàn</div>
+            <div class="sa-landing-feature-desc">Mật khẩu mã hóa BCrypt, phân quyền rõ ràng Admin / Học viên.</div>
+        </div>
+    </div>
+
+    <div style="background:var(--navy); border-radius:var(--radius-lg); padding:2.5rem; margin-top:2rem;">
+        <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+            <div style="text-align:center;">
+                <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">12+</div>
+                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Khóa học</div>
+            </div>
+            <div style="width:1px; height:50px; background:rgba(255,255,255,.1);"></div>
+            <div style="text-align:center;">
+                <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">200+</div>
+                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Học viên</div>
+            </div>
+            <div style="width:1px; height:50px; background:rgba(255,255,255,.1);"></div>
+            <div style="text-align:center;">
+                <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">500+</div>
+                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Lượt đăng ký</div>
+            </div>
+        </div>
+    </div>
+}

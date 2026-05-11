@@ -1152,3 +1152,281 @@ body {
     z-index: 1060 !important;
     position: relative !important;
 }
+
+/* ============================================================
+   ADMIN BAR (dải thông báo trên cùng khi đăng nhập Admin)
+   ============================================================ */
+
+.sa-admin-bar {
+    background: linear-gradient(90deg, #7b1c1c 0%, #a93226 50%, #7b1c1c 100%);
+    color: rgba(255,255,255,0.92);
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+    .sa-admin-bar strong {
+        color: #ffb3b3;
+    }
+
+    .sa-admin-bar .bi {
+        margin-right: 4px;
+        font-size: 0.75rem;
+    }
+
+/* ============================================================
+   STUDENT BADGE (trong header greeting)
+   ============================================================ */
+
+.sa-badge-student {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: #1a4a7a;
+    color: #a8d4ff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 99px;
+}
+
+    .sa-badge-student .bi {
+        font-size: 0.7rem;
+    }
+
+/* ============================================================
+   ADMIN DASHBOARD CARDS
+   ============================================================ */
+
+.sa-dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+}
+
+.sa-dash-card {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1.4rem 1.5rem;
+    background: var(--white);
+    border: 1px solid rgba(13,27,42,0.07);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+    .sa-dash-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    .sa-dash-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+        border-color: rgba(201,168,76,0.3);
+        color: var(--text-dark);
+    }
+
+.sa-dash-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--white);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.sa-dash-card-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.sa-dash-card-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 3px;
+}
+
+.sa-dash-card-desc {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+.sa-dash-card-arrow {
+    color: rgba(201,168,76,0.4);
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    transition: color var(--transition), transform var(--transition);
+}
+
+.sa-dash-card:hover .sa-dash-card-arrow {
+    color: var(--gold);
+    transform: translateX(3px);
+}
+
+/* Stats bar trong admin dashboard */
+.sa-dash-stats {
+    background: var(--navy);
+    border-radius: var(--radius-lg);
+    padding: 2rem 2.5rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.sa-dash-stat-item {
+    text-align: center;
+}
+
+.sa-dash-stat-num {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 2px;
+}
+
+.sa-dash-stat-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+.sa-dash-stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+}
+
+/* ============================================================
+   STUDENT HOME — Feature row
+   ============================================================ */
+
+.sa-student-feature-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.sa-student-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.4rem;
+    background: var(--white);
+    border: 1px solid var(--smoke);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.sa-student-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--white);
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    flex-shrink: 0;
+}
+
+.sa-student-feature-title {
+    font-weight: 600;
+    color: var(--navy);
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.sa-student-feature-desc {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    line-height: 1.55;
+}
+
+/* ============================================================
+   LANDING PAGE — Feature grid (chưa đăng nhập)
+   ============================================================ */
+
+.sa-landing-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+}
+
+.sa-landing-feature-item {
+    padding: 1.5rem 1.4rem;
+    background: var(--white);
+    border: 1px solid var(--smoke);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+    .sa-landing-feature-item:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+
+.sa-landing-feature-icon {
+    font-size: 2rem;
+    color: var(--gold);
+    margin-bottom: .75rem;
+    display: block;
+}
+
+.sa-landing-feature-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: .4rem;
+}
+
+.sa-landing-feature-desc {
+    font-size: 0.82rem;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+@media (max-width: 767px) {
+    .sa-dash-stats {
+        padding: 1.5rem;
+    }
+
+    .sa-dash-stat-divider {
+        display: none;
+    }
+
+    .sa-dash-stats {
+        gap: 1rem;
+    }
+}
