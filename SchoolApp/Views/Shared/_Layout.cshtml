@@ -15,6 +15,13 @@
     @RenderSection("Styles", required: false)
 </head>
 <body>
+    @if (Context.Session.GetString("Role") == "Admin")
+    {
+        <div class="sa-admin-bar">
+            <i class="bi bi-shield-fill-check"></i>
+            Bạn đang đăng nhập với quyền <strong>Quản trị viên</strong>
+        </div>
+    }
     <header class="sa-header" id="sa-header">
         <div class="container">
             <a class="sa-brand" asp-controller="Home" asp-action="Index" aria-label="SchoolApp - Trang chủ">
@@ -81,7 +88,11 @@
                                 <span>Xin chào, <strong>@studentName</strong></span>
                                 @if (role == "Admin")
                                 {
-                                    <span class="sa-badge-admin">Admin</span>
+                                    <span class="sa-badge-admin"><i class="bi bi-shield-fill-check"></i> Admin</span>
+                                }
+                                else if (role == "Student")
+                                {
+                                    <span class="sa-badge-student"><i class="bi bi-mortarboard-fill"></i> Học viên</span>
                                 }
                             </div>
                         </li>
@@ -158,28 +169,51 @@
                         </p>
                     </div>
 
-                    @* Cot 2: Kham pha *@
+                    @* Cot 2: Kham pha — hien thi theo role *@
                     <div>
-                        <p class="sa-footer-heading">Khám phá</p>
+                        <p class="sa-footer-heading">
+                            @if (Context.Session.GetString("Role") == "Admin")
+                            {
+                                <text>Quản trị</text>
+                            }
+                            else
+                            {
+                                <text>Khám phá</text>
+                            }
+                        </p>
                         <ul class="sa-footer-links">
                             <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
                             <li><a asp-controller="Course" asp-action="Index">Khóa học</a></li>
                             @if (Context.Session.GetString("Role") == "Admin")
                             {
-                                <li><a asp-controller="Student" asp-action="Index">Học viên</a></li>
-                                <li><a asp-controller="Enrollment" asp-action="Index">Đăng ký học</a></li>
+                                <li><a asp-controller="Student" asp-action="Index">Quản lý học viên</a></li>
+                                <li><a asp-controller="Enrollment" asp-action="Index">Quản lý đăng ký</a></li>
+                                <li><a asp-controller="QuestionBank" asp-action="Index">Ngân hàng câu hỏi</a></li>
+                            }
+                            @if (Context.Session.GetString("Role") == "Student")
+                            {
+                                <li><a asp-controller="Enrollment" asp-action="MyEnrollments">Khóa học của tôi</a></li>
                             }
                         </ul>
                     </div>
 
-                    @* Cot 3: Tai khoan *@
+                    @* Cot 3: Tai khoan — hien thi theo role *@
                     <div>
                         <p class="sa-footer-heading">Tài khoản</p>
                         <ul class="sa-footer-links">
-                            @if (Context.Session.GetString("StudentName") == null)
+                            @{
+                                var footerRole = Context.Session.GetString("Role");
+                            }
+                            @if (footerRole == null)
                             {
                                 <li><a asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
-                                <li><a asp-controller="Account" asp-action="Register">Đăng ký</a></li>
+                                <li><a asp-controller="Account" asp-action="Register">Đăng ký tài khoản</a></li>
+                            }
+                            else if (footerRole == "Admin")
+                            {
+                                <li><a asp-controller="Student" asp-action="Create">Thêm học viên mới</a></li>
+                                <li><a asp-controller="Course" asp-action="Index">Quản lý khóa học</a></li>
+                                <li><a asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
                             }
                             else
                             {
