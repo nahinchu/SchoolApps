@@ -556,12 +556,24 @@
                 @if ((currentLesson.Type == LessonType.Video || currentLesson.Type == LessonType.Mixed)
                             && !string.IsNullOrWhiteSpace(currentLesson.VideoUrl))
                 {
-                    var embed = GetEmbedUrl(currentLesson.VideoUrl);
-                    <div class="video-frame">
-                        <iframe src="@embed"
-                                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                allowfullscreen></iframe>
-                    </div>
+                    if (currentLesson.VideoUrl.StartsWith("/uploads/videos/"))
+                    {
+                        <div class="video-frame">
+                            <video controls preload="metadata" style="width:100%; height:100%; background:#000;">
+                                <source src="@currentLesson.VideoUrl" />
+                                Trình duyệt không hỗ trợ phát video.
+                            </video>
+                        </div>
+                    }
+                    else
+                    {
+                        var embed = GetEmbedUrl(currentLesson.VideoUrl);
+                        <div class="video-frame">
+                            <iframe src="@embed"
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
+                        </div>
+                    }
                 }
 
                 @if ((currentLesson.Type == LessonType.Text || currentLesson.Type == LessonType.Mixed)
@@ -576,6 +588,34 @@
                     <div class="empty-state">
                         <i class="bi bi-info-circle" style="font-size:2rem;"></i>
                         <p>Bài học này chưa có nội dung</p>
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(currentLesson.AttachmentPath))
+                {
+                    var attachExt = System.IO.Path.GetExtension(currentLesson.AttachmentPath).ToLowerInvariant();
+                    var attachName = System.IO.Path.GetFileName(currentLesson.AttachmentPath);
+                    var attachIcon = attachExt switch
+                    {
+                        ".pdf" => "bi-file-earmark-pdf-fill",
+                        ".doc" or ".docx" => "bi-file-earmark-word-fill",
+                        ".xls" or ".xlsx" => "bi-file-earmark-excel-fill",
+                        ".ppt" or ".pptx" => "bi-file-earmark-ppt-fill",
+                        ".zip" or ".rar" => "bi-file-earmark-zip-fill",
+                        ".mp4" => "bi-file-earmark-play-fill",
+                        ".png" or ".jpg" or ".jpeg" or ".gif" => "bi-file-earmark-image-fill",
+                        _ => "bi-file-earmark-fill"
+                    };
+                    <div style="margin: 1.5rem 0; padding: 1rem 1.25rem; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; display: flex; align-items: center; gap: 1rem;">
+                        <i class="bi @attachIcon" style="font-size: 2rem; color: var(--navy, #1a2a4a); flex-shrink:0;"></i>
+                        <div style="flex:1; min-width:0;">
+                            <div style="font-weight:600; margin-bottom:.2rem;">Tài liệu đính kèm</div>
+                            <div style="font-size:.875rem; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@attachName</div>
+                        </div>
+                        <a href="@currentLesson.AttachmentPath" target="_blank" download
+                           style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem 1rem; background:var(--navy, #1a2a4a); color:#fff; border-radius:6px; text-decoration:none; font-size:.875rem; white-space:nowrap;">
+                            <i class="bi bi-download"></i> Tải xuống
+                        </a>
                     </div>
                 }
 

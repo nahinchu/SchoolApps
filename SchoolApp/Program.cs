@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using SchoolApp.Data;
 using SchoolApp.Services;
 using SchoolApp.UnitOfWork;
@@ -11,6 +12,10 @@ namespace SchoolApp
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Cho phép upload file lớn tối đa 500MB
+            builder.WebHost.ConfigureKestrel(k => k.Limits.MaxRequestBodySize = 500 * 1024 * 1024);
+            builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = 500 * 1024 * 1024);
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
@@ -20,6 +25,8 @@ namespace SchoolApp
             builder.Services.AddSession();
 
             builder.Services.AddSingleton<IPasswordService, BCryptPasswordService>();
+
+            builder.Services.AddHttpClient<PayOSService>();
 
             var app = builder.Build();
 
