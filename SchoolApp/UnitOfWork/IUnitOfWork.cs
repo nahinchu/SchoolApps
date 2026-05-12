@@ -5,6 +5,7 @@ using SchoolApp.Repositories.LessonRepository;
 using SchoolApp.Repositories.ModuleRepository;
 using SchoolApp.Repositories.StudentRepository;
 using SchoolApp.Repositories.LearnRepository;
+using SchoolApp.Repositories.PaymentRepository;
 
 namespace SchoolApp.UnitOfWork
 {
@@ -21,6 +22,7 @@ namespace SchoolApp.UnitOfWork
         ILessonProgressRepository LessonProgresses { get; }
         IQuizAttemptRepository QuizAttempts { get; } 
         IQuizAnswerRepository  QuizAnswers  { get; }
+        IPaymentRepository Payments { get; }
         int SaveChanges();
     }
 }

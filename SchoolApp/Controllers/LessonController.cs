@@ -12,11 +12,66 @@ namespace SchoolApp.Controllers
     public class LessonController : Controller
     {
         private readonly IUnitOfWork _uow;
+        private readonly IWebHostEnvironment _env;
 
-        public LessonController(IUnitOfWork uow)
+        private static readonly string[] AllowedExtensions = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".zip", ".rar", ".mp4", ".png", ".jpg", ".jpeg", ".gif"];
+        private const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
+
+        private static readonly string[] AllowedVideoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
+        private const long MaxVideoSize = 500 * 1024 * 1024; // 500 MB
+
+        public LessonController(IUnitOfWork uow, IWebHostEnvironment env)
         {
             _uow = uow;
+            _env = env;
         }
+
+        private async Task<string?> SaveAttachmentAsync(IFormFile file)
+        {
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!AllowedExtensions.Contains(ext))
+                return null;
+
+            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "lessons");
+            Directory.CreateDirectory(uploadsDir);
+
+            var fileName = $"{Guid.NewGuid()}{ext}";
+            var filePath = Path.Combine(uploadsDir, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            return $"/uploads/lessons/{fileName}";
+        }
+
+        private void DeleteAttachmentFile(string? relativePath)
+        {
+            if (string.IsNullOrEmpty(relativePath)) return;
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
+            if (System.IO.File.Exists(fullPath))
+                System.IO.File.Delete(fullPath);
+        }
+
+        private async Task<string?> SaveVideoAsync(IFormFile file)
+        {
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (!AllowedVideoExtensions.Contains(ext))
+                return null;
+
+            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "videos");
+            Directory.CreateDirectory(uploadsDir);
+
+            var fileName = $"{Guid.NewGuid()}{ext}";
+            var filePath = Path.Combine(uploadsDir, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            return $"/uploads/videos/{fileName}";
+        }
+
+        private static bool IsUploadedVideo(string? url) =>
+            !string.IsNullOrEmpty(url) && url.StartsWith("/uploads/videos/");
 
         public IActionResult Index(int moduleId, string searchTerm, int page = 1)
         {
@@ -126,7 +181,7 @@ namespace SchoolApp.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateAjax([FromForm] LessonSaveDto dto)
+        public async Task<IActionResult> CreateAjax([FromForm] LessonSaveDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -136,21 +191,43 @@ namespace SchoolApp.Controllers
                 return Json(new { success = false, errors });
             }
 
+            if (dto.AttachmentFile != null && dto.AttachmentFile.Length > MaxFileSize)
+                return Json(new { success = false, message = "File đính kèm không được vượt quá 50MB." });
+
+            if (dto.VideoFile != null && dto.VideoFile.Length > MaxVideoSize)
+                return Json(new { success = false, message = "Video không được vượt quá 500MB." });
+
+            string? attachmentPath = null;
+            if (dto.AttachmentFile != null && dto.AttachmentFile.Length > 0)
+            {
+                attachmentPath = await SaveAttachmentAsync(dto.AttachmentFile);
+                if (attachmentPath == null)
+                    return Json(new { success = false, message = "Định dạng file đính kèm không hỗ trợ." });
+            }
+
+            string? videoUrl = dto.VideoUrl?.Trim();
+            if (dto.VideoInputMode == "file" && dto.VideoFile != null && dto.VideoFile.Length > 0)
+            {
+                videoUrl = await SaveVideoAsync(dto.VideoFile);
+                if (videoUrl == null)
+                    return Json(new { success = false, message = "Định dạng video không hỗ trợ. Dùng MP4, WebM, OGG hoặc MOV." });
+            }
+
             var lesson = new Lesson
             {
                 ModuleId = dto.ModuleId,
                 Title = dto.Title.Trim(),
                 Type = dto.Type,
-                VideoUrl = dto.VideoUrl?.Trim(),
+                VideoUrl = videoUrl,
                 HtmlContent = dto.HtmlContent?.Trim(),
-                AttachmentPath = dto.AttachmentPath?.Trim(),
+                AttachmentPath = attachmentPath,
                 OrderIndex = dto.OrderIndex == 0
                             ? _uow.Lessons.GetMaxOrderIndex(dto.ModuleId) + 1
                             : dto.OrderIndex,
                 DurationMinutes = dto.DurationMinutes,
                 IsPublished = dto.IsPublished,
                 CreatedAt = DateTime.UtcNow
-            };
+            };  
 
             _uow.Lessons.Add(lesson);
             _uow.SaveChanges();
@@ -161,7 +238,7 @@ namespace SchoolApp.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult EditAjax([FromForm] LessonSaveDto dto)
+        public async Task<IActionResult> EditAjax([FromForm] LessonSaveDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -176,18 +253,62 @@ namespace SchoolApp.Controllers
             if (existing == null)
                 return Json(new { success = false, message = "Không tìm thấy bài học" });
 
-            // Cập nhật thông tin
+            if (dto.AttachmentFile != null && dto.AttachmentFile.Length > MaxFileSize)
+                return Json(new { success = false, message = "File đính kèm không được vượt quá 50MB." });
+
+            if (dto.VideoFile != null && dto.VideoFile.Length > MaxVideoSize)
+                return Json(new { success = false, message = "Video không được vượt quá 500MB." });
+
+            // Xử lý file đính kèm
+            if (dto.AttachmentFile != null && dto.AttachmentFile.Length > 0)
+            {
+                var newPath = await SaveAttachmentAsync(dto.AttachmentFile);
+                if (newPath == null)
+                    return Json(new { success = false, message = "Định dạng file đính kèm không hỗ trợ." });
+                DeleteAttachmentFile(existing.AttachmentPath);
+                existing.AttachmentPath = newPath;
+            }
+            else if (dto.RemoveAttachment)
+            {
+                DeleteAttachmentFile(existing.AttachmentPath);
+                existing.AttachmentPath = null;
+            }
+
+            // Xử lý video
+            if (dto.VideoInputMode == "file")
+            {
+                if (dto.VideoFile != null && dto.VideoFile.Length > 0)
+                {
+                    var newVideoPath = await SaveVideoAsync(dto.VideoFile);
+                    if (newVideoPath == null)
+                        return Json(new { success = false, message = "Định dạng video không hỗ trợ. Dùng MP4, WebM, OGG hoặc MOV." });
+                    if (IsUploadedVideo(existing.VideoUrl))
+                        DeleteAttachmentFile(existing.VideoUrl);
+                    existing.VideoUrl = newVideoPath;
+                }
+                else if (dto.RemoveVideo)
+                {
+                    if (IsUploadedVideo(existing.VideoUrl))
+                        DeleteAttachmentFile(existing.VideoUrl);
+                    existing.VideoUrl = null;
+                }
+                // Nếu không upload file mới và không xóa → giữ nguyên VideoUrl cũ
+            }
+            else // mode = "url"
+            {
+                var newUrl = dto.VideoUrl?.Trim();
+                // Nếu đang dùng file upload cũ mà giờ chuyển sang URL → xóa file cũ
+                if (IsUploadedVideo(existing.VideoUrl))
+                    DeleteAttachmentFile(existing.VideoUrl);
+                existing.VideoUrl = newUrl;
+            }
+
             existing.Title = dto.Title.Trim();
             existing.Type = dto.Type;
-            existing.VideoUrl = dto.VideoUrl?.Trim();
             existing.HtmlContent = dto.HtmlContent?.Trim();
-            existing.AttachmentPath = dto.AttachmentPath?.Trim();
             existing.DurationMinutes = dto.DurationMinutes;
             existing.OrderIndex = dto.OrderIndex;
             existing.IsPublished = dto.IsPublished;
-
-            // KHÔNG thay đổi ModuleId khi edit (an toàn hơn)
-            // existing.ModuleId = dto.ModuleId;
 
             _uow.SaveChanges();
 
@@ -199,7 +320,7 @@ namespace SchoolApp.Controllers
         {
             var lesson = _uow.Lessons.GetById(id);
             if (lesson == null) return NotFound();
-                
+
             return Json(new
             {
                 lessonId = lesson.LessonId,

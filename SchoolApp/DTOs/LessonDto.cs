@@ -23,5 +23,11 @@ namespace SchoolApp.DTOs
         public bool IsPublished { get; set; } = true;
 
         public LessonType Type { get; set; } = LessonType.Video;
+        public IFormFile? AttachmentFile { get; set; }
+        public bool RemoveAttachment { get; set; }
+        public string VideoInputMode { get; set; } = "url";
+        public IFormFile? VideoFile { get; set; }
+        public bool RemoveVideo { get; set; }
     }
 }
+

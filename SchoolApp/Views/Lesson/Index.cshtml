@@ -103,8 +103,35 @@
 
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <label class="sa-label">URL Video</label>
-                            <input type="url" id="VideoUrl" name="VideoUrl" class="sa-input" placeholder="https://..." />
+                            <label class="sa-label">Video bài học</label>
+                            <div class="btn-group w-100 mb-2" role="group">
+                                <input type="radio" class="btn-check" name="VideoInputMode" id="modeUrl" value="url" autocomplete="off" checked>
+                                <label class="btn btn-outline-secondary btn-sm" for="modeUrl">
+                                    <i class="bi bi-link-45deg"></i> Nhập URL
+                                </label>
+                                <input type="radio" class="btn-check" name="VideoInputMode" id="modeFile" value="file" autocomplete="off">
+                                <label class="btn btn-outline-secondary btn-sm" for="modeFile">
+                                    <i class="bi bi-cloud-upload"></i> Upload video
+                                </label>
+                            </div>
+                            <div id="videoUrlSection">
+                                <input type="url" id="VideoUrl" name="VideoUrl" class="sa-input" placeholder="https://youtube.com/... hoặc https://vimeo.com/..." />
+                            </div>
+                            <div id="videoFileSection" style="display:none;">
+                                <input type="file" id="VideoFile" name="VideoFile" class="sa-input"
+                                       accept=".mp4,.webm,.ogg,.mov" />
+                                <div class="form-text text-muted">Hỗ trợ: MP4, WebM, OGG, MOV. Tối đa 500MB.</div>
+                                <div id="currentVideo" class="mt-2 p-2 bg-light border rounded" style="display:none;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-file-earmark-play-fill text-primary fs-5"></i>
+                                        <span id="currentVideoName" class="fw-bold text-truncate flex-grow-1"></span>
+                                    </div>
+                                    <div class="form-check mt-1">
+                                        <input type="checkbox" id="RemoveVideo" name="RemoveVideo" value="true" class="form-check-input" />
+                                        <label class="form-check-label text-danger small" for="RemoveVideo">Xóa video đã upload</label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-3">
                             <label class="sa-label">Thời lượng (phút)</label>
@@ -119,6 +146,23 @@
                     <div class="sa-form-group mt-3">
                         <label class="sa-label">Nội dung bài viết (HTML)</label>
                         <textarea id="HtmlContent" name="HtmlContent" class="sa-input" rows="6"></textarea>
+                    </div>
+
+                    <div class="sa-form-group mt-3">
+                        <label class="sa-label">Tệp đính kèm</label>
+                        <input type="file" id="AttachmentFile" name="AttachmentFile" class="sa-input"
+                               accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.mp4,.png,.jpg,.jpeg,.gif" />
+                        <div class="form-text text-muted">Hỗ trợ: PDF, Word, Excel, PowerPoint, ZIP, MP4, ảnh. Tối đa 50MB.</div>
+                        <div id="currentAttachment" class="mt-2" style="display:none;">
+                            <span class="text-muted">File hiện tại: </span>
+                            <a id="currentAttachmentLink" href="#" target="_blank" class="text-primary fw-bold">
+                                <i class="bi bi-paperclip"></i> <span id="currentAttachmentName"></span>
+                            </a>
+                            <div class="form-check mt-1">
+                                <input type="checkbox" id="RemoveAttachment" name="RemoveAttachment" value="true" class="form-check-input" />
+                                <label class="form-check-label text-danger" for="RemoveAttachment">Xóa tệp đính kèm</label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-check form-switch mt-3">
@@ -150,6 +194,18 @@
             $('#lessonForm [id^="err-"]').text('');
         }
 
+        function setVideoMode(mode) {
+            if (mode === 'file') {
+                $('#modeFile').prop('checked', true);
+                $('#videoUrlSection').hide();
+                $('#videoFileSection').show();
+            } else {
+                $('#modeUrl').prop('checked', true);
+                $('#videoUrlSection').show();
+                $('#videoFileSection').hide();
+            }
+        }
+
         function openCreateModal() {
             isEditMode = false;
             $('#lessonModalLabel').text('➕ Thêm bài học mới');
@@ -159,6 +215,9 @@
             $('#ModuleId').val(currentModuleId);
             $('#Type').val(0);
             $('#IsPublished').prop('checked', true);
+            $('#currentAttachment').hide();
+            $('#currentVideo').hide();
+            setVideoMode('url');
             clearErrors();
             $('#lessonModal').modal('show');
         }
@@ -173,12 +232,37 @@
                 $('#LessonId').val(data.lessonId);
                 $('#Title').val(data.title);
                 $('#Type').val(data.type === 'Video' ? 0 : data.type === 'Text' ? 1 : 2);
-                $('#VideoUrl').val(data.videoUrl || '');
                 $('#HtmlContent').val(data.htmlContent || '');
                 $('#DurationMinutes').val(data.durationMinutes || 0);
                 $('#OrderIndex').val(data.orderIndex);
                 $('#IsPublished').prop('checked', data.isPublished);
                 $('#ModuleId').val(data.moduleId);
+                $('#AttachmentFile').val('');
+                $('#RemoveAttachment').prop('checked', false);
+                $('#VideoFile').val('');
+                $('#RemoveVideo').prop('checked', false);
+
+                // Phân loại video: upload hay URL
+                var isUploadedVideo = data.videoUrl && data.videoUrl.startsWith('/uploads/videos/');
+                if (isUploadedVideo) {
+                    setVideoMode('file');
+                    $('#currentVideoName').text(data.videoUrl.split('/').pop());
+                    $('#currentVideo').show();
+                } else {
+                    setVideoMode('url');
+                    $('#VideoUrl').val(data.videoUrl || '');
+                    $('#currentVideo').hide();
+                }
+
+                // Attachment
+                if (data.attachmentPath) {
+                    $('#currentAttachmentLink').attr('href', data.attachmentPath);
+                    $('#currentAttachmentName').text(data.attachmentPath.split('/').pop());
+                    $('#currentAttachment').show();
+                } else {
+                    $('#currentAttachment').hide();
+                }
+
                 $('#lessonModal').modal('show');
             }).fail(function () {
                 showToast('Không thể tải thông tin bài học!', 'danger');
@@ -189,11 +273,21 @@
             $('#btnSaveLesson').on('click', function () {
                 clearErrors();
                 var url = isEditMode ? '@Url.Action("EditAjax", "Lesson")' : '@Url.Action("CreateAjax", "Lesson")';
+                var formData = new FormData($('#lessonForm')[0]);
+
+                // Checkbox IsPublished cần xử lý riêng vì serialize bỏ qua unchecked
+                if (!$('#IsPublished').is(':checked')) {
+                    formData.set('IsPublished', 'false');
+                } else {
+                    formData.set('IsPublished', 'true');
+                }
 
                 $.ajax({
                     url: url,
                     type: 'POST',
-                    data: $('#lessonForm').serialize(),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function (res) {
                         if (res.success) {
                             $('#lessonModal').modal('hide');
@@ -204,12 +298,19 @@
                                 $('#' + field).addClass('is-invalid');
                                 $('#err-' + field).text(messages.join(', '));
                             });
+                        } else {
+                            showToast(res.message || 'Đã xảy ra lỗi', 'danger');
                         }
                     },
                     error: function (xhr) {
                         showToast('Lỗi: ' + (xhr.status === 403 ? 'Không có quyền' : 'Kết nối'), 'danger');
                     }
                 });
+            });
+
+            // Toggle URL / Upload video
+            $('input[name="VideoInputMode"]').on('change', function () {
+                setVideoMode($(this).val());
             });
 
             $('#searchForm').on('submit', function (e) { e.preventDefault(); loadLessons(1); });
@@ -246,7 +347,7 @@
                     url: '@Url.Action("Index", "Lesson")',
                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
                     data: { moduleId: currentModuleId, searchTerm: searchTerm, page: page },
-                    success: function (html) {  
+                    success: function (html) {
                         $('#lessonTableContainer').html(html);
                     }
                 });
