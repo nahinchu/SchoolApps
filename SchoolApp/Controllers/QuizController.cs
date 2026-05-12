@@ -15,19 +15,12 @@ namespace SchoolApp.Controllers
         {
             _uow = uow;
         }
-
-        #region === DTOs ===
-
        
         public class ReorderDto
         {
             public int QuizId { get; set; }
             public List<int> QuestionIds { get; set; } = new();
         }
-
-        #endregion
-
-        #region === ADMIN: Quiz settings ===
 
         [AuthorizeAdmin]
         public IActionResult Manage(int lessonId)
@@ -137,10 +130,6 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, message = "Đã xóa bài kiểm tra!" });
         }
 
-        #endregion
-
-        #region === ADMIN: Question CRUD ===
-
         [HttpGet]
         [AuthorizeAdmin]
         public IActionResult GetQuestions(int quizId)
@@ -153,7 +142,7 @@ namespace SchoolApp.Controllers
         [AuthorizeAdmin]
         public IActionResult GetQuestion(int id)
         {
-            // ✅ Include Options để chắc chắn có dữ liệu khi modal sửa câu hỏi mở
+      
             var question = _uow.Questions.GetQuestionWithOptions(id);
             if (question == null) return NotFound();
 
@@ -231,16 +220,14 @@ namespace SchoolApp.Controllers
             if (question == null)
                 return Json(new { success = false, message = "Không tìm thấy câu hỏi" });
 
-            // Update các trường cơ bản
+
             question.Content = dto.Content.Trim();
             question.Type = (QuestionType)dto.Type;
             question.Points = dto.Points;
             question.Explanation = dto.Explanation;
 
-            // ============================================================
-            // ✅ UPSERT options thay vì delete-all-then-recreate
+            // UPSERT options thay vì delete-all-then-recreate
             // Tránh vi phạm FK với QuizAnswers từ các lượt làm bài cũ
-            // ============================================================
             var validIncoming = dto.Options
                 .Where(o => !string.IsNullOrWhiteSpace(o.Content))
                 .ToList();
@@ -362,14 +349,12 @@ namespace SchoolApp.Controllers
             if (!validOptions.Any(o => o.IsCorrect))
                 return "Cần đánh dấu ít nhất 1 đáp án đúng";
 
-            // ✅ Dùng enum thay vì magic number
             var type = (QuestionType)dto.Type;
             int correctCount = validOptions.Count(o => o.IsCorrect);
 
             if (type != QuestionType.MultiChoice && correctCount > 1)
                 return "Loại câu hỏi này chỉ được có 1 đáp án đúng";
 
-            // ✅ TrueFalse phải đúng 2 đáp án
             if (type == QuestionType.TrueFalse && validOptions.Count != 2)
                 return "Câu hỏi Đúng/Sai phải có đúng 2 đáp án";
 
@@ -416,9 +401,6 @@ namespace SchoolApp.Controllers
 
             return Json(new { success = true, message = "Đã lưu câu hỏi vào ngân hàng!" });
         }
-        #endregion
-
-        #region === STUDENT: Take Quiz ===
 
         [AuthorizeUser]
         public IActionResult Take(int id) // id = QuizId
@@ -429,22 +411,16 @@ namespace SchoolApp.Controllers
             var quiz = _uow.Quizzes.GetQuizWithQuestions(id);
             if (quiz == null || !quiz.IsPublished) return NotFound();
 
-            // ============================================================
-            // 🚧 ENROLLMENT CHECK (tuỳ chỉnh theo project của bạn)
-            // ============================================================
-            // Bỏ comment khối dưới khi đã có IEnrollmentRepository:
-            //
-            // var lesson = _uow.Lessons.GetById(quiz.LessonId);
-            // if (lesson?.Module == null) return NotFound();
-            // var enrolled = _uow.Enrollments.IsEnrolled(studentId.Value, lesson.Module.CourseId);
-            // if (!enrolled)
-            // {
-            //     TempData["Error"] = "Bạn cần đăng ký khoá học trước khi làm bài kiểm tra";
-            //     return RedirectToAction("Detail", "Course", new { id = lesson.Module.CourseId });
-            // }
-            // ============================================================
-
-            // ✅ Check số lần làm
+            var lesson = _uow.Lessons.GetById(quiz.LessonId);
+            if (lesson?.Module == null) return NotFound();
+            var enrolled = _uow.Enrollments.IsEnrolled(studentId.Value, lesson.Module.CourseId);
+            if (!enrolled)
+            {
+                TempData["Error"] = "Bạn cần đăng ký khoá học trước khi làm bài kiểm tra";
+                return RedirectToAction("Detail", "Course", new { id = lesson.Module.CourseId });
+            }
+         
+            //  Check số lần làm
             int attemptCount = _uow.QuizAttempts.GetAttemptCount(id, studentId.Value);
 
             if (attemptCount > 0 && !quiz.AllowRetry)
@@ -459,7 +435,7 @@ namespace SchoolApp.Controllers
                 return RedirectToAction("MyAttempts", new { quizId = id });
             }
 
-            // ✅ Lưu thời gian bắt đầu vào session để verify ở SubmitQuiz
+            // Lưu thời gian bắt đầu vào session để verify ở SubmitQuiz
             HttpContext.Session.SetString(
                 $"qz_start_{id}_{studentId}",
                 DateTime.UtcNow.ToString("o"));
@@ -652,6 +628,5 @@ namespace SchoolApp.Controllers
             return View(attempts);
         }
 
-        #endregion
     }
 }

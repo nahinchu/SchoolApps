@@ -22,7 +22,7 @@ namespace SchoolApp.Controllers
             var studentId = HttpContext.Session.GetInt32("StudentId");
             if (studentId == null) return RedirectToAction("Login", "Account");
 
-            // 1) Phải đăng ký mới được học
+            //Phải đăng ký mới được học
             var isEnrolled = _uow.Enrollments.IsEnrolled(studentId.Value, id);
             if (!isEnrolled)
             {
@@ -30,11 +30,11 @@ namespace SchoolApp.Controllers
                 return RedirectToAction("Index", "Course");
             }
 
-            // 2) Lấy course với full tree (Modules → Lessons → Quiz)
+            //Lấy course với full tree (Modules → Lessons → Quiz)
             var course = _uow.Courses.GetCourseWithFullTree(id);
             if (course == null) return NotFound();
 
-            // 3) Chỉ giữ những module/lesson đã publish
+            // Chỉ giữ những module/lesson đã publish
             var visibleModules = course.Modules
                 .Where(m => m.IsPublished)
                 .OrderBy(m => m.OrderIndex)
@@ -48,13 +48,13 @@ namespace SchoolApp.Controllers
             }
             course.Modules = visibleModules;
 
-            // 4) Tải tiến độ của học viên trong khoá này
+            //Tải tiến độ của học viên trong khoá này
             var progressList = _uow.LessonProgresses
                 .GetByStudentAndCourse(studentId.Value, id)
                 .ToList();
             var progressMap = progressList.ToDictionary(p => p.LessonId);
 
-            // 5) Xác định lesson đang chọn (ưu tiên lessonId từ URL, không thì lesson đầu tiên)
+            //Xác định lesson đang chọn (ưu tiên lessonId từ URL, không thì lesson đầu tiên)
             var allLessons = visibleModules.SelectMany(m => m.Lessons).ToList();
             Lesson? currentLesson = null;
             if (lessonId.HasValue)
@@ -63,7 +63,7 @@ namespace SchoolApp.Controllers
             }
             currentLesson ??= allLessons.FirstOrDefault();
 
-            // 6) Tự động tạo/cập nhật LessonProgress khi truy cập
+            //Tự động tạo/cập nhật LessonProgress khi truy cập
             if (currentLesson != null)
             {
                 if (progressMap.TryGetValue(currentLesson.LessonId, out var p))
@@ -91,7 +91,7 @@ namespace SchoolApp.Controllers
                 _uow.SaveChanges();
             }
 
-            // 7) Tính prev/next để render nút điều hướng
+            //Tính prev/next để render nút điều hướng
             int currentIndex = currentLesson != null
                 ? allLessons.FindIndex(l => l.LessonId == currentLesson.LessonId)
                 : -1;

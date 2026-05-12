@@ -29,7 +29,15 @@
             {
                 <tr>
                     <td class="text-center fw-bold">@item.OrderIndex</td>
-                    <td><strong>@item.Title</strong></td>
+                    <td>
+                        <strong>@item.Title</strong>
+                        @if (!string.IsNullOrEmpty(item.AttachmentPath))
+                        {
+                            <a href="@item.AttachmentPath" target="_blank" class="ms-1 text-secondary" title="Tệp đính kèm">
+                                <i class="bi bi-paperclip"></i>
+                            </a>
+                        }
+                    </td>
                     <td>
                         @switch (item.Type)
                         {
