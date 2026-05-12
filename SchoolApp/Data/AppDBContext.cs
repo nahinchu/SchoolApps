@@ -21,6 +21,7 @@ namespace SchoolApp.Data
         public DbSet<LessonProgress> LessonProgresses { get; set; }
         public DbSet<QuizAttempt> QuizAttempts { get; set; }
         public DbSet<QuizAnswer> QuizAnswers { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,7 +39,7 @@ namespace SchoolApp.Data
                 .WithMany(c => c.Enrollments)
                 .HasForeignKey(e => e.CourseId)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
             modelBuilder.Entity<Module>(entity =>
             {
                 // Sắp xếp Module theo Course + thứ tự
@@ -52,7 +53,7 @@ namespace SchoolApp.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-         
+
             modelBuilder.Entity<Lesson>(entity =>
             {
                 entity.HasIndex(l => new { l.ModuleId, l.OrderIndex })
@@ -79,7 +80,7 @@ namespace SchoolApp.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-           
+
             modelBuilder.Entity<Question>(entity =>
             {
                 entity.HasIndex(q => new { q.QuizId, q.OrderIndex })
@@ -91,7 +92,7 @@ namespace SchoolApp.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-          
+
             modelBuilder.Entity<AnswerOption>(entity =>
             {
                 entity.HasIndex(a => new { a.QuestionId, a.OrderIndex })
@@ -103,7 +104,7 @@ namespace SchoolApp.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-           
+
             modelBuilder.Entity<LessonProgress>(entity =>
             {
                 // Đã có [Index] attribute trên class, nhưng thêm Fluent API cho chắc
@@ -122,7 +123,7 @@ namespace SchoolApp.Data
                       .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
             });
 
-          
+
             modelBuilder.Entity<QuizAttempt>(entity =>
             {
                 // Index để query nhanh: lấy tất cả attempt của 1 student trong 1 quiz
@@ -140,7 +141,7 @@ namespace SchoolApp.Data
                       .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
             });
 
-         
+
             modelBuilder.Entity<QuizAnswer>(entity =>
             {
                 // 1 attempt + 1 question = 1 answer (tránh trùng)
@@ -161,6 +162,23 @@ namespace SchoolApp.Data
                       .WithMany()
                       .HasForeignKey(qa => qa.SelectedOptionId)
                       .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
+            });
+
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasIndex(p => p.OrderCode)
+                      .IsUnique()
+                      .HasDatabaseName("IX_Payment_OrderCode");
+
+                entity.HasOne(p => p.Student)
+                      .WithMany()
+                      .HasForeignKey(p => p.StudentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(p => p.Course)
+                      .WithMany()
+                      .HasForeignKey(p => p.CourseId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

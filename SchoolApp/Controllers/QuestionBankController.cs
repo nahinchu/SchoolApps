@@ -46,7 +46,7 @@ public class QuestionBankController : Controller
         });
     }
 
-    // SAVE — dùng lại QuestionDto + AnswerOption
+    
     [HttpPost, ValidateAntiForgeryToken]
     public IActionResult Save([FromBody] QuestionDto dto)
     {      
@@ -78,7 +78,6 @@ public class QuestionBankController : Controller
         }
         else
         {
-            // UPDATE — UPSERT options (y chang QuizController.EditQuestion)
             var existing = _uow.Questions.GetQuestionWithOptions(dto.QuestionId);
             if (existing == null || existing.QuizId != null)
                 return Json(new { success = false, message = "Không tìm thấy câu hỏi trong ngân hàng" });
@@ -176,7 +175,7 @@ public class QuestionBankController : Controller
         return Json(list);
     }
 
-    // ── Helper UPSERT options ─────────────────────────────────────────────
+
     private void UpsertOptions(Question question, List<OptionDto> incoming)
     {
         var valid = incoming.Where(o => !string.IsNullOrWhiteSpace(o.Content)).ToList();
