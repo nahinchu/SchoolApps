@@ -21,6 +21,8 @@ namespace SchoolApp
 
             builder.Services.AddSingleton<IPasswordService, BCryptPasswordService>();
 
+            builder.Services.AddHttpClient<PayOSService>();
+
             var app = builder.Build();
 
 

@@ -21,6 +21,7 @@ namespace SchoolApp.Data
         public DbSet<LessonProgress> LessonProgresses { get; set; }
         public DbSet<QuizAttempt> QuizAttempts { get; set; }
         public DbSet<QuizAnswer> QuizAnswers { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -161,6 +162,23 @@ namespace SchoolApp.Data
                       .WithMany()
                       .HasForeignKey(qa => qa.SelectedOptionId)
                       .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
+            });
+
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasIndex(p => p.OrderCode)
+                      .IsUnique()
+                      .HasDatabaseName("IX_Payment_OrderCode");
+
+                entity.HasOne(p => p.Student)
+                      .WithMany()
+                      .HasForeignKey(p => p.StudentId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(p => p.Course)
+                      .WithMany()
+                      .HasForeignKey(p => p.CourseId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

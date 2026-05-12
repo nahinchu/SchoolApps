@@ -294,8 +294,16 @@
 
             // ====== ĐĂNG KÝ KHÓA HỌC (Student) ======
             $(document).on('click', '.btn-register-course', function () {
-                if (!confirm('Bạn có chắc muốn đăng ký khóa học này?')) return;
                 var courseId = $(this).data('id');
+                var fee = parseFloat($(this).data('fee')) || 0;
+
+                if (fee > 0) {
+                    // Khóa học có phí → chuyển sang trang thanh toán
+                    window.location.href = '/Payment/Checkout/' + courseId;
+                    return;
+                }
+
+                if (!confirm('Bạn có chắc muốn đăng ký khóa học miễn phí này?')) return;
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
                 $.ajax({
                     url: '@Url.Action("Register", "Enrollment")',

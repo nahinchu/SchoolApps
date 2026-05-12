@@ -6,7 +6,8 @@ using SchoolApp.Repositories.EnrollmentRepository;
 using SchoolApp.Repositories.LessonRepository;
 using SchoolApp.Repositories.ModuleRepository;
 using SchoolApp.Repositories.StudentRepository;
-using SchoolApp.Repositories.LearnRepository;   
+using SchoolApp.Repositories.LearnRepository;
+using SchoolApp.Repositories.PaymentRepository;
 using System.Reflection;
 
 namespace SchoolApp.UnitOfWork
@@ -23,8 +24,9 @@ namespace SchoolApp.UnitOfWork
         public IQuestionRepository Questions { get; private set; }
         public IAnswerOptionRepository AnswerOptions { get; private set; }
         public ILessonProgressRepository LessonProgresses { get; private set; }
-        public IQuizAttemptRepository QuizAttempts { get; }   
+        public IQuizAttemptRepository QuizAttempts { get; }
         public IQuizAnswerRepository  QuizAnswers  { get; }
+        public IPaymentRepository Payments { get; private set; }
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
@@ -39,6 +41,7 @@ namespace SchoolApp.UnitOfWork
             LessonProgresses = new LessonProgressRepository(context);
             QuizAttempts = new QuizAttemptRepository(context);
             QuizAnswers = new QuizAnswerRepository(context);
+            Payments = new PaymentRepository(context);
         }
 
         public int SaveChanges()
