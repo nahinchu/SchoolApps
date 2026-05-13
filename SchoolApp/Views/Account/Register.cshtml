@@ -3,202 +3,323 @@
     ViewData["Title"] = "Đăng ký tài khoản";
 }
 
-<!-- Background -->
-<div style="
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(100vh - 66px - 200px);
-    position: relative;
-    padding: 2rem 1rem;
-">
-<!-- Vòng trang trí góc -->
-<div style="
-        position:absolute; top:-80px; right:-80px;
-        width:300px; height:300px;
-        background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
-        pointer-events:none;
-    "></div>
-<div style="
-        position:absolute; bottom:-60px; left:-60px;
-        width:250px; height:250px;
-        background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
-        pointer-events:none;
-    "></div>
-
-<!-- Card -->
-<div class="sa-card" style="width:100%; max-width:420px; position:relative;">
-
-    <!-- Header — nền vàng gold giống Login -->
-    <div style="
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-            border-radius: 12px 12px 0 0;
-            padding: 2rem 1.5rem 1.75rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        ">
-        <!-- Logo -->
-        <div style="
-                width: 64px; height: 64px;
-                background: var(--navy);
-                border-radius: 16px;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 2rem;
-                margin: 0 auto .75rem;
-                box-shadow: 0 8px 24px rgba(13,27,42,0.3);
-                position: relative;
-            ">
-            📝
-        </div>
-
-        <h2 style="
-                font-family: var(--font-display);
-                font-size: 1.6rem;
-                font-weight: 700;
-                color: var(--navy);
-                margin-bottom: .2rem;
-            ">
-            Đăng ký
-        </h2>
-        <p style="color: rgba(13,27,42,0.6); font-size:.85rem;">
-            Tạo tài khoản học viên mới
-        </p>
-    </div>
-
-    <!-- Body -->
-    <div class="sa-card-body">
-
-        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
-        {
-            var generalErrors = ViewData.ModelState[""]?.Errors;
-            @if (generalErrors != null && generalErrors.Count > 0)
-            {
-                <div class="sa-alert sa-alert-danger" style="margin-bottom:1rem;">
-                    <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
-                    <span>@generalErrors[0].ErrorMessage</span>
-                </div>
-            }
+@section Styles {
+    <style>
+        body {
+            background: var(--navy-light) !important;
         }
 
-        <form asp-action="Register" method="post">
-            @Html.AntiForgeryToken()
+        .sa-main {
+            padding: 0 !important;
+        }
 
-            @* Họ tên *@
-            <div class="sa-form-group">
-                <label class="sa-label" asp-for="FullName">
-                    Họ và tên <span style="color:var(--danger)">*</span>
-                </label>
-                <input class="sa-input" asp-for="FullName"
-                       placeholder="Nguyễn Văn A"
-                       autocomplete="name" />
-                <span asp-validation-for="FullName"
-                      style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
-            </div>
+            .sa-main > .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+    </style>
+}
 
-            @* Email *@
-            <div class="sa-form-group">
-                <label class="sa-label" asp-for="Email">
-                    Email <span style="color:var(--danger)">*</span>
-                </label>
-                <input class="sa-input" asp-for="Email"
-                       type="email" placeholder="example@email.com"
-                       autocomplete="email" />
-                <span asp-validation-for="Email"
-                      style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
-            </div>
+<div style="
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 66px);
+    background: var(--navy-light);
+">
+    <!-- ===== Left: Decorative Panel ===== -->
+    <div style="
+        background: linear-gradient(135deg, rgb(201,168,76) 0%, rgb(232,201,110) 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 2.5rem 2.5rem;
+        position: relative;
+        overflow: hidden;
+    ">
+        <!-- Decorative circles -->
+        <div style="
+            position:absolute; top:-100px; left:-100px;
+            width:350px; height:350px;
+            border-radius:50%;
+            background: radial-gradient(circle, rgba(13,27,42,0.1) 0%, transparent 70%);
+            pointer-events:none;
+        "></div>
+        <div style="
+            position:absolute; bottom:-80px; right:-80px;
+            width:280px; height:280px;
+            border-radius:50%;
+            background: radial-gradient(circle, rgba(13,27,42,0.07) 0%, transparent 70%);
+            pointer-events:none;
+        "></div>
+        <div style="
+            position:absolute; top:40%; left:-40px;
+            width:180px; height:180px;
+            border-radius:50%;
+            border: 1px solid rgba(13,27,42,0.12);
+            pointer-events:none;
+        "></div>
 
-            @* Mật khẩu *@
-            <div class="sa-form-group">
-                <label class="sa-label" asp-for="Password">
-                    Mật khẩu <span style="color:var(--danger)">*</span>
-                </label>
-                <div style="position:relative;">
-                    <input class="sa-input" asp-for="Password" id="registerPassword"
-                           type="password" placeholder="Ít nhất 6 ký tự"
-                           autocomplete="new-password"
-                           style="padding-right: 46px;" />
-                    <button type="button"
-                            onclick="togglePassword('registerPassword', this)"
-                            style="
-                                    position:absolute; right:1px; top:1px; bottom:1px;
-                                    width:42px; border:none; background:transparent;
-                                    color:var(--text-light); cursor:pointer;
-                                    display:flex; align-items:center; justify-content:center;
-                                    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-                                    transition: color var(--transition);
-                                ">
-                        <i class="bi bi-eye"></i>
-                    </button>
+        <!-- Logo + Brand -->
+        <div style="
+            width: 80px; height: 80px;
+            background: var(--navy-light);
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 12px 32px rgba(13,27,42,0.25);
+        ">
+            🎓
+        </div>
+
+        <h1 style="
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: .35rem;
+            text-align: center;
+        ">
+            Bắt đầu hành trình
+        </h1>
+
+        <p style="
+            color: rgba(13,27,42,0.65);
+            font-size: .95rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            max-width: 280px;
+            line-height: 1.7;
+        ">Tạo tài khoản miễn phí và khám phá hàng trăm khoá học chất lượng.</p>
+
+        <!-- Steps -->
+        <div style="display:flex; flex-direction:column; gap:.75rem; width:100%; max-width:280px;">
+            <div style="display:flex; align-items:flex-start; gap:.75rem;">
+                <div style="
+                    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+                    background: var(--navy-light);
+                    display:flex; align-items:center; justify-content:center;
+                    color:var(--gold); font-size:.78rem; font-weight:700;
+                    margin-top:1px;
+                ">
+                    1
                 </div>
-                <span asp-validation-for="Password"
-                      style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
-            </div>
-
-            @* Xác nhận mật khẩu *@
-            <div class="sa-form-group">
-                <label class="sa-label" asp-for="ConfirmPassword">
-                    Xác nhận mật khẩu <span style="color:var(--danger)">*</span>
-                </label>
-                <div style="position:relative;">
-                    <input class="sa-input" asp-for="ConfirmPassword" id="registerConfirmPassword"
-                           type="password" placeholder="Nhập lại mật khẩu"
-                           autocomplete="new-password"
-                           style="padding-right: 46px;" />
-                    <button type="button"
-                            onclick="togglePassword('registerConfirmPassword', this)"
-                            style="
-                                    position:absolute; right:1px; top:1px; bottom:1px;
-                                    width:42px; border:none; background:transparent;
-                                    color:var(--text-light); cursor:pointer;
-                                    display:flex; align-items:center; justify-content:center;
-                                    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-                                    transition: color var(--transition);
-                                ">
-                        <i class="bi bi-eye"></i>
-                    </button>
+                <div>
+                    <div style="color:var(--navy); font-size:.88rem; font-weight:600;">Điền thông tin đăng ký</div>
+                    <div style="color:rgba(13,27,42,0.5); font-size:.8rem;">Email, mật khẩu và tên của bạn</div>
                 </div>
-                <span asp-validation-for="ConfirmPassword"
-                      style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
             </div>
-
-            @* Số điện thoại *@
-            <div class="sa-form-group">
-                <label class="sa-label" asp-for="Phone">
-                    Số điện thoại
-                </label>
-                <input class="sa-input" asp-for="Phone"
-                       type="tel" placeholder="0901234567"
-                       autocomplete="tel" />
-                <span asp-validation-for="Phone"
-                      style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+            <div style="display:flex; align-items:flex-start; gap:.75rem;">
+                <div style="
+                    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+                    background: rgba(13,27,42,0.18);
+                    display:flex; align-items:center; justify-content:center;
+                    color:var(--navy); font-size:.78rem; font-weight:700;
+                    margin-top:1px;
+                ">
+                    2
+                </div>
+                <div>
+                    <div style="color:rgba(13,27,42,0.8); font-size:.88rem; font-weight:600;">Đăng nhập và khám phá</div>
+                    <div style="color:rgba(13,27,42,0.5); font-size:.8rem;">Duyệt khoá học phù hợp với bạn</div>
+                </div>
             </div>
-
-            @* Ngày sinh *@
-            <div class="sa-form-group" style="margin-bottom:1.5rem;">
-                <label class="sa-label" asp-for="DateOfBirth">
-                    Ngày sinh
-                </label>
-                <input class="sa-input" asp-for="DateOfBirth"
-                       type="date"
-                       autocomplete="bday" />
-                <span asp-validation-for="DateOfBirth"
-                      style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+            <div style="display:flex; align-items:flex-start; gap:.75rem;">
+                <div style="
+                    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+                    background: rgba(13,27,42,0.18);
+                    display:flex; align-items:center; justify-content:center;
+                    color:var(--navy); font-size:.78rem; font-weight:700;
+                    margin-top:1px;
+                ">
+                    3
+                </div>
+                <div>
+                    <div style="color:rgba(13,27,42,0.8); font-size:.88rem; font-weight:600;">Học & nhận chứng chỉ</div>
+                    <div style="color:rgba(13,27,42,0.5); font-size:.8rem;">Hoàn thành khoá học theo tốc độ của bạn</div>
+                </div>
             </div>
+        </div>
 
-            <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
-                <i class="bi bi-person-plus"></i> Đăng ký
-            </button>
-        </form>
+        <div style="
+            width:100%; max-width:280px;
+            height:1px;
+            background: rgba(13,27,42,0.15);
+            margin: 1.25rem 0 .75rem;
+        "></div>
 
-        <p style="text-align:center; margin-top:1.25rem; font-size:.82rem; color:var(--text-light);">
-            Đã có tài khoản?
-            <a asp-controller="Account" asp-action="Login"
-               style="color:var(--gold); font-weight:600;">Đăng nhập</a>
+        <p style="color:rgba(13,27,42,0.45); font-size:.78rem; text-align:center;">
+            © 2026 SchoolApp · Học không giới hạn
         </p>
     </div>
 
-</div>
+    <!-- ===== Right: Form ===== -->
+    <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 2rem;
+        position: relative;
+    ">
+        <!-- Subtle bg decoration -->
+        <div style="
+            position:absolute; bottom:-60px; right:-60px;
+            width:280px; height:280px;
+            border-radius:50%;
+            background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+            pointer-events:none;
+        "></div>
+
+        <!-- Card -->
+        <div class="sa-card" style="width:100%; max-width:420px; position:relative;">
+
+            <!-- Header -->
+            <div style="
+                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+                border-radius: 12px 12px 0 0;
+                padding: 1.75rem 1.5rem 1.5rem;
+                text-align: center;
+            ">
+                <h2 style="
+                    font-family: var(--font-display);
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    color: var(--navy);
+                    margin-bottom: .2rem;
+                ">
+                    Đăng ký
+                </h2>
+                <p style="color: rgba(13,27,42,0.6); font-size:.85rem;">
+                    Tạo tài khoản học viên mới
+                </p>
+            </div>
+
+            <!-- Body -->
+            <div class="sa-card-body">
+
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    var generalErrors = ViewData.ModelState[""]?.Errors;
+                    @if (generalErrors != null && generalErrors.Count > 0)
+                    {
+                        <div class="sa-alert sa-alert-danger" style="margin-bottom:1rem;">
+                            <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
+                            <span>@generalErrors[0].ErrorMessage</span>
+                        </div>
+                    }
+                }
+
+                <form asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="FullName">
+                            Họ và tên <span style="color:var(--danger)">*</span>
+                        </label>
+                        <input class="sa-input" asp-for="FullName"
+                               placeholder="Nguyễn Văn A"
+                               autocomplete="name" />
+                        <span asp-validation-for="FullName"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="Email">
+                            Email <span style="color:var(--danger)">*</span>
+                        </label>
+                        <input class="sa-input" asp-for="Email"
+                               type="email" placeholder="example@email.com"
+                               autocomplete="email" />
+                        <span asp-validation-for="Email"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="Password">
+                            Mật khẩu <span style="color:var(--danger)">*</span>
+                        </label>
+                        <div style="position:relative;">
+                            <input class="sa-input" asp-for="Password" id="registerPassword"
+                                   type="password" placeholder="Ít nhất 6 ký tự"
+                                   autocomplete="new-password"
+                                   style="padding-right: 46px;" />
+                            <button type="button"
+                                    onclick="togglePassword('registerPassword', this)"
+                                    style="
+                                        position:absolute; right:1px; top:1px; bottom:1px;
+                                        width:42px; border:none; background:transparent;
+                                        color:var(--text-light); cursor:pointer;
+                                        display:flex; align-items:center; justify-content:center;
+                                        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+                                        transition: color var(--transition);
+                                    ">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="ConfirmPassword">
+                            Xác nhận mật khẩu <span style="color:var(--danger)">*</span>
+                        </label>
+                        <div style="position:relative;">
+                            <input class="sa-input" asp-for="ConfirmPassword" id="registerConfirmPassword"
+                                   type="password" placeholder="Nhập lại mật khẩu"
+                                   autocomplete="new-password"
+                                   style="padding-right: 46px;" />
+                            <button type="button"
+                                    onclick="togglePassword('registerConfirmPassword', this)"
+                                    style="
+                                        position:absolute; right:1px; top:1px; bottom:1px;
+                                        width:42px; border:none; background:transparent;
+                                        color:var(--text-light); cursor:pointer;
+                                        display:flex; align-items:center; justify-content:center;
+                                        border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+                                        transition: color var(--transition);
+                                    ">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="ConfirmPassword"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="Phone">Số điện thoại</label>
+                        <input class="sa-input" asp-for="Phone"
+                               type="tel" placeholder="0901234567"
+                               autocomplete="tel" />
+                        <span asp-validation-for="Phone"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group" style="margin-bottom:1.5rem;">
+                        <label class="sa-label" asp-for="DateOfBirth">Ngày sinh</label>
+                        <input class="sa-input" asp-for="DateOfBirth"
+                               type="date"
+                               autocomplete="bday" />
+                        <span asp-validation-for="DateOfBirth"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
+                        <i class="bi bi-person-plus"></i> Đăng ký
+                    </button>
+                </form>
+
+                <p style="text-align:center; margin-top:1.25rem; font-size:.82rem; color:var(--text-light);">
+                    Đã có tài khoản?
+                    <a asp-controller="Account" asp-action="Login"
+                       style="color:var(--gold); font-weight:600;">Đăng nhập</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 @section Scripts {

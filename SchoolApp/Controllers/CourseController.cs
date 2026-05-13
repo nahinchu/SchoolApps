@@ -25,6 +25,16 @@ namespace SchoolApp.Controllers
                 .ToPagedList(page, pageSize);
 
             ViewData["SearchTerm"] = searchTerm;
+
+            var studentId = HttpContext.Session.GetInt32("StudentId");
+            if (studentId.HasValue)
+            {
+                var enrolledIds = _uow.Enrollments.GetByStudent(studentId.Value)
+                    .Select(e => e.CourseId)
+                    .ToHashSet();
+                ViewBag.EnrolledCourseIds = enrolledIds;
+            }
+
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView("_CourseTable", result);
@@ -158,7 +168,7 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, message = "Cập nhật thành công!" });
         }
 
-        
+
         [HttpGet]
         [AuthorizeUser]
         public IActionResult GetCourse(int id)

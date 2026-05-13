@@ -6,7 +6,6 @@ using SchoolApp.UnitOfWork;
 
 namespace SchoolApp.Controllers
 {
-    [AuthorizeUser]
     public class LearnController : Controller
     {
         private readonly IUnitOfWork _uow;
@@ -20,15 +19,6 @@ namespace SchoolApp.Controllers
         public IActionResult Course(int id, int? lessonId)
         {
             var studentId = HttpContext.Session.GetInt32("StudentId");
-            if (studentId == null) return RedirectToAction("Login", "Account");
-
-            //Phải đăng ký mới được học
-            var isEnrolled = _uow.Enrollments.IsEnrolled(studentId.Value, id);
-            if (!isEnrolled)
-            {
-                TempData["Error"] = "Bạn chưa đăng ký khóa học này";
-                return RedirectToAction("Index", "Course");
-            }
 
             //Lấy course với full tree (Modules → Lessons → Quiz)
             var course = _uow.Courses.GetCourseWithFullTree(id);
@@ -48,6 +38,31 @@ namespace SchoolApp.Controllers
             }
             course.Modules = visibleModules;
 
+            var allLessons = visibleModules.SelectMany(m => m.Lessons).ToList();
+
+            // Chưa đăng nhập → hiện overlay yêu cầu đăng nhập
+            if (studentId == null)
+            {
+                ViewData["AccessState"] = "guest";
+                ViewData["CurrentLesson"] = allLessons.FirstOrDefault();
+                ViewData["ProgressMap"] = new Dictionary<int, LessonProgress>();
+                ViewData["TotalLessons"] = allLessons.Count;
+                ViewData["CompletedCount"] = 0;
+                return View(course);
+            }
+
+            // Đã đăng nhập nhưng chưa đăng ký → hiện overlay yêu cầu đăng ký
+            var isEnrolled = _uow.Enrollments.IsEnrolled(studentId.Value, id);
+            if (!isEnrolled)
+            {
+                ViewData["AccessState"] = "not_enrolled";
+                ViewData["CurrentLesson"] = allLessons.FirstOrDefault();
+                ViewData["ProgressMap"] = new Dictionary<int, LessonProgress>();
+                ViewData["TotalLessons"] = allLessons.Count;
+                ViewData["CompletedCount"] = 0;
+                return View(course);
+            }
+
             //Tải tiến độ của học viên trong khoá này
             var progressList = _uow.LessonProgresses
                 .GetByStudentAndCourse(studentId.Value, id)
@@ -55,7 +70,6 @@ namespace SchoolApp.Controllers
             var progressMap = progressList.ToDictionary(p => p.LessonId);
 
             //Xác định lesson đang chọn (ưu tiên lessonId từ URL, không thì lesson đầu tiên)
-            var allLessons = visibleModules.SelectMany(m => m.Lessons).ToList();
             Lesson? currentLesson = null;
             if (lessonId.HasValue)
             {
@@ -112,6 +126,7 @@ namespace SchoolApp.Controllers
 
         // POST: /Learn/MarkComplete
         [HttpPost]
+        [AuthorizeUser]
         [ValidateAntiForgeryToken]
         public IActionResult MarkComplete(int lessonId)
         {
