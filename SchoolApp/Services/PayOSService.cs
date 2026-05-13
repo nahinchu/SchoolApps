@@ -21,7 +21,7 @@ namespace SchoolApp.Services
             _apiKey = section["ApiKey"]!;
             _checksumKey = section["ChecksumKey"]!;
         }
-
+            
         private string SignPayload(string data)
         {
             var key = Encoding.UTF8.GetBytes(_checksumKey);
@@ -44,7 +44,7 @@ namespace SchoolApp.Services
             var body = new PayOSCreateRequest
             {
                 orderCode = orderCode,
-                amount = amount,
+                amount = amount,    
                 description = description,
                 returnUrl = returnUrl,
                 cancelUrl = cancelUrl,

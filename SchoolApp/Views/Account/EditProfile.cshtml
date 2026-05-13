@@ -1,0 +1,278 @@
+﻿@model SchoolApp.DTOs.EditProfileViewModel
+@{
+    ViewData["Title"] = "Sửa thông tin cá nhân";
+    var pwdErrorsJson = TempData["PwdErrors"]?.ToString();
+    var pwdErrors = pwdErrorsJson != null
+        ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(pwdErrorsJson)
+        : null;
+}
+
+<div style="
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;S
+    min-height: calc(100vh - 66px - 200px);
+    position: relative;
+    padding: 2rem 1rem;
+">
+
+    <!-- Vòng trang trí -->
+    <div style="
+    position:absolute; top:-80px; right:-80px;
+    width:300px; height:300px;
+    background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+    pointer-events:none;
+"></div>
+    <div style="
+    position:absolute; bottom:-60px; left:-60px;
+    width:250px; height:250px;
+    background: radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%);
+    pointer-events:none;
+"></div>
+
+    <div class="sa-card" style="width:100%; max-width:520px; position:relative;">
+
+        <!-- Header -->
+        <div style="
+        background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+        border-radius: 12px 12px 0 0;
+        padding: 2rem 1.5rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    ">
+            <div style="
+            width: 64px; height: 64px;
+            background: var(--navy);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto .75rem;
+            box-shadow: 0 8px 24px rgba(13,27,42,0.3);
+        ">
+                👤
+            </div>
+            <h2 style="
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: .2rem;
+        ">
+                Tài khoản của tôi
+            </h2>
+            <p style="color: rgba(13,27,42,0.6); font-size:.85rem; margin-bottom: 1.25rem;">
+                Cập nhật thông tin cá nhân và mật khẩu
+            </p>
+
+            <!-- Tabs -->
+            <div style="display: flex; gap: 0; margin-top: .5rem;">
+                <button type="button" id="tab-profile"
+                        onclick="switchTab('profile')"
+                        style="
+                    flex: 1; border: none; cursor: pointer; padding: .65rem 1rem;
+                    font-weight: 600; font-size: .88rem;
+                    background: var(--navy); color: var(--gold);
+                    border-radius: 8px 0 0 0;
+                    transition: opacity .2s;
+                ">
+                    <i class="bi bi-person-fill"></i> Thông tin
+                </button>
+                <button type="button" id="tab-password"
+                        onclick="switchTab('password')"
+                        style="
+                    flex: 1; border: none; cursor: pointer; padding: .65rem 1rem;
+                    font-weight: 600; font-size: .88rem;
+                    background: rgba(13,27,42,0.12); color: rgba(13,27,42,0.65);
+                    border-radius: 0 8px 0 0;
+                    transition: opacity .2s;
+                ">
+                    <i class="bi bi-shield-lock-fill"></i> Đổi mật khẩu
+                </button>
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="sa-card-body">
+
+            <!-- Panel: Thông tin cá nhân -->
+            <div id="panel-profile">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    var generalErrors = ViewData.ModelState[""]?.Errors;
+                    if (generalErrors != null && generalErrors.Count > 0)
+                    {
+                        <div class="sa-alert sa-alert-danger" style="margin-bottom:1rem;">
+                            <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
+                            <span>@generalErrors[0].ErrorMessage</span>
+                        </div>
+                    }
+                }
+
+                <form asp-action="EditProfile" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="FullName">
+                            Họ và tên <span style="color:var(--danger)">*</span>
+                        </label>
+                        <input class="sa-input" asp-for="FullName"
+                               placeholder="Nguyễn Văn A"
+                               autocomplete="name" />
+                        <span asp-validation-for="FullName"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="Phone">Số điện thoại</label>
+                        <input class="sa-input" asp-for="Phone"
+                               type="tel" placeholder="0901234567"
+                               autocomplete="tel" />
+                        <span asp-validation-for="Phone"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" asp-for="DateOfBirth">Ngày sinh</label>
+                        <input class="sa-input" asp-for="DateOfBirth"
+                               type="date" autocomplete="bday" />
+                        <span asp-validation-for="DateOfBirth"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <div class="sa-form-group" style="margin-bottom:1.5rem;">
+                        <label class="sa-label" asp-for="Address">Địa chỉ</label>
+                        <textarea class="sa-input" asp-for="Address"
+                                  placeholder="123 Đường ABC, TP.Đà Nẵng"
+                                  rows="2"
+                                  style="resize:vertical;"></textarea>
+                        <span asp-validation-for="Address"
+                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                    </div>
+
+                    <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
+                        <i class="bi bi-check-lg"></i> Lưu thay đổi
+                    </button>
+                </form>
+            </div>
+
+            <!-- Panel: Đổi mật khẩu -->
+            <div id="panel-password" style="display:none;">
+                <form asp-action="ChangePassword" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" for="CurrentPassword">
+                            Mật khẩu hiện tại <span style="color:var(--danger)">*</span>
+                        </label>
+                        <div style="position:relative;">
+                            <input class="sa-input" type="password" id="CurrentPassword" name="CurrentPassword"
+                                   placeholder="Nhập mật khẩu hiện tại"
+                                   autocomplete="current-password"
+                                   style="padding-right:46px;" />
+                            <button type="button" onclick="togglePwd('CurrentPassword', this)"
+                                    style="position:absolute;right:1px;top:1px;bottom:1px;width:42px;border:none;
+                                       background:transparent;color:var(--text-light);cursor:pointer;
+                                       display:flex;align-items:center;justify-content:center;
+                                       border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        @if (pwdErrors != null && pwdErrors.ContainsKey("CurrentPassword"))
+                        {
+                            <span style="font-size:.78rem;color:var(--danger);margin-top:4px;display:block;">@pwdErrors["CurrentPassword"]</span>
+                        }
+                    </div>
+
+                    <div class="sa-form-group">
+                        <label class="sa-label" for="NewPassword">
+                            Mật khẩu mới <span style="color:var(--danger)">*</span>
+                        </label>
+                        <div style="position:relative;">
+                            <input class="sa-input" type="password" id="NewPassword" name="NewPassword"
+                                   placeholder="Ít nhất 6 ký tự"
+                                   autocomplete="new-password"
+                                   style="padding-right:46px;" />
+                            <button type="button" onclick="togglePwd('NewPassword', this)"
+                                    style="position:absolute;right:1px;top:1px;bottom:1px;width:42px;border:none;
+                                       background:transparent;color:var(--text-light);cursor:pointer;
+                                       display:flex;align-items:center;justify-content:center;
+                                       border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        @if (pwdErrors != null && pwdErrors.ContainsKey("NewPassword"))
+                        {
+                            <span style="font-size:.78rem;color:var(--danger);margin-top:4px;display:block;">@pwdErrors["NewPassword"]</span>
+                        }
+                    </div>
+
+                    <div class="sa-form-group" style="margin-bottom:1.5rem;">
+                        <label class="sa-label" for="ConfirmNewPassword">
+                            Xác nhận mật khẩu mới <span style="color:var(--danger)">*</span>
+                        </label>
+                        <div style="position:relative;">
+                            <input class="sa-input" type="password" id="ConfirmNewPassword" name="ConfirmNewPassword"
+                                   placeholder="Nhập lại mật khẩu mới"
+                                   autocomplete="new-password"
+                                   style="padding-right:46px;" />
+                            <button type="button" onclick="togglePwd('ConfirmNewPassword', this)"
+                                    style="position:absolute;right:1px;top:1px;bottom:1px;width:42px;border:none;
+                                       background:transparent;color:var(--text-light);cursor:pointer;
+                                       display:flex;align-items:center;justify-content:center;
+                                       border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        @if (pwdErrors != null && pwdErrors.ContainsKey("ConfirmNewPassword"))
+                        {
+                            <span style="font-size:.78rem;color:var(--danger);margin-top:4px;display:block;">@pwdErrors["ConfirmNewPassword"]</span>
+                        }
+                    </div>
+
+                    <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
+                        <i class="bi bi-shield-check"></i> Đổi mật khẩu
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function switchTab(tab) {
+            var isProfile = tab === 'profile';
+            document.getElementById('panel-profile').style.display = isProfile ? '' : 'none';
+            document.getElementById('panel-password').style.display = isProfile ? 'none' : '';
+
+            var tabProfile = document.getElementById('tab-profile');
+            var tabPwd = document.getElementById('tab-password');
+
+            tabProfile.style.background = isProfile ? 'var(--navy)' : 'rgba(13,27,42,0.12)';
+            tabProfile.style.color = isProfile ? 'var(--gold)' : 'rgba(13,27,42,0.65)';
+            tabPwd.style.background = isProfile ? 'rgba(13,27,42,0.12)' : 'var(--navy)';
+            tabPwd.style.color = isProfile ? 'rgba(13,27,42,0.65)' : 'var(--gold)';
+        }
+
+        function togglePwd(inputId, btn) {
+            var input = document.getElementById(inputId);
+            var icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        }
+
+        // Nếu server redirect về sau khi đổi mật khẩu thất bại, mở tab password
+        @if (TempData["ActiveTab"]?.ToString() == "password")
+        {
+                <text>document.addEventListener('DOMContentLoaded', function() { switchTab('password'); });</text>
+        }
+    </script>
+}
