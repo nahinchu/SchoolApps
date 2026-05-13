@@ -411,7 +411,7 @@ namespace SchoolApp.Controllers
             var quiz = _uow.Quizzes.GetQuizWithQuestions(id);
             if (quiz == null || !quiz.IsPublished) return NotFound();
 
-            var lesson = _uow.Lessons.GetById(quiz.LessonId);
+            var lesson = _uow.Lessons.GetWithModule(quiz.LessonId);
             if (lesson?.Module == null) return NotFound();
             var enrolled = _uow.Enrollments.IsEnrolled(studentId.Value, lesson.Module.CourseId);
             if (!enrolled)
