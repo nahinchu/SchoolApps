@@ -41,5 +41,12 @@ namespace SchoolApp.Repositories.LessonRepository
                 .Where(l => l.ModuleId == moduleId)
                 .Max(l => (int?)l.OrderIndex) ?? 0;
         }
+
+        public Lesson? GetWithModule(int lessonId)
+        {
+            return _dbSet
+                .Include(l => l.Module)
+                .FirstOrDefault(l => l.LessonId == lessonId);
+        }
     }
 }

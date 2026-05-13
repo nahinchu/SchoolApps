@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SchoolApp.DTOs;
+using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Services;
 using SchoolApp.UnitOfWork;
@@ -108,6 +110,84 @@ namespace SchoolApp.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        [AuthorizeUser]
+        public IActionResult EditProfile()
+        {
+            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var student = _uow.Students.GetById(studentId!.Value);
+            if (student == null) return NotFound();
+
+            var model = new EditProfileViewModel
+            {
+                FullName = student.FullName,
+                Phone = student.Phone,
+                DateOfBirth = student.DateOfBirth,
+                Address = student.Address
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [AuthorizeUser]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditProfile(EditProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var student = _uow.Students.GetById(studentId!.Value);
+            if (student == null) return NotFound();
+
+            student.FullName = model.FullName.Trim();
+            student.Phone = model.Phone?.Trim();
+            student.DateOfBirth = model.DateOfBirth;
+            student.Address = model.Address?.Trim();
+
+            _uow.SaveChanges();
+
+            HttpContext.Session.SetString("StudentName", student.FullName);
+
+            TempData["Success"] = "Cập nhật thông tin thành công!";
+            return RedirectToAction("EditProfile");
+        }
+
+        [HttpPost]
+        [AuthorizeUser]
+        [ValidateAntiForgeryToken]
+        public IActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            TempData["ActiveTab"] = "password";
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState
+                    .Where(x => x.Value!.Errors.Count > 0)
+                    .ToDictionary(k => k.Key, v => v.Value!.Errors[0].ErrorMessage);
+                TempData["PwdErrors"] = System.Text.Json.JsonSerializer.Serialize(errors);
+                return RedirectToAction("EditProfile");
+            }
+
+            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var student = _uow.Students.GetById(studentId!.Value);
+            if (student == null) return NotFound();
+
+            if (!_passwordService.Verify(model.CurrentPassword, student.Password))
+            {
+                TempData["PwdErrors"] = System.Text.Json.JsonSerializer.Serialize(
+                    new Dictionary<string, string> { { "CurrentPassword", "Mật khẩu hiện tại không đúng" } });
+                return RedirectToAction("EditProfile");
+            }
+
+            student.Password = _passwordService.Hash(model.NewPassword);
+            _uow.SaveChanges();
+
+            TempData["ActiveTab"] = null;
+            TempData["Success"] = "Đổi mật khẩu thành công!";
+            return RedirectToAction("EditProfile");
         }
     }
 }

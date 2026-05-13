@@ -11,6 +11,8 @@
     var totalLessons = (int)(ViewData["TotalLessons"] ?? 0);
     var completedCount = (int)(ViewData["CompletedCount"] ?? 0);
     var pctComplete = totalLessons > 0 ? completedCount * 100 / totalLessons : 0;
+    var accessState = ViewData["AccessState"] as string; // "guest" | "not_enrolled" | null
+    var isLocked = accessState == "guest" || accessState == "not_enrolled";
 
     string GetEmbedUrl(string? url)
     {
@@ -416,6 +418,69 @@
         padding: 3rem 1.5rem;
         color: var(--text-light);
     }
+
+    /* ========= LOCKED OVERLAY ========= */
+    .locked-wrap {
+        position: relative;
+    }
+
+    .locked-blur {
+        filter: blur(4px);
+        pointer-events: none;
+        user-select: none;
+        opacity: .55;
+    }
+
+    .locked-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.55);
+        backdrop-filter: blur(2px);
+        z-index: 10;
+        border-radius: var(--radius-md);
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .locked-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+        color: var(--gold-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 8px 24px rgba(20,33,61,.25);
+    }
+
+    .locked-title {
+        font-family: var(--font-display);
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--navy);
+        margin-bottom: .5rem;
+    }
+
+    .locked-sub {
+        font-size: .92rem;
+        color: var(--text-mid);
+        margin-bottom: 1.5rem;
+        max-width: 360px;
+    }
+
+    .locked-actions {
+        display: flex;
+        gap: .75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 </style>
 
 <div class="learn-header">
@@ -426,15 +491,34 @@
                 @Model.Modules.Count chương · @totalLessons bài học
             </div>
         </div>
-        <a asp-controller="Enrollment" asp-action="MyEnrollments"
-           class="sa-btn sa-btn-outline" style="border-color:var(--gold-light); color:var(--gold-light);">
-            ← Khoá của tôi
-        </a>
+        @if (!isLocked)
+        {
+            <a asp-controller="Enrollment" asp-action="MyEnrollments"
+               class="sa-btn sa-btn-outline" style="border-color:var(--gold-light); color:var(--gold-light);">
+                ← Khoá của tôi
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Course" asp-action="Index"
+               class="sa-btn sa-btn-outline" style="border-color:var(--gold-light); color:var(--gold-light);">
+                ← Danh sách khoá học
+            </a>
+        }
     </div>
-    <div class="learn-progress-bar"><div style="width:@(pctComplete)%;"></div></div>
-    <div class="learn-progress-text">
-        Tiến độ: <strong>@completedCount / @totalLessons</strong> bài đã hoàn thành (@pctComplete%)
-    </div>
+    @if (!isLocked)
+    {
+        <div class="learn-progress-bar"><div style="width:@(pctComplete)%;"></div></div>
+        <div class="learn-progress-text">
+            Tiến độ: <strong>@completedCount / @totalLessons</strong> bài đã hoàn thành (@pctComplete%)
+        </div>
+    }
+    else
+    {
+        <div class="learn-progress-text" style="margin-top:.5rem;">
+            <i class="bi bi-eye me-1"></i> Chế độ xem trước — Đăng nhập hoặc đăng ký để học đầy đủ
+        </div>
+    }
 </div>
 
 <div class="learn-wrap">
@@ -503,187 +587,228 @@
     </aside>
 
     <!-- ============ MAIN CONTENT ============ -->
-    <main class="learn-main">
-        @if (currentLesson == null)
+    <div class="@(isLocked ? "locked-wrap" : "")">
+        @if (isLocked)
         {
-            <div class="empty-state">
-                <i class="bi bi-journal-x" style="font-size:3rem;"></i>
-                <h4 class="mt-3">Khoá học chưa có bài học nào để học</h4>
-                <p>Vui lòng quay lại sau khi giảng viên cập nhật nội dung.</p>
-            </div>
-        }
-        else
-        {
-            var curProgress = progressMap.TryGetValue(currentLesson.LessonId, out var cp) ? cp : null;
-            var isCompleted = curProgress != null && curProgress.Status == ProgressStatus.Completed;
-
-            <div class="lesson-title-bar">
-                <div style="display:inline-block; background:var(--navy); color:var(--gold-light); font-size:.7rem; font-weight:700; padding:3px 10px; border-radius:999px; letter-spacing:.1em; margin-bottom:.5rem;">
-                    BÀI HỌC
+            <div class="locked-overlay">
+                <div class="locked-icon">
+                    <i class="bi @(accessState == "guest" ? "bi-lock-fill" : "bi-person-lock")"></i>
                 </div>
-                <h2>@currentLesson.Title</h2>
-                <div class="lesson-meta-row">
-                    @switch (currentLesson.Type)
-                    {
-                        case LessonType.Video:
-                            <span><i class="bi bi-play-btn"></i> Video</span>
-                            break;
-                        case LessonType.Text:
-
-                            <span><i class="bi bi-file-text"></i> Bài viết</span>
-                            break;
-                        case LessonType.Mixed:
-
-                            <span><i class="bi bi-collection-play"></i> Video + Bài viết</span>
-                            break;
-                    }
-                    @if (currentLesson.DurationMinutes > 0)
-                    {
-                        <span><i class="bi bi-clock"></i> @currentLesson.DurationMinutes phút</span>
-                    }
-                    @if (isCompleted)
-                    {
-                        <span style="color:var(--success);"><i class="bi bi-check-circle-fill"></i> Đã hoàn thành</span>
-                    }
-                    else
-                    {
-                        <span style="color:var(--gold);"><i class="bi bi-hourglass-split"></i> Đang học</span>
-                    }
-                </div>
-            </div>
-
-            <div class="lesson-body">
-                @if ((currentLesson.Type == LessonType.Video || currentLesson.Type == LessonType.Mixed)
-                            && !string.IsNullOrWhiteSpace(currentLesson.VideoUrl))
+                @if (accessState == "guest")
                 {
-                    if (currentLesson.VideoUrl.StartsWith("/uploads/videos/"))
-                    {
-                        <div class="video-frame">
-                            <video controls preload="metadata" style="width:100%; height:100%; background:#000;">
-                                <source src="@currentLesson.VideoUrl" />
-                                Trình duyệt không hỗ trợ phát video.
-                            </video>
-                        </div>
-                    }
-                    else
-                    {
-                        var embed = GetEmbedUrl(currentLesson.VideoUrl);
-                        <div class="video-frame">
-                            <iframe src="@embed"
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    allowfullscreen></iframe>
-                        </div>
-                    }
-                }
-
-                @if ((currentLesson.Type == LessonType.Text || currentLesson.Type == LessonType.Mixed)
-                            && !string.IsNullOrWhiteSpace(currentLesson.HtmlContent))
-                {
-                    <div class="article-content">@Html.Raw(currentLesson.HtmlContent)</div>
-                }
-
-                @if (string.IsNullOrWhiteSpace(currentLesson.VideoUrl)
-                            && string.IsNullOrWhiteSpace(currentLesson.HtmlContent))
-                {
-                    <div class="empty-state">
-                        <i class="bi bi-info-circle" style="font-size:2rem;"></i>
-                        <p>Bài học này chưa có nội dung</p>
+                    <div class="locked-title">Đăng nhập để học</div>
+                    <div class="locked-sub">
+                        Bạn cần đăng nhập để xem nội dung bài học của khóa học <strong>@Model.CourseName</strong>.
                     </div>
-                }
-
-                @if (!string.IsNullOrWhiteSpace(currentLesson.AttachmentPath))
-                {
-                    var attachExt = System.IO.Path.GetExtension(currentLesson.AttachmentPath).ToLowerInvariant();
-                    var attachName = System.IO.Path.GetFileName(currentLesson.AttachmentPath);
-                    var attachIcon = attachExt switch
-                    {
-                        ".pdf" => "bi-file-earmark-pdf-fill",
-                        ".doc" or ".docx" => "bi-file-earmark-word-fill",
-                        ".xls" or ".xlsx" => "bi-file-earmark-excel-fill",
-                        ".ppt" or ".pptx" => "bi-file-earmark-ppt-fill",
-                        ".zip" or ".rar" => "bi-file-earmark-zip-fill",
-                        ".mp4" => "bi-file-earmark-play-fill",
-                        ".png" or ".jpg" or ".jpeg" or ".gif" => "bi-file-earmark-image-fill",
-                        _ => "bi-file-earmark-fill"
-                    };
-                    <div style="margin: 1.5rem 0; padding: 1rem 1.25rem; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; display: flex; align-items: center; gap: 1rem;">
-                        <i class="bi @attachIcon" style="font-size: 2rem; color: var(--navy, #1a2a4a); flex-shrink:0;"></i>
-                        <div style="flex:1; min-width:0;">
-                            <div style="font-weight:600; margin-bottom:.2rem;">Tài liệu đính kèm</div>
-                            <div style="font-size:.875rem; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@attachName</div>
-                        </div>
-                        <a href="@currentLesson.AttachmentPath" target="_blank" download
-                           style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem 1rem; background:var(--navy, #1a2a4a); color:#fff; border-radius:6px; text-decoration:none; font-size:.875rem; white-space:nowrap;">
-                            <i class="bi bi-download"></i> Tải xuống
+                    <div class="locked-actions">
+                        <a asp-controller="Account" asp-action="Login"
+                           asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString"
+                           class="sa-btn sa-btn-primary">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập ngay
                         </a>
-                    </div>
-                }
-
-                @if (currentLesson.Quiz != null && currentLesson.Quiz.IsPublished)
-                {
-                    <div class="quiz-banner">
-                        <div class="quiz-banner-icon">
-                            <i class="bi bi-pencil-square"></i>
-                        </div>
-                        <div class="quiz-banner-text">
-                            <span class="quiz-banner-label">📋 BÀI KIỂM TRA</span>
-                            <h3 class="quiz-banner-title">@currentLesson.Quiz.Title</h3>
-                            <div class="quiz-banner-sub">
-                                @currentLesson.Quiz.Questions.Count câu hỏi
-                                @if (currentLesson.Quiz.TimeLimitMinutes > 0)
-                                {
-                                    <text> · ⏱ @currentLesson.Quiz.TimeLimitMinutes phút</text>
-                                }
-                                <text> · 🎯 Điểm đạt @currentLesson.Quiz.PassingScore%</text>
-                            </div>
-                        </div>
-                        <a asp-controller="Quiz" asp-action="Take" asp-route-id="@currentLesson.Quiz.QuizId"
-                           class="sa-btn sa-btn-gold" style="font-weight:700;">
-                            <i class="bi bi-play-fill"></i> Bắt đầu làm bài
-                        </a>
-                    </div>
-                }
-            </div>
-
-            <div class="lesson-footer">
-                <div>
-                    @if (prevLesson != null)
-                    {
-                        <a asp-action="Course" asp-route-id="@Model.CourseId" asp-route-lessonId="@prevLesson.LessonId"
+                        <a asp-controller="Account" asp-action="Register"
                            class="sa-btn sa-btn-outline">
-                            <i class="bi bi-arrow-left"></i> Bài trước
+                            <i class="bi bi-person-plus me-1"></i> Tạo tài khoản
                         </a>
-                    }
-                </div>
-
-                <div style="display:flex; gap:.5rem;">
-                    @if (!isCompleted)
-                    {
-                        <button id="btnMarkComplete" class="sa-btn sa-btn-primary"
-                                data-lesson-id="@currentLesson.LessonId">
-                            <i class="bi bi-check-lg"></i> Đánh dấu hoàn thành
-                        </button>
-                    }
-                    else
-                    {
-                        <span class="sa-btn sa-btn-outline" style="color:var(--success); border-color:var(--success); cursor:default;">
-                            <i class="bi bi-check-circle-fill"></i> Đã hoàn thành
-                        </span>
-                    }
-                </div>
-
-                <div>
-                    @if (nextLesson != null)
-                    {
-                        <a asp-action="Course" asp-route-id="@Model.CourseId" asp-route-lessonId="@nextLesson.LessonId"
-                           class="sa-btn sa-btn-gold">
-                            Bài tiếp theo <i class="bi bi-arrow-right"></i>
+                    </div>
+                }
+                else
+                {
+                    <div class="locked-title">Đăng ký để học</div>
+                    <div class="locked-sub">
+                        Bạn chưa đăng ký khóa học <strong>@Model.CourseName</strong>. Hãy đăng ký để mở khóa toàn bộ nội dung.
+                    </div>
+                    <div class="locked-actions">
+                        <a asp-controller="Course" asp-action="Index"
+                           class="sa-btn sa-btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i> Đăng ký khóa học
                         </a>
-                    }
-                </div>
+                    </div>
+                }
             </div>
         }
-    </main>
+        <main class="learn-main @(isLocked ? "locked-blur" : "")">
+            @if (currentLesson == null)
+            {
+                <div class="empty-state">
+                    <i class="bi bi-journal-x" style="font-size:3rem;"></i>
+                    <h4 class="mt-3">Khoá học chưa có bài học nào để học</h4>
+                    <p>Vui lòng quay lại sau khi giảng viên cập nhật nội dung.</p>
+                </div>
+            }
+            else
+            {
+                var curProgress = progressMap.TryGetValue(currentLesson.LessonId, out var cp) ? cp : null;
+                var isCompleted = curProgress != null && curProgress.Status == ProgressStatus.Completed;
+
+                <div class="lesson-title-bar">
+                    <div style="display:inline-block; background:var(--navy); color:var(--gold-light); font-size:.7rem; font-weight:700; padding:3px 10px; border-radius:999px; letter-spacing:.1em; margin-bottom:.5rem;">
+                        BÀI HỌC
+                    </div>
+                    <h2>@currentLesson.Title</h2>
+                    <div class="lesson-meta-row">
+                        @switch (currentLesson.Type)
+                        {
+                            case LessonType.Video:
+                                <span><i class="bi bi-play-btn"></i> Video</span>
+                                break;
+                            case LessonType.Text:
+
+                                <span><i class="bi bi-file-text"></i> Bài viết</span>
+                                break;
+                            case LessonType.Mixed:
+
+                                <span><i class="bi bi-collection-play"></i> Video + Bài viết</span>
+                                break;
+                        }
+                        @if (currentLesson.DurationMinutes > 0)
+                        {
+                            <span><i class="bi bi-clock"></i> @currentLesson.DurationMinutes phút</span>
+                        }
+                        @if (isCompleted)
+                        {
+                            <span style="color:var(--success);"><i class="bi bi-check-circle-fill"></i> Đã hoàn thành</span>
+                        }
+                        else
+                        {
+                            <span style="color:var(--gold);"><i class="bi bi-hourglass-split"></i> Đang học</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="lesson-body">
+                    @if ((currentLesson.Type == LessonType.Video || currentLesson.Type == LessonType.Mixed)
+                                    && !string.IsNullOrWhiteSpace(currentLesson.VideoUrl))
+                    {
+                        if (currentLesson.VideoUrl.StartsWith("/uploads/videos/"))
+                        {
+                            <div class="video-frame">
+                                <video controls preload="metadata" style="width:100%; height:100%; background:#000;">
+                                    <source src="@currentLesson.VideoUrl" />
+                                    Trình duyệt không hỗ trợ phát video.
+                                </video>
+                            </div>
+                        }
+                        else
+                        {
+                            var embed = GetEmbedUrl(currentLesson.VideoUrl);
+                            <div class="video-frame">
+                                <iframe src="@embed"
+                                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen></iframe>
+                            </div>
+                        }
+                    }
+
+                    @if ((currentLesson.Type == LessonType.Text || currentLesson.Type == LessonType.Mixed)
+                                    && !string.IsNullOrWhiteSpace(currentLesson.HtmlContent))
+                    {
+                        <div class="article-content">@Html.Raw(currentLesson.HtmlContent)</div>
+                    }
+
+                    @if (string.IsNullOrWhiteSpace(currentLesson.VideoUrl)
+                                    && string.IsNullOrWhiteSpace(currentLesson.HtmlContent))
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-info-circle" style="font-size:2rem;"></i>
+                            <p>Bài học này chưa có nội dung</p>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(currentLesson.AttachmentPath))
+                    {
+                        var attachExt = System.IO.Path.GetExtension(currentLesson.AttachmentPath).ToLowerInvariant();
+                        var attachName = System.IO.Path.GetFileName(currentLesson.AttachmentPath);
+                        var attachIcon = attachExt switch
+                        {
+                            ".pdf" => "bi-file-earmark-pdf-fill",
+                            ".doc" or ".docx" => "bi-file-earmark-word-fill",
+                            ".xls" or ".xlsx" => "bi-file-earmark-excel-fill",
+                            ".ppt" or ".pptx" => "bi-file-earmark-ppt-fill",
+                            ".zip" or ".rar" => "bi-file-earmark-zip-fill",
+                            ".mp4" => "bi-file-earmark-play-fill",
+                            ".png" or ".jpg" or ".jpeg" or ".gif" => "bi-file-earmark-image-fill",
+                            _ => "bi-file-earmark-fill"
+                        };
+                        <div style="margin: 1.5rem 0; padding: 1rem 1.25rem; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; display: flex; align-items: center; gap: 1rem;">
+                            <i class="bi @attachIcon" style="font-size: 2rem; color: var(--navy, #1a2a4a); flex-shrink:0;"></i>
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-weight:600; margin-bottom:.2rem;">Tài liệu đính kèm</div>
+                                <div style="font-size:.875rem; color:#6c757d; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">@attachName</div>
+                            </div>
+                            <a href="@currentLesson.AttachmentPath" target="_blank" download
+                               style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem 1rem; background:var(--navy, #1a2a4a); color:#fff; border-radius:6px; text-decoration:none; font-size:.875rem; white-space:nowrap;">
+                                <i class="bi bi-download"></i> Tải xuống
+                            </a>
+                        </div>
+                    }
+
+                    @if (currentLesson.Quiz != null && currentLesson.Quiz.IsPublished)
+                    {
+                        <div class="quiz-banner">
+                            <div class="quiz-banner-icon">
+                                <i class="bi bi-pencil-square"></i>
+                            </div>
+                            <div class="quiz-banner-text">
+                                <span class="quiz-banner-label">📋 BÀI KIỂM TRA</span>
+                                <h3 class="quiz-banner-title">@currentLesson.Quiz.Title</h3>
+                                <div class="quiz-banner-sub">
+                                    @currentLesson.Quiz.Questions.Count câu hỏi
+                                    @if (currentLesson.Quiz.TimeLimitMinutes > 0)
+                                    {
+                                        <text> · ⏱ @currentLesson.Quiz.TimeLimitMinutes phút</text>
+                                    }
+                                    <text> · 🎯 Điểm đạt @currentLesson.Quiz.PassingScore%</text>
+                                </div>
+                            </div>
+                            <a asp-controller="Quiz" asp-action="Take" asp-route-id="@currentLesson.Quiz.QuizId"
+                               class="sa-btn sa-btn-gold" style="font-weight:700;">
+                                <i class="bi bi-play-fill"></i> Bắt đầu làm bài
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                <div class="lesson-footer">
+                    <div>
+                        @if (prevLesson != null)
+                        {
+                            <a asp-action="Course" asp-route-id="@Model.CourseId" asp-route-lessonId="@prevLesson.LessonId"
+                               class="sa-btn sa-btn-outline">
+                                <i class="bi bi-arrow-left"></i> Bài trước
+                            </a>
+                        }
+                    </div>
+
+                    <div style="display:flex; gap:.5rem;">
+                        @if (!isCompleted)
+                        {
+                            <button id="btnMarkComplete" class="sa-btn sa-btn-primary"
+                                    data-lesson-id="@currentLesson.LessonId">
+                                <i class="bi bi-check-lg"></i> Đánh dấu hoàn thành
+                            </button>
+                        }
+                        else
+                        {
+                            <span class="sa-btn sa-btn-outline" style="color:var(--success); border-color:var(--success); cursor:default;">
+                                <i class="bi bi-check-circle-fill"></i> Đã hoàn thành
+                            </span>
+                        }
+                    </div>
+
+                    <div>
+                        @if (nextLesson != null)
+                        {
+                            <a asp-action="Course" asp-route-id="@Model.CourseId" asp-route-lessonId="@nextLesson.LessonId"
+                               class="sa-btn sa-btn-gold">
+                                Bài tiếp theo <i class="bi bi-arrow-right"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </main>
+    </div>@* /locked-wrap *@
 </div>
 
 @section Scripts {

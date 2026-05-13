@@ -8,5 +8,6 @@ namespace SchoolApp.Repositories.LessonRepository
         IQueryable<Lesson> SearchByTitle(string keyword, int? moduleId = null);
         bool ExistsInModule(int lessonId, int moduleId);
         int GetMaxOrderIndex(int moduleId);
+        Lesson? GetWithModule(int lessonId);
     }
 }

@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link href="~/css/Schoolapp.css" rel="stylesheet" />
+    <link href="~/css/Schoolapp.css" rel="stylesheet" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
 <body>
@@ -82,10 +82,12 @@
                         var studentName = Context.Session.GetString("StudentName");
                         var role = Context.Session.GetString("Role");
                         var initials = studentName?.Length > 0 ? studentName[0].ToString().ToUpper() : "U";
-                        <li>
-                            <div class="sa-greeting">
+                        <li class="dropdown">
+                            <button type="button" class="sa-greeting dropdown-toggle"
+                                    data-bs-toggle="dropdown" data-bs-offset="0,10"
+                                    aria-expanded="false">
                                 <div class="sa-greeting-avatar">@initials</div>
-                                <span>Xin chào, <strong>@studentName</strong></span>
+                                <span class="sa-greeting-name">@studentName</span>
                                 @if (role == "Admin")
                                 {
                                     <span class="sa-badge-admin"><i class="bi bi-shield-fill-check"></i> Admin</span>
@@ -94,14 +96,74 @@
                                 {
                                     <span class="sa-badge-student"><i class="bi bi-mortarboard-fill"></i> Học viên</span>
                                 }
-                            </div>
-                        </li>
+                                <i class="bi bi-chevron-down sa-greeting-chevron"></i>
+                            </button>
 
-                        <li>
-                            <a class="sa-btn-logout" asp-controller="Account" asp-action="Logout">
-                                <i class="bi bi-box-arrow-right"></i>
-                                Đăng xuất
-                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end sa-user-dropdown-menu"
+                                style="
+                                        background-color: #1b2d42;
+                                        border: 1px solid rgba(201,168,76,0.25);
+                                        border-radius: 12px;
+                                        box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+                                        padding: 6px;
+                                        min-width: 220px;
+                                    ">
+                                <!-- Header -->
+                                <li style="
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 12px;
+                                        padding: 10px 12px 8px;
+                                    ">
+                                    <div style="
+                                            width:42px; height:42px; flex-shrink:0;
+                                            background: linear-gradient(135deg, #c9a84c, #e8c96e);
+                                            border-radius: 50%;
+                                            display:flex; align-items:center; justify-content:center;
+                                            font-size:16px; font-weight:700; color:#0d1b2a;
+                                            box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+                                        ">
+                                        @initials
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600; font-size:.9rem; color:#ffffff; line-height:1.3;">@studentName</div>
+                                        <div style="font-size:.75rem; color:#c9a84c; margin-top:2px;">
+                                            @if (role == "Admin")
+                                            {
+                                                <text><i class="bi bi-shield-fill-check"></i> Quản trị viên</text>
+                                            }
+                                            else
+                                            {
+                                                <text><i class="bi bi-mortarboard-fill"></i> Học viên</text>
+                                            }
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li><hr style="border-color: rgba(201,168,76,0.2); margin: 4px 0; opacity:1;"></li>
+
+                                <li>
+                                    <a class="sa-dditem" asp-controller="Account" asp-action="EditProfile"
+                                       style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;border-left:2px solid transparent;color:rgba(201,168,76,0.9);font-size:.875rem;font-weight:500;text-decoration:none;">
+                                        <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,168,76,0.12);font-size:.85rem;flex-shrink:0;">
+                                            <i class="bi bi-person-gear"></i>
+                                        </span>
+                                        Sửa profile
+                                    </a>
+                                </li>
+
+                                <li><hr style="border-color: rgba(201,168,76,0.2); margin: 4px 0; opacity:1;"></li>
+
+                                <li>
+                                    <a class="sa-dditem sa-dditem--danger" asp-controller="Account" asp-action="Logout"
+                                       style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:6px;border-left:2px solid transparent;color:rgba(224,112,112,0.85);font-size:.875rem;font-weight:500;text-decoration:none;">
+                                        <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(192,57,43,0.15);font-size:.85rem;flex-shrink:0;">
+                                            <i class="bi bi-box-arrow-right"></i>
+                                        </span>
+                                        Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                     }
                     else
@@ -218,6 +280,7 @@
                             else
                             {
                                 <li><a asp-controller="Enrollment" asp-action="MyEnrollments">Khóa học của tôi</a></li>
+                                <li><a asp-controller="Account" asp-action="EditProfile">Sửa profile</a></li>
                                 <li><a asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
                             }
                         </ul>
@@ -276,6 +339,19 @@
             var open = container.classList.toggle('open');
             this.classList.toggle('open', open);
             this.setAttribute('aria-expanded', open);
+        });
+
+
+        // Chevron xoay khi dropdown mở/đóng
+        document.querySelectorAll('.sa-greeting.dropdown-toggle').forEach(function(btn) {
+            btn.addEventListener('shown.bs.dropdown', function() {
+                var chevron = btn.querySelector('.sa-greeting-chevron');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            });
+            btn.addEventListener('hidden.bs.dropdown', function() {
+                var chevron = btn.querySelector('.sa-greeting-chevron');
+                if (chevron) chevron.style.transform = '';
+            });
         });
 
         // Fix: xóa backdrop giả do extension inject
