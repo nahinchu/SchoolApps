@@ -242,8 +242,7 @@
                 $('#VideoFile').val('');
                 $('#RemoveVideo').prop('checked', false);
 
-                // Phân loại video: upload hay URL
-                var isUploadedVideo = data.videoUrl && data.videoUrl.startsWith('/uploads/videos/');
+                var isUploadedVideo = data.videoUrl && data.videoUrl.includes('res.cloudinary.com');
                 if (isUploadedVideo) {
                     setVideoMode('file');
                     $('#currentVideoName').text(data.videoUrl.split('/').pop());
@@ -254,7 +253,6 @@
                     $('#currentVideo').hide();
                 }
 
-                // Attachment
                 if (data.attachmentPath) {
                     $('#currentAttachmentLink').attr('href', data.attachmentPath);
                     $('#currentAttachmentName').text(data.attachmentPath.split('/').pop());
@@ -272,15 +270,17 @@
         $(function () {
             $('#btnSaveLesson').on('click', function () {
                 clearErrors();
+                var $btn = $(this);
                 var url = isEditMode ? '@Url.Action("EditAjax", "Lesson")' : '@Url.Action("CreateAjax", "Lesson")';
                 var formData = new FormData($('#lessonForm')[0]);
 
-                // Checkbox IsPublished cần xử lý riêng vì serialize bỏ qua unchecked
                 if (!$('#IsPublished').is(':checked')) {
                     formData.set('IsPublished', 'false');
                 } else {
                     formData.set('IsPublished', 'true');
                 }
+
+                $btn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> <span class="btn-text">Đang xử lý...</span>');
 
                 $.ajax({
                     url: url,
@@ -304,11 +304,14 @@
                     },
                     error: function (xhr) {
                         showToast('Lỗi: ' + (xhr.status === 403 ? 'Không có quyền' : 'Kết nối'), 'danger');
+                    },
+                    complete: function () {
+                        var label = isEditMode ? 'Cập nhật' : 'Lưu';
+                        $btn.prop('disabled', false).html('<i class="bi bi-check-lg"></i> <span class="btn-text">' + label + '</span>');
                     }
                 });
             });
 
-            // Toggle URL / Upload video
             $('input[name="VideoInputMode"]').on('change', function () {
                 setVideoMode($(this).val());
             });
@@ -341,7 +344,7 @@
                 });
             });
 
-            window.loadLessons = function(page = 1) {
+            window.loadLessons = function (page = 1) {
                 var searchTerm = $('#searchForm input[name="searchTerm"]').val();
                 $.ajax({
                     url: '@Url.Action("Index", "Lesson")',

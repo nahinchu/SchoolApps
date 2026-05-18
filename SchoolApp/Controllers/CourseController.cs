@@ -215,4 +215,4 @@ namespace SchoolApp.Controllers
             return RedirectToAction("Index", "Module", new { courseId = id });
         }
     }
-}
+}       
