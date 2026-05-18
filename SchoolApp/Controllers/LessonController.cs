@@ -3,6 +3,7 @@ using SchoolApp.DTOs;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
+using SchoolApp.Services;
 using SchoolApp.UnitOfWork;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -13,6 +14,7 @@ namespace SchoolApp.Controllers
     {
         private readonly IUnitOfWork _uow;
         private readonly IWebHostEnvironment _env;
+        private readonly ICloudinaryService _cloudinary;
 
         private static readonly string[] AllowedExtensions = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".zip", ".rar", ".mp4", ".png", ".jpg", ".jpeg", ".gif"];
         private const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
@@ -20,59 +22,12 @@ namespace SchoolApp.Controllers
         private static readonly string[] AllowedVideoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
         private const long MaxVideoSize = 500 * 1024 * 1024; // 500 MB
 
-        public LessonController(IUnitOfWork uow, IWebHostEnvironment env)
+        public LessonController(IUnitOfWork uow, IWebHostEnvironment env, ICloudinaryService cloudinary)
         {
             _uow = uow;
             _env = env;
+            _cloudinary = cloudinary;
         }
-
-        private async Task<string?> SaveAttachmentAsync(IFormFile file)
-        {
-            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (!AllowedExtensions.Contains(ext))
-                return null;
-
-            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "lessons");
-            Directory.CreateDirectory(uploadsDir);
-
-            var fileName = $"{Guid.NewGuid()}{ext}";
-            var filePath = Path.Combine(uploadsDir, fileName);
-
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
-
-            return $"/uploads/lessons/{fileName}";
-        }
-
-        private void DeleteAttachmentFile(string? relativePath)
-        {
-            if (string.IsNullOrEmpty(relativePath)) return;
-            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
-            if (System.IO.File.Exists(fullPath))
-                System.IO.File.Delete(fullPath);
-        }
-
-        private async Task<string?> SaveVideoAsync(IFormFile file)
-        {
-            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
-            if (!AllowedVideoExtensions.Contains(ext))
-                return null;
-
-            var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "videos");
-            Directory.CreateDirectory(uploadsDir);
-
-            var fileName = $"{Guid.NewGuid()}{ext}";
-            var filePath = Path.Combine(uploadsDir, fileName);
-
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
-
-            return $"/uploads/videos/{fileName}";
-        }
-
-        private static bool IsUploadedVideo(string? url) =>
-            !string.IsNullOrEmpty(url) && url.StartsWith("/uploads/videos/");
-
         public IActionResult Index(int moduleId, string searchTerm, int page = 1)
         {
             int pageSize = 10;
@@ -95,7 +50,6 @@ namespace SchoolApp.Controllers
 
             return View(lessons);
         }
-
         [HttpGet]
         [AuthorizeAdmin]
         public IActionResult Create(int moduleId)
@@ -164,11 +118,14 @@ namespace SchoolApp.Controllers
         [HttpPost]
         [AuthorizeAdmin]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var lesson = _uow.Lessons.GetById(id);
             if (lesson == null)
                 return Json(new { success = false, message = "Không tìm thấy bài học" });
+
+            await _cloudinary.DeleteAsync(lesson.VideoUrl);
+            await _cloudinary.DeleteAsync(lesson.AttachmentPath);
 
             _uow.Lessons.Delete(lesson);
             _uow.SaveChanges();
@@ -200,7 +157,7 @@ namespace SchoolApp.Controllers
             string? attachmentPath = null;
             if (dto.AttachmentFile != null && dto.AttachmentFile.Length > 0)
             {
-                attachmentPath = await SaveAttachmentAsync(dto.AttachmentFile);
+                attachmentPath = await _cloudinary.UploadAttachmentAsync(dto.AttachmentFile);
                 if (attachmentPath == null)
                     return Json(new { success = false, message = "Định dạng file đính kèm không hỗ trợ." });
             }
@@ -208,7 +165,7 @@ namespace SchoolApp.Controllers
             string? videoUrl = dto.VideoUrl?.Trim();
             if (dto.VideoInputMode == "file" && dto.VideoFile != null && dto.VideoFile.Length > 0)
             {
-                videoUrl = await SaveVideoAsync(dto.VideoFile);
+                videoUrl = await _cloudinary.UploadVideoAsync(dto.VideoFile);
                 if (videoUrl == null)
                     return Json(new { success = false, message = "Định dạng video không hỗ trợ. Dùng MP4, WebM, OGG hoặc MOV." });
             }
@@ -262,15 +219,15 @@ namespace SchoolApp.Controllers
             // Xử lý file đính kèm
             if (dto.AttachmentFile != null && dto.AttachmentFile.Length > 0)
             {
-                var newPath = await SaveAttachmentAsync(dto.AttachmentFile);
+                var newPath = await _cloudinary.UploadAttachmentAsync(dto.AttachmentFile);
                 if (newPath == null)
                     return Json(new { success = false, message = "Định dạng file đính kèm không hỗ trợ." });
-                DeleteAttachmentFile(existing.AttachmentPath);
+               await _cloudinary.DeleteAsync(existing.AttachmentPath);
                 existing.AttachmentPath = newPath;
             }
             else if (dto.RemoveAttachment)
             {
-                DeleteAttachmentFile(existing.AttachmentPath);
+                await _cloudinary.DeleteAsync(existing.AttachmentPath);
                 existing.AttachmentPath = null;
             }
 
@@ -279,17 +236,15 @@ namespace SchoolApp.Controllers
             {
                 if (dto.VideoFile != null && dto.VideoFile.Length > 0)
                 {
-                    var newVideoPath = await SaveVideoAsync(dto.VideoFile);
+                    var newVideoPath = await _cloudinary.UploadVideoAsync(dto.VideoFile);
                     if (newVideoPath == null)
                         return Json(new { success = false, message = "Định dạng video không hỗ trợ. Dùng MP4, WebM, OGG hoặc MOV." });
-                    if (IsUploadedVideo(existing.VideoUrl))
-                        DeleteAttachmentFile(existing.VideoUrl);
+                    await _cloudinary.DeleteAsync(existing.VideoUrl);
                     existing.VideoUrl = newVideoPath;
                 }
                 else if (dto.RemoveVideo)
                 {
-                    if (IsUploadedVideo(existing.VideoUrl))
-                        DeleteAttachmentFile(existing.VideoUrl);
+                    await _cloudinary.DeleteAsync(existing.VideoUrl);
                     existing.VideoUrl = null;
                 }
                 // Nếu không upload file mới và không xóa → giữ nguyên VideoUrl cũ
@@ -298,8 +253,7 @@ namespace SchoolApp.Controllers
             {
                 var newUrl = dto.VideoUrl?.Trim();
                 // Nếu đang dùng file upload cũ mà giờ chuyển sang URL → xóa file cũ
-                if (IsUploadedVideo(existing.VideoUrl))
-                    DeleteAttachmentFile(existing.VideoUrl);
+                await _cloudinary.DeleteAsync(existing.VideoUrl);
                 existing.VideoUrl = newUrl;
             }
 
@@ -335,5 +289,57 @@ namespace SchoolApp.Controllers
                 moduleId = lesson.ModuleId
             });
         }
+
+        //Lưu local
+
+        //private async Task<string?> SaveAttachmentAsync(IFormFile file)
+        //{
+        //    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        //    if (!AllowedExtensions.Contains(ext))
+        //        return null;
+
+        //    var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "lessons");
+        //    Directory.CreateDirectory(uploadsDir);
+
+        //    var fileName = $"{Guid.NewGuid()}{ext}";
+        //    var filePath = Path.Combine(uploadsDir, fileName);
+
+        //    using var stream = new FileStream(filePath, FileMode.Create);
+        //    await file.CopyToAsync(stream);
+
+        //    return $"/uploads/lessons/{fileName}";
+        //}
+
+        //private void DeleteAttachmentFile(string? relativePath)
+        //{
+        //    if (string.IsNullOrEmpty(relativePath)) return;
+        //    var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
+        //    if (System.IO.File.Exists(fullPath))
+        //        System.IO.File.Delete(fullPath);
+        //}
+
+        //private async Task<string?> SaveVideoAsync(IFormFile file)
+        //{
+        //    var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        //    if (!AllowedVideoExtensions.Contains(ext))
+        //        return null;
+
+        //    var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "videos");
+        //    Directory.CreateDirectory(uploadsDir);
+
+        //    var fileName = $"{Guid.NewGuid()}{ext}";
+        //    var filePath = Path.Combine(uploadsDir, fileName);
+
+        //    using var stream = new FileStream(filePath, FileMode.Create);
+        //    await file.CopyToAsync(stream);
+
+        //    return $"/uploads/videos/{fileName}";
+        //}
+
+        //private static bool IsUploadedVideo(string? url) =>
+        //    !string.IsNullOrEmpty(url) && url.StartsWith("/uploads/videos/");
+
+       
+
     }
 }
