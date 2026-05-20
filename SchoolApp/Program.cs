@@ -27,16 +27,16 @@ namespace SchoolApp
             builder.Services.AddSingleton<IPasswordService, BCryptPasswordService>();
             builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
             builder.Services.AddHttpClient<PayOSService>();
-            //builder.Services.AddSingleton<IMinioClient>(sp =>
-            //{
-            //    var config = builder.Configuration.GetSection("MinIO");
-            //    return new MinioClient()
-            //        .WithEndpoint(config["Endpoint"])
-            //        .WithCredentials(config["AccessKey"], config["SecretKey"])
-            //        .WithSSL(bool.Parse(config["UseSSL"] ?? "false"))
-            //        .Build();
-            //});
-            //builder.Services.AddScoped<IFileStorageService, MinioFileStorageService>();
+            builder.Services.AddSingleton<IMinioClient>(sp =>
+            {
+                var config = builder.Configuration.GetSection("MinIO");
+                return new MinioClient()
+                    .WithEndpoint(config["Endpoint"])
+                    .WithCredentials(config["AccessKey"], config["SecretKey"])
+                    .WithSSL(bool.Parse(config["UseSSL"] ?? "false"))
+                    .Build();
+            });
+            builder.Services.AddScoped<IFileStorageService, MinioFileStorageService>();
 
             var app = builder.Build();
 
