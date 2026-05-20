@@ -14,19 +14,16 @@ namespace SchoolApp.Controllers
     {
         private readonly IUnitOfWork _uow;
         private readonly IWebHostEnvironment _env;
-        private readonly ICloudinaryService _cloudinary;
+        private readonly IFileStorageService _storage;
 
-        private static readonly string[] AllowedExtensions = [".pdf", ".doc", ".docx", ".ppt", ".pptx", ".xls", ".xlsx", ".zip", ".rar", ".mp4", ".png", ".jpg", ".jpeg", ".gif"];
         private const long MaxFileSize = 50 * 1024 * 1024; // 50 MB
-
-        private static readonly string[] AllowedVideoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
         private const long MaxVideoSize = 500 * 1024 * 1024; // 500 MB
 
-        public LessonController(IUnitOfWork uow, IWebHostEnvironment env, ICloudinaryService cloudinary)
+        public LessonController(IUnitOfWork uow, IWebHostEnvironment env, IFileStorageService storage)
         {
             _uow = uow;
             _env = env;
-            _cloudinary = cloudinary;
+            _storage = storage;
         }
         public IActionResult Index(int moduleId, string searchTerm, int page = 1)
         {
@@ -124,8 +121,8 @@ namespace SchoolApp.Controllers
             if (lesson == null)
                 return Json(new { success = false, message = "Không tìm thấy bài học" });
 
-            await _cloudinary.DeleteAsync(lesson.VideoUrl);
-            await _cloudinary.DeleteAsync(lesson.AttachmentPath);
+            await _storage.DeleteAsync(lesson.VideoUrl ?? "");
+            await _storage.DeleteAsync(lesson.AttachmentPath ?? "");
 
             _uow.Lessons.Delete(lesson);
             _uow.SaveChanges();
@@ -157,7 +154,7 @@ namespace SchoolApp.Controllers
             string? attachmentPath = null;
             if (dto.AttachmentFile != null && dto.AttachmentFile.Length > 0)
             {
-                attachmentPath = await _cloudinary.UploadAttachmentAsync(dto.AttachmentFile);
+                attachmentPath = await _storage.UploadAttachmentAsync(dto.AttachmentFile);
                 if (attachmentPath == null)
                     return Json(new { success = false, message = "Định dạng file đính kèm không hỗ trợ." });
             }
@@ -165,7 +162,7 @@ namespace SchoolApp.Controllers
             string? videoUrl = dto.VideoUrl?.Trim();
             if (dto.VideoInputMode == "file" && dto.VideoFile != null && dto.VideoFile.Length > 0)
             {
-                videoUrl = await _cloudinary.UploadVideoAsync(dto.VideoFile);
+                videoUrl = await _storage.UploadVideoAsync(dto.VideoFile);
                 if (videoUrl == null)
                     return Json(new { success = false, message = "Định dạng video không hỗ trợ. Dùng MP4, WebM, OGG hoặc MOV." });
             }
@@ -219,15 +216,15 @@ namespace SchoolApp.Controllers
             // Xử lý file đính kèm
             if (dto.AttachmentFile != null && dto.AttachmentFile.Length > 0)
             {
-                var newPath = await _cloudinary.UploadAttachmentAsync(dto.AttachmentFile);
+                var newPath = await _storage.UploadAttachmentAsync(dto.AttachmentFile);
                 if (newPath == null)
                     return Json(new { success = false, message = "Định dạng file đính kèm không hỗ trợ." });
-               await _cloudinary.DeleteAsync(existing.AttachmentPath);
+                await _storage.DeleteAsync(existing.AttachmentPath ?? "");
                 existing.AttachmentPath = newPath;
             }
             else if (dto.RemoveAttachment)
             {
-                await _cloudinary.DeleteAsync(existing.AttachmentPath);
+                await _storage.DeleteAsync(existing.AttachmentPath ?? "");
                 existing.AttachmentPath = null;
             }
 
@@ -236,15 +233,15 @@ namespace SchoolApp.Controllers
             {
                 if (dto.VideoFile != null && dto.VideoFile.Length > 0)
                 {
-                    var newVideoPath = await _cloudinary.UploadVideoAsync(dto.VideoFile);
+                    var newVideoPath = await _storage.UploadVideoAsync(dto.VideoFile);
                     if (newVideoPath == null)
                         return Json(new { success = false, message = "Định dạng video không hỗ trợ. Dùng MP4, WebM, OGG hoặc MOV." });
-                    await _cloudinary.DeleteAsync(existing.VideoUrl);
+                    await _storage.DeleteAsync(existing.VideoUrl ?? "");
                     existing.VideoUrl = newVideoPath;
                 }
                 else if (dto.RemoveVideo)
                 {
-                    await _cloudinary.DeleteAsync(existing.VideoUrl);
+                    await _storage.DeleteAsync(existing.VideoUrl ?? "");
                     existing.VideoUrl = null;
                 }
                 // Nếu không upload file mới và không xóa → giữ nguyên VideoUrl cũ
@@ -253,7 +250,7 @@ namespace SchoolApp.Controllers
             {
                 var newUrl = dto.VideoUrl?.Trim();
                 // Nếu đang dùng file upload cũ mà giờ chuyển sang URL → xóa file cũ
-                await _cloudinary.DeleteAsync(existing.VideoUrl);
+                await _storage.DeleteAsync(existing.VideoUrl ?? "");
                 existing.VideoUrl = newUrl;
             }
 

@@ -242,10 +242,13 @@
                 $('#VideoFile').val('');
                 $('#RemoveVideo').prop('checked', false);
 
-                var isUploadedVideo = data.videoUrl && data.videoUrl.includes('res.cloudinary.com');
+                var isUploadedVideo = data.videoUrl && (data.videoUrl.includes('res.cloudinary.com') || data.videoUrl.startsWith('/File/Video'));
                 if (isUploadedVideo) {
                     setVideoMode('file');
-                    $('#currentVideoName').text(data.videoUrl.split('/').pop());
+                    var videoLabel = data.videoUrl.startsWith('/File/Video')
+                        ? decodeURIComponent(data.videoUrl.split('path=')[1] || '').split('/').pop()
+                        : data.videoUrl.split('/').pop();
+                    $('#currentVideoName').text(videoLabel);
                     $('#currentVideo').show();
                 } else {
                     setVideoMode('url');

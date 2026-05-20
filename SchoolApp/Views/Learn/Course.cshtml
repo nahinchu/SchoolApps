@@ -438,7 +438,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: rgba(255,255,255,.55); 
+        background: rgba(255,255,255,.55);
         backdrop-filter: blur(2px);
         z-index: 10;
         border-radius: var(--radius-md);
@@ -680,7 +680,7 @@
                     @if ((currentLesson.Type == LessonType.Video || currentLesson.Type == LessonType.Mixed)
                                     && !string.IsNullOrWhiteSpace(currentLesson.VideoUrl))
                     {
-                        if (currentLesson.VideoUrl.StartsWith("/uploads/videos/"))
+                        if (currentLesson.VideoUrl.StartsWith("/uploads/videos/") || currentLesson.VideoUrl.StartsWith("/File/Video"))
                         {
                             <div class="video-frame">
                                 <video controls preload="metadata" style="width:100%; height:100%; background:#000;">
