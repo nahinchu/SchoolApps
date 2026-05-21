@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolApp.Services;
+using SchoolApp.Services.MinioService;
 
 namespace SchoolApp.Controllers
 {

@@ -3,8 +3,10 @@ using SchoolApp.DTOs;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
-using SchoolApp.Services;
+using SchoolApp.Services.EmailService;
+using SchoolApp.Services.PayosService;
 using SchoolApp.UnitOfWork;
+using SchoolApp.Services;   
 
 namespace SchoolApp.Controllers
 {
@@ -12,11 +14,15 @@ namespace SchoolApp.Controllers
     {
         private readonly PayOSService _payOS;
         private readonly IUnitOfWork _uow;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(IUnitOfWork uow, PayOSService payOS)
+        public PaymentController(IUnitOfWork uow, PayOSService payOS, IEmailService emailService, ILogger<PaymentController> logger)
         {
             _uow = uow;
             _payOS = payOS;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         [AuthorizeUser]
@@ -166,6 +172,9 @@ namespace SchoolApp.Controllers
                     }
 
                     _uow.SaveChanges();
+
+                    _ = SendPaymentEmailAsync(payment);
+
                     return View("Success", payment);
                 }
             }
@@ -173,6 +182,23 @@ namespace SchoolApp.Controllers
 
             TempData["Error"] = "Thanh toán chưa được xác nhận. Liên hệ hỗ trợ nếu đã bị trừ tiền.";
             return RedirectToAction("Index", "Course");
+        }
+        private async Task SendPaymentEmailAsync(Payment payment)
+        {
+            try
+            {
+                await _emailService.SendPaymentSuccessEmailAsync(
+                    payment.Student.Email,
+                    payment.Student.FullName,
+                    payment.Course.CourseName,
+                    payment.Amount,
+                    payment.OrderCode,
+                    payment.PaidAt ?? DateTime.Now);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Gửi email xác nhận thanh toán thất bại. OrderCode={OrderCode}", payment.OrderCode);
+            }
         }
 
         public async Task<IActionResult> Cancel(long orderCode)
@@ -190,6 +216,7 @@ namespace SchoolApp.Controllers
             TempData["Error"] = "Bạn đã hủy thanh toán";
             return RedirectToAction("Index", "Course");
         }
+
     }
 
 

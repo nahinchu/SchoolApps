@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolApp.Filters;
 using SchoolApp.Models;
-using SchoolApp.Services;
+using SchoolApp.Services.HashPassService;
 using SchoolApp.UnitOfWork;
 using X.PagedList;
 using X.PagedList.Extensions;

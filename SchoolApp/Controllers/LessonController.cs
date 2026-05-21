@@ -3,7 +3,7 @@ using SchoolApp.DTOs;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
-using SchoolApp.Services;
+using SchoolApp.Services.MinioService;
 using SchoolApp.UnitOfWork;
 using X.PagedList;
 using X.PagedList.Extensions;

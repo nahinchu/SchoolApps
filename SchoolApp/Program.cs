@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Minio;
 using SchoolApp.Data;
 using SchoolApp.Services;
+using SchoolApp.Services.CloudinaryService;
+using SchoolApp.Services.EmailService;
+using SchoolApp.Services.HashPassService;
+using SchoolApp.Services.MinioService;
+using SchoolApp.Services.PayosService;
 using SchoolApp.UnitOfWork;
-using Minio;
 namespace SchoolApp
 {
     public class Program
@@ -24,6 +29,7 @@ namespace SchoolApp
             builder.Services.AddScoped<IUnitOfWork, SchoolApp.UnitOfWork.UnitOfWork>();
             builder.Services.AddSession();
 
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddSingleton<IPasswordService, BCryptPasswordService>();
             builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
             builder.Services.AddHttpClient<PayOSService>();

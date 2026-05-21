@@ -1,6 +1,6 @@
 ﻿using Minio;
 using Minio.DataModel.Args;
-using SchoolApp.Services;
+using SchoolApp.Services.MinioService;
 
 public class MinioFileStorageService : IFileStorageService
 {
