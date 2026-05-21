@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace SchoolApp.Services
+namespace SchoolApp.Services.PayosService
 {
     public class PayOSService
     {

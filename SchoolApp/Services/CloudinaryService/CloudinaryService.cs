@@ -1,6 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-namespace SchoolApp.Services
+namespace SchoolApp.Services.CloudinaryService
 {
     public class CloudinaryService : ICloudinaryService
     {

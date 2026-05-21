@@ -2,7 +2,7 @@
 using SchoolApp.DTOs;
 using SchoolApp.Filters;
 using SchoolApp.Models;
-using SchoolApp.Services;
+using SchoolApp.Services.HashPassService;
 using SchoolApp.UnitOfWork;
 
 namespace SchoolApp.Controllers

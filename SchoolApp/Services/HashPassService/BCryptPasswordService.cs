@@ -1,4 +1,4 @@
-﻿namespace SchoolApp.Services
+﻿namespace SchoolApp.Services.HashPassService
 {
     public class BCryptPasswordService : IPasswordService
     {
