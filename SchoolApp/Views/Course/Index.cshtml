@@ -30,10 +30,16 @@
 
     @if (isAdmin)
     {
-        <button type="button" class="sa-btn sa-btn-gold" data-bs-toggle="modal" data-bs-target="#courseModal"
-                onclick="openCreateModal()">
-            <i class="bi bi-plus-circle me-2"></i> Thêm khóa học mới
-        </button>
+        <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+            <a id="btnExport" href="@Url.Action("ExportExcel", "Course", new { searchTerm = ViewData["SearchTerm"] })"
+               class="sa-btn" style="background:#1d7a3a; color:#fff; border:none;">
+                <i class="bi bi-file-earmark-excel me-1"></i> Xuất Excel
+            </a>
+            <button type="button" class="sa-btn sa-btn-gold" data-bs-toggle="modal" data-bs-target="#courseModal"
+                    onclick="openCreateModal()">
+                <i class="bi bi-plus-circle me-2"></i> Thêm khóa học mới
+            </button>
+        </div>
     }
 </div>
 
@@ -332,6 +338,10 @@
                         $('#courseTableContainer').html(html);
                     }
                 });
+                 // Cập nhật link export theo từ khóa hiện tại
+                var exportUrl = '@Url.Action("ExportExcel", "Course")';
+                if (searchTerm) exportUrl += '?searchTerm=' + encodeURIComponent(searchTerm);
+                $('#btnExport').attr('href', exportUrl);
             }
 
             // ====== TOAST ======
