@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolApp.Filters;
 using SchoolApp.Models;
+using SchoolApp.Services.ExcelExportService;
 using SchoolApp.UnitOfWork;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -10,10 +11,12 @@ namespace SchoolApp.Controllers
     public class CourseController : Controller
     {
         private readonly IUnitOfWork _uow;
+        private readonly IExcelExportService _excel;
 
-        public CourseController(IUnitOfWork uow)
+        public CourseController(IUnitOfWork uow, IExcelExportService excel)
         {
             _uow = uow;
+            _excel = excel;
         }
 
         // GET: /Course
@@ -205,6 +208,30 @@ namespace SchoolApp.Controllers
             _uow.SaveChanges();
             return Json(new { success = true, message = "Đã xóa khóa học!" });
         }
+
+        [AuthorizeAdmin]
+        public IActionResult ExportExcel(string? searchTerm)
+        {
+            var courses = _uow.Courses.SearchByName(searchTerm).ToList();
+
+            var columns = new List<ExcelColumnDef<Course>>
+            {
+                new() { Header = "ID",           ValueSelector = c => c.CourseId,    Width = 8  },
+                new() { Header = "Tên khóa học", ValueSelector = c => c.CourseName,  Width = 35 },
+                new() { Header = "Mô tả",        ValueSelector = c => c.Description, Width = 45 },
+                new() { Header = "Tín chỉ",      ValueSelector = c => c.Credits,     Width = 12 },
+                new() { Header = "Học phí (VNĐ)",ValueSelector = c => c.Fee,         Width = 18, Format = "#,##0" },
+                new() { Header = "Trạng thái",   ValueSelector = c => c.IsActive ? "Đang mở" : "Đóng", Width = 14 },
+                new() { Header = "Ngày tạo",     ValueSelector = c => c.CreatedDate, Width = 16, Format = "dd/MM/yyyy" },
+            };
+
+            var bytes = _excel.Export(courses, columns, "Khóa học", "DANH SÁCH KHÓA HỌC");
+            var fileName = $"DanhSachKhoaHoc_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+        }
+
+
+
         [AuthorizeAdmin]
         public IActionResult Modules(int id)
         {
