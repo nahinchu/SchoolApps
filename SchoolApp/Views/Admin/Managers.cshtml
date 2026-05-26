@@ -1,0 +1,172 @@
+@model IEnumerable<SchoolApp.Models.Student>
+@{
+    ViewData["Title"] = "Quản lý Manager";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .adm-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .adm-form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+            .adm-form-group.full {
+                grid-column: 1 / -1;
+            }
+
+        .adm-form-label {
+            font-size: .75rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .adm-btn-create {
+            background: linear-gradient(135deg, #c9a84c, #a8862e);
+            border: none;
+            border-radius: 8px;
+            color: #0d1b2a;
+            font-weight: 700;
+            font-size: .875rem;
+            padding: 10px 24px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity .2s;
+        }
+
+            .adm-btn-create:hover {
+                opacity: .85;
+            }
+
+        .adm-btn-del {
+            background: rgba(248,81,73,0.12);
+            border: 1px solid rgba(248,81,73,0.3);
+            color: #f85149;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: .78rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+            .adm-btn-del:hover {
+                background: rgba(248,81,73,0.25);
+            }
+
+        .adm-empty {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        @@media (max-width: 768px) {
+            .adm-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+}
+
+<!-- ── PAGE HEADER ─────────────────────────────────────────── -->
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">Quản lý <span>Manager</span></div>
+        <div class="adm-page-sub">Tạo và quản lý tài khoản quản lý nội dung hệ thống</div>
+    </div>
+</div>
+
+<!-- ── FORM TẠO MANAGER ────────────────────────────────────── -->
+<div class="adm-card">
+    <div class="adm-card-title"><i class="bi bi-person-plus-fill"></i> Tạo tài khoản Manager mới</div>
+    <form asp-action="CreateManager" asp-controller="Admin" method="post">
+        @Html.AntiForgeryToken()
+        <div class="adm-form-grid">
+            <div class="adm-form-group">
+                <label class="adm-form-label">Họ và tên *</label>
+                <input name="FullName" class="adm-input" placeholder="Nguyễn Văn A" required minlength="2" maxlength="100" />
+            </div>
+            <div class="adm-form-group">
+                <label class="adm-form-label">Email *</label>
+                <input name="Email" type="email" class="adm-input" placeholder="manager@school.vn" required maxlength="150" />
+            </div>
+            <div class="adm-form-group">
+                <label class="adm-form-label">Mật khẩu *</label>
+                <input name="Password" type="password" class="adm-input" placeholder="Tối thiểu 6 ký tự" required minlength="6" />
+            </div>
+            <div class="adm-form-group">
+                <label class="adm-form-label">Số điện thoại</label>
+                <input name="Phone" class="adm-input" placeholder="0901234567" maxlength="15" />
+            </div>
+            <div class="adm-form-group full" style="align-items:flex-start;">
+                <button type="submit" class="adm-btn-create">
+                    <i class="bi bi-plus-circle"></i> Tạo tài khoản Manager
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- ── DANH SÁCH MANAGER ───────────────────────────────────── -->
+<div class="adm-card">
+    <div class="adm-card-title">
+        <i class="bi bi-people-fill"></i>
+        Danh sách Manager (@Model.Count() tài khoản)
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="adm-empty">
+            <i class="bi bi-person-x" style="font-size:2.5rem;display:block;margin-bottom:8px;"></i>
+            Chưa có tài khoản Manager nào.
+        </div>
+    }
+    else
+    {
+        <div class="adm-table-wrap">
+            <table class="adm-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Họ và tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int idx = 1;
+                    }
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td style="color:rgba(255,255,255,0.35);">@idx</td>
+                            <td style="font-weight:600;">@m.FullName</td>
+                            <td style="color:rgba(201,168,76,0.8);">@m.Email</td>
+                            <td>@(m.Phone ?? "—")</td>
+                            <td>@m.RegisteredDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <form asp-action="DeleteManager" asp-controller="Admin" method="post" style="display:inline;"
+                                      onsubmit="return confirm('Xóa tài khoản Manager @m.FullName?')">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@m.StudentId" />
+                                    <button type="submit" class="adm-btn-del">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        idx++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

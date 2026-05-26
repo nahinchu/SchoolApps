@@ -22,7 +22,7 @@ namespace SchoolApp.Controllers
             public List<int> QuestionIds { get; set; } = new();
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Manage(int lessonId)
         {
             var lesson = _uow.Lessons.GetById(lessonId);
@@ -38,7 +38,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpGet]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult GetQuiz(int id)
         {
             var quiz = _uow.Quizzes.GetById(id);
@@ -60,7 +60,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult SaveQuiz([FromForm] QuizSaveDto dto)
         {
@@ -117,7 +117,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -131,7 +131,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpGet]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult GetQuestions(int quizId)
         {
             var questions = _uow.Questions.GetQuestionsByQuiz(quizId).ToList();
@@ -139,7 +139,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpGet]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult GetQuestion(int id)
         {
       
@@ -167,7 +167,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult CreateQuestion([FromBody] QuestionDto dto)
         {
@@ -209,7 +209,7 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, message = "Thêm câu hỏi thành công!" });
         }
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult EditQuestion([FromBody] QuestionDto dto)
         {
@@ -286,7 +286,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteQuestion(int id)
         {
@@ -311,7 +311,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult ReorderQuestions([FromBody] ReorderDto dto)
         {
@@ -361,7 +361,7 @@ namespace SchoolApp.Controllers
             return null;
         }
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult CopyToBank(int questionId)
         {

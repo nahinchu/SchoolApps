@@ -15,11 +15,22 @@
     @RenderSection("Styles", required: false)
 </head>
 <body>
-    @if (Context.Session.GetString("Role") == "Admin")
+    @{
+        var _topRole = Context.Session.GetString("Role");
+    }
+    @if (_topRole == "Admin")
     {
         <div class="sa-admin-bar">
             <i class="bi bi-shield-fill-check"></i>
-            Bạn đang đăng nhập với quyền <strong>Quản trị viên</strong>
+            Bạn đang đăng nhập với quyền <strong>Quản trị hệ thống</strong>
+            — <a href="/Admin/Dashboard" style="color:#c9a84c;">Vào Dashboard</a>
+        </div>
+    }
+    else if (_topRole == "Manager")
+    {
+        <div class="sa-admin-bar" style="background:linear-gradient(135deg,#1a3a52,#0d2b3e);">
+            <i class="bi bi-person-gear"></i>
+            Bạn đang đăng nhập với quyền <strong>Quản lý nội dung</strong>
         </div>
     }
     <header class="sa-header" id="sa-header">
@@ -44,6 +55,22 @@
                         </a>
                     </li>
                     @if (Context.Session.GetString("Role") == "Admin")
+                    {
+                        <li>
+                            <a class="sa-nav-link" asp-controller="Admin" asp-action="Dashboard">
+                                <i class="bi bi-speedometer2 nav-icon"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a class="sa-nav-link" asp-controller="Admin" asp-action="Managers">
+                                <i class="bi bi-person-gear nav-icon"></i>
+                                Quản lý Manager
+                            </a>
+                        </li>
+                    }
+
+                    @if (Context.Session.GetString("Role") == "Manager")
                     {
                         <li>
                             <a class="sa-nav-link" asp-controller="Student" asp-action="Index">
@@ -92,6 +119,10 @@
                                 {
                                     <span class="sa-badge-admin"><i class="bi bi-shield-fill-check"></i> Admin</span>
                                 }
+                                else if (role == "Manager")
+                                {
+                                    <span class="sa-badge-admin" style="background:rgba(26,90,143,0.15);color:#5b9dd9;"><i class="bi bi-person-gear"></i> Manager</span>
+                                }
                                 else if (role == "Student")
                                 {
                                     <span class="sa-badge-student"><i class="bi bi-mortarboard-fill"></i> Học viên</span>
@@ -101,28 +132,28 @@
 
                             <ul class="dropdown-menu dropdown-menu-end sa-user-dropdown-menu"
                                 style="
-                                        background-color: #1b2d42;
-                                        border: 1px solid rgba(201,168,76,0.25);
-                                        border-radius: 12px;
-                                        box-shadow: 0 16px 40px rgba(0,0,0,0.5);
-                                        padding: 6px;
-                                        min-width: 220px;
-                                    ">
+                                            background-color: #1b2d42;
+                                            border: 1px solid rgba(201,168,76,0.25);
+                                            border-radius: 12px;
+                                            box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+                                            padding: 6px;
+                                            min-width: 220px;
+                                        ">
                                 <!-- Header -->
                                 <li style="
-                                        display: flex;
-                                        align-items: center;
-                                        gap: 12px;
-                                        padding: 10px 12px 8px;
-                                    ">
-                                    <div style="
-                                            width:42px; height:42px; flex-shrink:0;
-                                            background: linear-gradient(135deg, #c9a84c, #e8c96e);
-                                            border-radius: 50%;
-                                            display:flex; align-items:center; justify-content:center;
-                                            font-size:16px; font-weight:700; color:#0d1b2a;
-                                            box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 12px;
+                                            padding: 10px 12px 8px;
                                         ">
+                                    <div style="
+                                                width:42px; height:42px; flex-shrink:0;
+                                                background: linear-gradient(135deg, #c9a84c, #e8c96e);
+                                                border-radius: 50%;
+                                                display:flex; align-items:center; justify-content:center;
+                                                font-size:16px; font-weight:700; color:#0d1b2a;
+                                                box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+                                            ">
                                         @initials
                                     </div>
                                     <div>
@@ -130,7 +161,11 @@
                                         <div style="font-size:.75rem; color:#c9a84c; margin-top:2px;">
                                             @if (role == "Admin")
                                             {
-                                                <text><i class="bi bi-shield-fill-check"></i> Quản trị viên</text>
+                                                <text><i class="bi bi-shield-fill-check"></i> Quản trị hệ thống</text>
+                                            }
+                                            else if (role == "Manager")
+                                            {
+                                                <text><i class="bi bi-person-gear"></i> Quản lý nội dung</text>
                                             }
                                             else
                                             {
@@ -236,7 +271,11 @@
                         <p class="sa-footer-heading">
                             @if (Context.Session.GetString("Role") == "Admin")
                             {
-                                <text>Quản trị</text>
+                                <text>Hệ thống</text>
+                            }
+                            else if (Context.Session.GetString("Role") == "Manager")
+                            {
+                                <text>Quản lý</text>
                             }
                             else
                             {
@@ -247,6 +286,11 @@
                             <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
                             <li><a asp-controller="Course" asp-action="Index">Khóa học</a></li>
                             @if (Context.Session.GetString("Role") == "Admin")
+                            {
+                                <li><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
+                                <li><a asp-controller="Admin" asp-action="Managers">Quản lý Manager</a></li>
+                            }
+                            @if (Context.Session.GetString("Role") == "Manager")
                             {
                                 <li><a asp-controller="Student" asp-action="Index">Quản lý học viên</a></li>
                                 <li><a asp-controller="Enrollment" asp-action="Index">Quản lý đăng ký</a></li>
@@ -273,8 +317,14 @@
                             }
                             else if (footerRole == "Admin")
                             {
-                                <li><a asp-controller="Student" asp-action="Create">Thêm học viên mới</a></li>
+                                <li><a asp-controller="Admin" asp-action="Dashboard">Dashboard hệ thống</a></li>
+                                <li><a asp-controller="Admin" asp-action="Managers">Quản lý Manager</a></li>
+                                <li><a asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                            }
+                            else if (footerRole == "Manager")
+                            {
                                 <li><a asp-controller="Course" asp-action="Index">Quản lý khóa học</a></li>
+                                <li><a asp-controller="Student" asp-action="Index">Quản lý học viên</a></li>
                                 <li><a asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
                             }
                             else

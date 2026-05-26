@@ -4,13 +4,16 @@
 
 @{
     ViewData["Title"] = "Quản lý Chương";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var courseId = ViewData["CourseId"] != null ? (int)ViewData["CourseId"] : 0;
     var courseName = ViewData["CourseName"] as string ?? "Khóa học";
 }
 
-<div class="sa-page-hero">
-    <h1>📖 Quản lý Chương - <span style="color:var(--gold);">@courseName</span></h1>
-    <p>Quản lý cấu trúc chương học trong khóa</p>
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">📖 Chương học — <span>@courseName</span></div>
+        <div class="adm-page-sub">Quản lý cấu trúc chương học trong khóa</div>
+    </div>
 </div>
 
 <!-- TOOLBAR -->
