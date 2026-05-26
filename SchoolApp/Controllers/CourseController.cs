@@ -46,14 +46,14 @@ namespace SchoolApp.Controllers
         }
 
         [HttpGet]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Create()
         {
             return View(new Course { IsActive = true });
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Course course)
         {
@@ -68,7 +68,7 @@ namespace SchoolApp.Controllers
             return RedirectToAction("Index");
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Edit(int id)
         {
             var course = _uow.Courses.GetById(id);
@@ -77,7 +77,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Course course)
         {
@@ -130,7 +130,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult CreateAjax(Course course)
         {
@@ -147,7 +147,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult EditAjax(Course course)
         {
@@ -209,7 +209,7 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, message = "Đã xóa khóa học!" });
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult ExportExcel(string? searchTerm)
         {
             var courses = _uow.Courses.SearchByName(searchTerm).ToList();
@@ -232,7 +232,7 @@ namespace SchoolApp.Controllers
 
 
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Modules(int id)
         {
             var course = _uow.Courses.GetById(id);
@@ -242,4 +242,4 @@ namespace SchoolApp.Controllers
             return RedirectToAction("Index", "Module", new { courseId = id });
         }
     }
-}       
+}

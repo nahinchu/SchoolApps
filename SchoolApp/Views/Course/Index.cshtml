@@ -4,14 +4,29 @@
 @{
     ViewData["Title"] = "Danh sách khóa học";
     var role = Context.Session.GetString("Role");
-    var isAdmin = role == "Admin";
+    var isAdminOrManager = role == "Admin" || role == "Manager";
+    Layout = isAdminOrManager
+        ? "~/Views/Shared/_AdminLayout.cshtml"
+        : "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- ==================== PAGE HERO ==================== -->
-<div class="sa-page-hero">
-    <h1>📚 Danh sách khóa học</h1>
-    <p>Quản lý và khám phá các khóa học hiện có</p>
-</div>
+<!-- ==================== PAGE HEADER ==================== -->
+@if (isAdminOrManager)
+{
+    <div class="adm-page-header">
+        <div>
+            <div class="adm-page-title">📚 Danh sách <span>Khóa học</span></div>
+            <div class="adm-page-sub">Quản lý và khám phá các khóa học hiện có</div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="sa-page-hero">
+        <h1>📚 Danh sách khóa học</h1>
+        <p>Quản lý và khám phá các khóa học hiện có</p>
+    </div>
+}
 
 <!-- ==================== TOOLBAR ==================== -->
 <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
@@ -28,7 +43,7 @@
         </button>
     </form>
 
-    @if (isAdmin)
+    @if (isAdminOrManager)
     {
         <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
             <a id="btnExport" href="@Url.Action("ExportExcel", "Course", new { searchTerm = ViewData["SearchTerm"] })"

@@ -2,13 +2,16 @@
 @model IEnumerable<SchoolApp.Models.Question>
 @{
     ViewData["Title"] = "Ngân hàng câu hỏi";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var currentTag = ViewData["CurrentTag"] as string;
     var allTags = ViewData["AllTags"] as List<string> ?? new();
 }
 
-<div class="sa-page-hero">
-    <h1>🗃️ Ngân hàng câu hỏi</h1>
-    <p>Quản lý câu hỏi dùng chung cho nhiều bài kiểm tra</p>
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">🗃️ Ngân hàng <span>Câu hỏi</span></div>
+        <div class="adm-page-sub">Quản lý câu hỏi dùng chung cho nhiều bài kiểm tra</div>
+    </div>
 </div>
 
 @* ── TOOLBAR ──────────────────────────────────────────────────────── *@

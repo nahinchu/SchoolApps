@@ -5,6 +5,8 @@
 @{
     var role = Context.Session.GetString("Role");
     var isAdmin = role == "Admin";
+    var isManager = role == "Manager";
+    var isAdminOrManager = isAdmin || isManager;
     var isStudent = role == "Student";
     var studentId = Context.Session.GetInt32("StudentId");
     var enrolledIds = ViewBag.EnrolledCourseIds as HashSet<int> ?? new HashSet<int>();
@@ -59,16 +61,19 @@
                         }
                     </td>
                     <td>
-                        @if (isAdmin)
+                        @if (isAdminOrManager)
                         {
                             <button type="button" class="btn btn-sm btn-warning me-1"
                                     onclick="openEditModal(@item.CourseId)">
                                 <i class="bi bi-pencil"></i> Sửa
                             </button>
-                            <button type="button" class="btn btn-sm btn-danger me-1 btn-delete-course"
-                                    data-id="@item.CourseId">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            @if (isAdmin)
+                            {
+                                <button type="button" class="btn btn-sm btn-danger me-1 btn-delete-course"
+                                        data-id="@item.CourseId">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            }
                             <a asp-controller="Module" asp-action="Index" asp-route-courseId="@item.CourseId"
                                class="btn btn-sm btn-primary">
                                 <i class="bi bi-folder2"></i> Chương

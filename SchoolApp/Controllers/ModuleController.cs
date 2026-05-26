@@ -37,7 +37,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpGet]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Create(int courseId)
         {
             return View(new Module
@@ -49,7 +49,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Module module)
         {
@@ -72,7 +72,7 @@ namespace SchoolApp.Controllers
             return RedirectToAction("Index", new { courseId = module.CourseId });
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Edit(int id)
         {
             var module = _uow.Modules.GetById(id);
@@ -81,7 +81,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Module module)
         {
@@ -106,7 +106,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -129,7 +129,7 @@ namespace SchoolApp.Controllers
         // ==================== AJAX ====================
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult CreateAjax([FromForm] ModuleSaveDto dto)
         {
@@ -159,7 +159,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult EditAjax([FromForm] ModuleSaveDto dto)
         {

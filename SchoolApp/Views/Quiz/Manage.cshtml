@@ -3,13 +3,16 @@
 
 @{
     ViewData["Title"] = "Quản lý Quiz";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var lessonId = (int)ViewData["LessonId"]!;
     var lessonTitle = ViewData["LessonTitle"] as string;
 }
 
-<div class="sa-page-hero">
-    <h1>📋 Quiz - @lessonTitle</h1>
-    <p>Quản lý câu hỏi và cài đặt bài kiểm tra</p>
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">📋 Quiz — <span>@lessonTitle</span></div>
+        <div class="adm-page-sub">Quản lý câu hỏi và cài đặt bài kiểm tra</div>
+    </div>
 </div>
 
 <div class="card">

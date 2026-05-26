@@ -48,7 +48,7 @@ namespace SchoolApp.Controllers
             return View(lessons);
         }
         [HttpGet]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Create(int moduleId)
         {
             return View(new Lesson
@@ -62,7 +62,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Lesson lesson)
         {
@@ -80,7 +80,7 @@ namespace SchoolApp.Controllers
             return RedirectToAction("Index", new { moduleId = lesson.ModuleId });
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Edit(int id)
         {
             var lesson = _uow.Lessons.GetById(id);
@@ -89,7 +89,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Lesson lesson)
         {
@@ -113,7 +113,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
@@ -133,7 +133,7 @@ namespace SchoolApp.Controllers
         // ==================== AJAX ====================
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateAjax([FromForm] LessonSaveDto dto)
         {
@@ -190,7 +190,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditAjax([FromForm] LessonSaveDto dto)
         {

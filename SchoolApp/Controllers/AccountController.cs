@@ -49,13 +49,20 @@ namespace SchoolApp.Controllers
             HttpContext.Session.SetString("StudentName", student.FullName);
             HttpContext.Session.SetInt32("StudentId", student.StudentId);
 
-            string role = student.Role.Equals("admin", StringComparison.OrdinalIgnoreCase)
-                ? "Admin"
-                : "Student";
+            string role = student.Role.ToLower() switch
+            {
+                "admin" => "Admin",
+                "manager" => "Manager",
+                _ => "Student"
+            };
             HttpContext.Session.SetString("Role", role);
 
             TempData["Success"] = "Đăng nhập thành công!";
-            return RedirectToAction("Index", "Home");
+
+            if (role == "Admin" || role == "Manager")
+                return RedirectToAction("Dashboard", "Admin");
+
+            return RedirectToAction("Index", "Course");
         }
         // GET: /Account/Register
         [HttpGet]
@@ -77,7 +84,7 @@ namespace SchoolApp.Controllers
 
             // Kiểm tra email đã tồn tại
             bool emailExists = _uow.Students.GetAll()
-                .Any(s => s.Email.Equals(model.Email, StringComparison.OrdinalIgnoreCase));
+                .Any(s => s.Email == model.Email.Trim().ToLower());
 
             if (emailExists)
             {
@@ -92,7 +99,9 @@ namespace SchoolApp.Controllers
                 Email = model.Email.Trim().ToLower(),
                 Password = _passwordService.Hash(model.Password),
                 Phone = model.Phone?.Trim(),
-                DateOfBirth = model.DateOfBirth
+                DateOfBirth = model.DateOfBirth,
+                Role = "student",
+                RegisteredDate = DateTime.Now
             };
 
             _uow.Students.Add(student);
