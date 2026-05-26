@@ -3,12 +3,15 @@
 @model IPagedList<SchoolApp.Models.Enrollment>
 @{
     ViewData["Title"] = "Danh sách đăng ký";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<!-- ==================== PAGE HERO ==================== -->
-<div class="sa-page-hero">
-    <h1>📋 Danh sách đăng ký học</h1>
-    <p>Quản lý đăng ký và chấm điểm học viên</p>
+<!-- ==================== PAGE HEADER ==================== -->
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">📋 Danh sách <span>Đăng ký học</span></div>
+        <div class="adm-page-sub">Quản lý đăng ký và chấm điểm học viên</div>
+    </div>
 </div>
 
 <!-- ==================== TOOLBAR ==================== -->

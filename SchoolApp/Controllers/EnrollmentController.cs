@@ -16,7 +16,7 @@ namespace SchoolApp.Controllers
             _uow = uow;
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Index(string searchTerm, int page = 1)
         {
             int pageSize = 5;
@@ -32,7 +32,7 @@ namespace SchoolApp.Controllers
             return View(result);
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Edit(int id)
         {
             var enrollment = _uow.Enrollments.GetWithDetails(id);
@@ -41,7 +41,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Enrollment enrollment)
         {
@@ -62,7 +62,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -92,7 +92,7 @@ namespace SchoolApp.Controllers
                 return Json(new { success = false, message = "Vui lòng đăng nhập" });
             }
 
-            if (role == "Admin")
+            if (role == "Admin" || role == "Manager")
             {
                 return Json(new { success = false, message = "Admin không thể đăng ký khóa học" });
             }
@@ -141,7 +141,7 @@ namespace SchoolApp.Controllers
             return View(myEnrollments);
         }
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteAjax(int id)
         {
@@ -155,7 +155,7 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, message = "Đã xóa đăng ký!" });
         }
         [HttpGet]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult GetEnrollment(int id)
         {
             var enrollment = _uow.Enrollments.GetWithDetails(id);
@@ -172,7 +172,7 @@ namespace SchoolApp.Controllers
         }
 
         [HttpPost]
-        [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult EditAjax(Enrollment enrollment)
         {

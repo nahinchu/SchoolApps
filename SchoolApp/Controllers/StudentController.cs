@@ -43,6 +43,7 @@ namespace SchoolApp.Controllers
 
         [HttpGet]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Create()
         {
             return View(new Student());
@@ -50,6 +51,7 @@ namespace SchoolApp.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Student student)
         {
@@ -73,6 +75,7 @@ namespace SchoolApp.Controllers
         }
 
         [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult Edit(int id)
         {
             var student = _uow.Students.GetById(id);
@@ -82,6 +85,7 @@ namespace SchoolApp.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Student student)
         {
@@ -108,6 +112,7 @@ namespace SchoolApp.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -140,6 +145,7 @@ namespace SchoolApp.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteAjax(int id)
         {
@@ -157,6 +163,7 @@ namespace SchoolApp.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult CreateAjax(Student student)
         {
@@ -188,6 +195,7 @@ namespace SchoolApp.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult EditAjax(Student student)
         {
@@ -216,6 +224,7 @@ namespace SchoolApp.Controllers
 
         [HttpGet]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult GetStudent(int id)
         {
             var student = _uow.Students.GetById(id);
@@ -232,6 +241,7 @@ namespace SchoolApp.Controllers
         }
         [HttpGet]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult GetStudentDetails(int id)
         {
             var student = _uow.Students.GetWithEnrollments(id);
@@ -278,6 +288,7 @@ namespace SchoolApp.Controllers
 
 
         [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult ExportExcel(string? searchTerm)
         {
             var students = _uow.Students.Search(searchTerm).ToList();
@@ -300,6 +311,7 @@ namespace SchoolApp.Controllers
 
         [HttpPost]
         [AuthorizeAdmin]
+        [AuthorizeManager]
         [ValidateAntiForgeryToken]
         public IActionResult ImportExcel(IFormFile file)
         {
@@ -389,6 +401,7 @@ namespace SchoolApp.Controllers
 
         // ── TẢI FILE MẪU ──────────────────────────────────────────────────
         [AuthorizeAdmin]
+        [AuthorizeManager]
         public IActionResult DownloadImportTemplate()
         {
             var sample = new[]

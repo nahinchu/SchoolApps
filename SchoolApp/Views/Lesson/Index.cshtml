@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Quản lý Bài học";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var moduleId = ViewData["ModuleId"] != null ? (int)ViewData["ModuleId"] : 0;
     var moduleName = ViewData["ModuleName"] as string ?? "Chương học";
     var courseId = ViewData["CourseId"] != null ? (int)ViewData["CourseId"] : 0;
@@ -40,9 +41,11 @@
     }
 </style>
 
-<div class="sa-page-hero">
-    <h1>📝 Bài học - @moduleName</h1>
-    <p>Quản lý nội dung bài học trong chương</p>
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">📝 Bài học — <span>@moduleName</span></div>
+        <div class="adm-page-sub">Quản lý nội dung bài học trong chương</div>
+    </div>
 </div>
 
 <div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">

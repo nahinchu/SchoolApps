@@ -10,6 +10,7 @@ public class QuestionBankController : Controller
     public QuestionBankController(IUnitOfWork uow) => _uow = uow;
 
     // LIST
+    [AuthorizeManager]
     public IActionResult Index(string? tag)
     {
         var questions = _uow.Questions.GetBankQuestions(tag);
@@ -24,6 +25,7 @@ public class QuestionBankController : Controller
 
     // GET (modal sửa) — dùng GetQuestionWithOptions đã có sẵn
     [HttpGet]
+    [AuthorizeManager]
     public IActionResult GetQuestion(int id)
     {
         var q = _uow.Questions.GetQuestionWithOptions(id);
@@ -47,7 +49,9 @@ public class QuestionBankController : Controller
     }
 
     
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AuthorizeManager]
     public IActionResult Save([FromBody] QuestionDto dto)
     {      
         var error = QuestionValidator.Validate(dto);
@@ -102,7 +106,9 @@ public class QuestionBankController : Controller
     }
 
     // DELETE
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AuthorizeManager]
     public IActionResult Delete(int id)
     {
         var q = _uow.Questions.GetById(id);
@@ -115,7 +121,9 @@ public class QuestionBankController : Controller
     }
 
     // IMPORT → deep copy vào quiz (QuizId = null → QuizId = dto.QuizId)
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [AuthorizeManager]
     public IActionResult ImportToQuiz([FromBody] ImportFromBankDto dto)
     {
         if (dto.BankQuestionIds.Count == 0)
@@ -162,6 +170,7 @@ public class QuestionBankController : Controller
 
     // GET ALL — JSON cho import modal
     [HttpGet]
+    [AuthorizeManager]
     public IActionResult GetAll(string? tag)
     {
         var list = _uow.Questions.GetBankQuestions(tag).Select(q => new
