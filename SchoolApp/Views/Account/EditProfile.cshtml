@@ -1,10 +1,21 @@
 ﻿@model SchoolApp.DTOs.EditProfileViewModel
 @{
-    ViewData["Title"] = "Sửa thông tin cá nhân";
+    ViewData["Title"] = "Hồ sơ cá nhân";
     var pwdErrorsJson = TempData["PwdErrors"]?.ToString();
     var pwdErrors = pwdErrorsJson != null
         ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(pwdErrorsJson)
         : null;
+    var activeSection = TempData["ActiveTab"]?.ToString() == "password" ? "password" : "profile";
+    var userRole = Context.Session.GetString("Role") ?? "Student";
+    var roleLabel = userRole switch
+    {
+        "Admin" => "Quản trị viên",
+        "Manager" => "Quản lý",
+        _ => "Học viên"
+    };
+    var initials = string.IsNullOrEmpty(Model.FullName) ? "?" :
+        string.Concat(Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                    .TakeLast(2).Select(w => w[0])).ToUpper();
 }
 
 @section Styles {
@@ -14,7 +25,8 @@
         }
 
         .sa-main {
-            padding: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
         }
 
             .sa-main > .container {
@@ -22,202 +34,572 @@
                 padding: 0 !important;
                 width: 100% !important;
             }
+
+        /* ── Page shell ── */
+        .profile-layout {
+            display: flex;
+            min-height: calc(100vh - 66px);
+            background: var(--navy-light, #f7f5f0);
+        }
+
+        /* ── Sidebar ── */
+        .profile-sidebar {
+            width: 256px;
+            flex-shrink: 0;
+            background: white;
+            border-right: 1px solid rgba(13,27,42,0.08);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 66px;
+            height: calc(100vh - 66px);
+            overflow-y: auto;
+        }
+
+        /* Avatar block */
+        .sidebar-avatar-block {
+            padding: 1.75rem 1.25rem 1.25rem;
+            border-bottom: 1px solid rgba(13,27,42,0.07);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.65rem;
+            text-align: center;
+        }
+
+        .sidebar-avatar {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--navy);
+            font-family: var(--font-display);
+            box-shadow: 0 4px 16px rgba(201,168,76,0.30);
+            flex-shrink: 0;
+        }
+
+        .sidebar-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--navy);
+            line-height: 1.3;
+        }
+
+        .sidebar-role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(201,168,76,0.12);
+            color: var(--gold);
+            border: 1px solid rgba(201,168,76,0.25);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.72rem;
+            font-weight: 600;
+        }
+
+        /* Nav section */
+        .sidebar-nav {
+            flex: 1;
+            padding: 0.75rem 0;
+        }
+
+        .sidebar-section-title {
+            padding: 0.6rem 1.25rem 0.3rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: rgba(13,27,42,0.35);
+            text-transform: uppercase;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.62rem 1.25rem;
+            font-size: 0.86rem;
+            color: rgba(13,27,42,0.65);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            text-decoration: none;
+            transition: background 0.15s, color 0.15s;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+            .sidebar-item:hover {
+                background: rgba(201,168,76,0.07);
+                color: var(--navy);
+            }
+
+            .sidebar-item.active {
+                background: rgba(201,168,76,0.10);
+                color: var(--gold);
+                border-left-color: var(--gold);
+                font-weight: 600;
+            }
+
+            .sidebar-item i {
+                font-size: 0.95rem;
+                width: 18px;
+                flex-shrink: 0;
+            }
+
+            .sidebar-item .item-chevron {
+                margin-left: auto;
+                font-size: 0.7rem;
+                opacity: 0.4;
+            }
+
+        .sidebar-item-badge {
+            margin-left: auto;
+            font-size: 0.65rem;
+            background: rgba(13,27,42,0.07);
+            color: rgba(13,27,42,0.4);
+            border-radius: 10px;
+            padding: 1px 7px;
+            font-weight: 600;
+        }
+
+        .sidebar-item.disabled {
+            cursor: default;
+            opacity: 0.5;
+        }
+
+            .sidebar-item.disabled:hover {
+                background: transparent;
+                color: rgba(13,27,42,0.65);
+            }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(13,27,42,0.06);
+            margin: 0.5rem 1rem;
+        }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            border-top: 1px solid rgba(13,27,42,0.07);
+            padding: 0.6rem 0;
+        }
+
+        .sidebar-logout {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.62rem 1.25rem;
+            font-size: 0.86rem;
+            color: rgba(185,28,28,0.75);
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+            .sidebar-logout:hover {
+                background: rgba(185,28,28,0.05);
+                color: #b91c1c;
+            }
+
+            .sidebar-logout i {
+                font-size: 0.95rem;
+                width: 18px;
+            }
+
+        /* ── Main content ── */
+        .profile-content {
+            flex: 1;
+            padding: 2rem 2.5rem;
+            min-width: 0;
+            width: 0; /* force flex child to shrink/grow correctly */
+        }
+
+        /* Section card */
+        .profile-section {
+            display: none;
+        }
+
+            .profile-section.active {
+                display: block;
+            }
+
+        /* Section header — navy background, white text */
+        .section-header {
+            background: linear-gradient(135deg, var(--navy) 0%, #1c3a52 100%);
+            border-radius: 12px;
+            padding: 1.4rem 1.75rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-header-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.18rem;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 0.81rem;
+            color: rgba(255,255,255,0.55);
+            font-weight: 400;
+        }
+
+        /* Content card */
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid rgba(13,27,42,0.09);
+            overflow: hidden;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 6px rgba(13,27,42,0.05);
+        }
+
+        .profile-card-header {
+            padding: 0.9rem 1.5rem;
+            border-bottom: 1px solid rgba(13,27,42,0.06);
+            background: rgba(13,27,42,0.02);
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .profile-card-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+            .profile-card-title i {
+                color: var(--gold);
+            }
+
+        .profile-card-body {
+            padding: 1.5rem 1.75rem;
+        }
+
+        /* Form grid */
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem 1.25rem;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        /* Field */
+        .pf-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .pf-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: rgba(13,27,42,0.55);
+            letter-spacing: 0.2px;
+        }
+
+            .pf-label .req {
+                color: var(--danger);
+            }
+
+        .pf-input {
+            border: 1.5px solid rgba(13,27,42,0.12);
+            border-radius: 8px;
+            padding: 9px 13px;
+            font-size: 0.87rem;
+            color: var(--navy);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: white;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+            .pf-input:focus {
+                border-color: var(--gold);
+                box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+            }
+
+            .pf-input::placeholder {
+                color: rgba(13,27,42,0.25);
+            }
+
+        textarea.pf-input {
+            resize: vertical;
+            min-height: 72px;
+        }
+
+        .pf-error {
+            font-size: 0.73rem;
+            color: var(--danger);
+        }
+
+        .pw-wrap {
+            position: relative;
+        }
+
+        .pw-toggle {
+            position: absolute;
+            right: 1px;
+            top: 1px;
+            bottom: 1px;
+            width: 38px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: rgba(13,27,42,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0 7px 7px 0;
+            transition: color 0.15s;
+        }
+
+            .pw-toggle:hover {
+                color: var(--gold);
+            }
+
+        /* Action bar */
+        .section-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid rgba(13,27,42,0.06);
+            margin-top: 1.25rem;
+        }
+
+        .pf-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 9px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.84rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .pf-btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            color: var(--navy);
+            box-shadow: 0 2px 8px rgba(201,168,76,0.30);
+        }
+
+            .pf-btn-primary:hover {
+                filter: brightness(1.06);
+            }
+
+            .pf-btn-primary:active {
+                transform: scale(0.98);
+            }
+
+        /* Alert */
+        .pf-alert {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.7rem 1rem;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .pf-alert-error {
+            background: #fff5f5;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+        }
+
+        @@media (max-width: 900px) {
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid-full {
+                grid-column: auto;
+            }
+        }
+
+        @@media (max-width: 700px) {
+            .profile-layout {
+                flex-direction: column;
+            }
+
+            .profile-sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                flex-direction: row;
+                flex-wrap: wrap;
+                border-right: none;
+                border-bottom: 1px solid rgba(13,27,42,0.08);
+            }
+
+            .sidebar-avatar-block {
+                flex-direction: row;
+                text-align: left;
+                padding: 1rem;
+                border-bottom: none;
+                border-right: 1px solid rgba(13,27,42,0.07);
+            }
+
+            .sidebar-nav {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 0.25rem;
+            }
+
+            .sidebar-item {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                border-radius: 6px;
+                white-space: nowrap;
+            }
+
+                .sidebar-item.active {
+                    border-left-color: transparent;
+                    border-bottom-color: var(--gold);
+                }
+
+            .profile-content {
+                padding: 1.25rem;
+            }
+        }
     </style>
 }
 
-<div style="
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: calc(100vh - 66px);
-    background: var(--navy-light);
-">
-    <!-- ===== Left: Decorative Panel ===== -->
-    <div style="
-        background: linear-gradient(135deg, rgb(201,168,76) 0%, rgb(232,201,110) 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 2.5rem;
-        position: relative;
-        overflow: hidden;
-    ">
-        <!-- Decorative circles -->
-        <div style="
-            position:absolute; top:-100px; left:-100px;
-            width:350px; height:350px;
-            border-radius:50%;
-            background: radial-gradient(circle, rgba(13,27,42,0.1) 0%, transparent 70%);
-            pointer-events:none;
-        "></div>
-        <div style="
-            position:absolute; bottom:-80px; right:-80px;
-            width:280px; height:280px;
-            border-radius:50%;
-            background: radial-gradient(circle, rgba(13,27,42,0.07) 0%, transparent 70%);
-            pointer-events:none;
-        "></div>
-        <div style="
-            position:absolute; top:40%; left:-40px;
-            width:180px; height:180px;
-            border-radius:50%;
-            border: 1px solid rgba(13,27,42,0.12);
-            pointer-events:none;
-        "></div>
+<div class="profile-layout">
 
-        <!-- Avatar placeholder -->
-        <div style="
-            width: 90px; height: 90px;
-            background: var(--navy-light);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.8rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 12px 32px rgba(13,27,42,0.25);
-        ">
-            👤
-        </div>
+    <!-- ════════════════════ SIDEBAR ════════════════════ -->
+    <aside class="profile-sidebar">
 
-        <h1 style="
-            font-family: var(--font-display);
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: .5rem;
-            text-align: center;
-        ">
-            Tài khoản của tôi
-        </h1>
-
-        <p style="
-            color: rgba(13,27,42,0.65);
-            font-size: .9rem;
-            text-align: center;
-            margin-bottom: 2.5rem;
-            max-width: 270px;
-            line-height: 1.7;
-        ">Cập nhật thông tin cá nhân và bảo mật tài khoản của bạn.</p>
-
-        <!-- Info cards -->
-        <div style="display:flex; flex-direction:column; gap:.85rem; width:100%; max-width:270px;">
-            <div style="
-                background: rgba(13,27,42,0.08);
-                border: 1px solid rgba(13,27,42,0.15);
-                border-radius: 10px;
-                padding: .85rem 1rem;
-                display:flex; align-items:center; gap:.75rem;
-            ">
-                <i class="bi bi-person-badge-fill" style="color:var(--navy); font-size:1.1rem;"></i>
-                <div>
-                    <div style="color:var(--navy); font-size:.85rem; font-weight:600;">Thông tin cá nhân</div>
-                    <div style="color:rgba(13,27,42,0.5); font-size:.78rem;">Tên, SĐT, ngày sinh, địa chỉ</div>
-                </div>
-            </div>
-            <div style="
-                background: rgba(13,27,42,0.08);
-                border: 1px solid rgba(13,27,42,0.15);
-                border-radius: 10px;
-                padding: .85rem 1rem;
-                display:flex; align-items:center; gap:.75rem;
-            ">
-                <i class="bi bi-shield-lock-fill" style="color:var(--navy); font-size:1.1rem;"></i>
-                <div>
-                    <div style="color:var(--navy); font-size:.85rem; font-weight:600;">Bảo mật</div>
-                    <div style="color:rgba(13,27,42,0.5); font-size:.78rem;">Đổi mật khẩu an toàn</div>
+        <!-- Avatar + User info -->
+        <div class="sidebar-avatar-block">
+            <div class="sidebar-avatar">@initials</div>
+            <div>
+                <div class="sidebar-name">@Model.FullName</div>
+                <div style="margin-top:4px;">
+                    <span class="sidebar-role-badge">
+                        <i class="bi bi-patch-check-fill" style="font-size:0.65rem;"></i>
+                        @roleLabel
+                    </span>
                 </div>
             </div>
         </div>
 
-        <div style="
-            width:100%; max-width:270px;
-            height:1px;
-            background: rgba(13,27,42,0.15);
-            margin: 2rem 0 1.25rem;
-        "></div>
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+            <div class="sidebar-section-title">Tài khoản</div>
 
-        <p style="color:rgba(13,27,42,0.45); font-size:.78rem; text-align:center;">
-            © 2026 SchoolApp · Học không giới hạn
-        </p>
-    </div>
+            <button class="sidebar-item @(activeSection == "profile" ? "active" : "")"
+                    onclick="switchSection('profile')">
+                <i class="bi bi-person-fill"></i>
+                <span>Thông tin cá nhân</span>
+                <i class="bi bi-chevron-right item-chevron"></i>
+            </button>
 
-    <!-- ===== Right: Form ===== -->
-    <div style="
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        padding: 2.5rem 2rem;
-        position: relative;
-    ">
-        <!-- Subtle bg decoration -->
-        <div style="
-            position:absolute; bottom:-60px; right:-60px;
-            width:280px; height:280px;
-            border-radius:50%;
-            background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
-            pointer-events:none;
-        "></div>
+            <button class="sidebar-item @(activeSection == "password" ? "active" : "")"
+                    onclick="switchSection('password')">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Đổi mật khẩu</span>
+                <i class="bi bi-chevron-right item-chevron"></i>
+            </button>
 
-        <div class="sa-card" style="width:100%; max-width:480px; position:relative;">
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-title">Học tập</div>
 
-            <!-- Header -->
-            <div style="
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-                border-radius: 12px 12px 0 0;
-                padding: 1.5rem 1.5rem 0;
-                text-align: center;
-            ">
-                <h2 style="
-                    font-family: var(--font-display);
-                    font-size: 1.5rem;
-                    font-weight: 700;
-                    color: var(--navy);
-                    margin-bottom: .2rem;
-                ">
-                    Chỉnh sửa tài khoản
-                </h2>
-                <p style="color: rgba(13,27,42,0.6); font-size:.85rem; margin-bottom: 1.25rem;">
-                    Cập nhật thông tin cá nhân và mật khẩu
-                </p>
+            <div class="sidebar-item disabled">
+                <i class="bi bi-book-half"></i>
+                <span>Khoá học của tôi</span>
+                <span class="sidebar-item-badge">Sắp ra</span>
+            </div>
 
-                <!-- Tabs -->
-                <div style="display: flex; gap: 0; margin-top: .5rem;">
-                    <button type="button" id="tab-profile"
-                            onclick="switchTab('profile')"
-                            style="
-                        flex: 1; border: none; cursor: pointer; padding: .65rem 1rem;
-                        font-weight: 600; font-size: .88rem;
-                        background: var(--navy-light); color: var(--gold);
-                        border-radius: 8px 0 0 0;
-                        transition: opacity .2s;
-                    ">
-                        <i class="bi bi-person-fill"></i> Thông tin
-                    </button>
-                    <button type="button" id="tab-password"
-                            onclick="switchTab('password')"
-                            style="
-                        flex: 1; border: none; cursor: pointer; padding: .65rem 1rem;
-                        font-weight: 600; font-size: .88rem;
-                        background: rgba(13,27,42,0.12); color: rgba(13,27,42,0.65);
-                        border-radius: 0 8px 0 0;
-                        transition: opacity .2s;
-                    ">
-                        <i class="bi bi-shield-lock-fill"></i> Đổi mật khẩu
-                    </button>
+            <div class="sidebar-item disabled">
+                <i class="bi bi-trophy-fill"></i>
+                <span>Chứng chỉ</span>
+                <span class="sidebar-item-badge">Sắp ra</span>
+            </div>
+
+            <div class="sidebar-item disabled">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Tiến trình học</span>
+                <span class="sidebar-item-badge">Sắp ra</span>
+            </div>
+        </nav>
+
+        <!-- Logout -->
+        <div class="sidebar-footer">
+            <a class="sidebar-logout" asp-controller="Account" asp-action="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Đăng xuất</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ════════════════════ CONTENT ════════════════════ -->
+    <div class="profile-content">
+
+        <!-- ── Section: Thông tin cá nhân ── -->
+        <div id="section-profile" class="profile-section @(activeSection == "profile" ? "active" : "")">
+
+            <div class="section-header">
+                <div class="section-header-icon">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div>
+                    <div class="section-title">Thông tin cá nhân</div>
+                    <div class="section-subtitle">Cập nhật tên, liên hệ và địa chỉ của bạn</div>
                 </div>
             </div>
 
-            <!-- Body -->
-            <div class="sa-card-body">
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <i class="bi bi-person-vcard-fill" style="color:var(--gold);"></i>
+                    <span class="profile-card-title">Thông tin cơ bản</span>
+                </div>
+                <div class="profile-card-body">
 
-                <!-- Panel: Thông tin cá nhân -->
-                <div id="panel-profile">
-                    @if (!ViewData.ModelState.IsValid)
+                    @if (!ViewData.ModelState.IsValid && activeSection == "profile")
                     {
                         var generalErrors = ViewData.ModelState[""]?.Errors;
                         if (generalErrors != null && generalErrors.Count > 0)
                         {
-                            <div class="sa-alert sa-alert-danger" style="margin-bottom:1rem;">
-                                <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
+                            <div class="pf-alert pf-alert-error">
+                                <i class="bi bi-exclamation-circle-fill"></i>
                                 <span>@generalErrors[0].ErrorMessage</span>
                             </div>
                         }
@@ -226,167 +608,187 @@
                     <form asp-action="EditProfile" method="post">
                         @Html.AntiForgeryToken()
 
-                        <div class="sa-form-group">
-                            <label class="sa-label" asp-for="FullName">
-                                Họ và tên <span style="color:var(--danger)">*</span>
-                            </label>
-                            <input class="sa-input" asp-for="FullName"
-                                   placeholder="Nguyễn Văn A"
-                                   autocomplete="name" />
-                            <span asp-validation-for="FullName"
-                                  style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                        <div class="form-grid-2">
+
+                            <div class="pf-field form-grid-full">
+                                <label class="pf-label" asp-for="FullName">
+                                    Họ và tên <span class="req">*</span>
+                                </label>
+                                <input class="pf-input" asp-for="FullName"
+                                       placeholder="Nguyễn Văn A"
+                                       autocomplete="name" />
+                                <span asp-validation-for="FullName" class="pf-error"></span>
+                            </div>
+
+                            <div class="pf-field">
+                                <label class="pf-label" asp-for="Phone">Số điện thoại</label>
+                                <input class="pf-input" asp-for="Phone"
+                                       type="tel" placeholder="0901 234 567"
+                                       autocomplete="tel" />
+                                <span asp-validation-for="Phone" class="pf-error"></span>
+                            </div>
+
+                            <div class="pf-field">
+                                <label class="pf-label" asp-for="DateOfBirth">Ngày sinh</label>
+                                <input class="pf-input" asp-for="DateOfBirth"
+                                       type="date" autocomplete="bday" />
+                                <span asp-validation-for="DateOfBirth" class="pf-error"></span>
+                            </div>
+
+                            <div class="pf-field form-grid-full">
+                                <label class="pf-label" asp-for="Address">Địa chỉ</label>
+                                <textarea class="pf-input" asp-for="Address"
+                                          placeholder="123 Đường ABC, Quận 1, TP.Hồ Chí Minh"
+                                          rows="2"></textarea>
+                                <span asp-validation-for="Address" class="pf-error"></span>
+                            </div>
+
                         </div>
 
-                        <div class="sa-form-group">
-                            <label class="sa-label" asp-for="Phone">Số điện thoại</label>
-                            <input class="sa-input" asp-for="Phone"
-                                   type="tel" placeholder="0901234567"
-                                   autocomplete="tel" />
-                            <span asp-validation-for="Phone"
-                                  style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
+                        <div class="section-actions">
+                            <button type="submit" class="pf-btn pf-btn-primary">
+                                <i class="bi bi-check-lg"></i> Lưu thay đổi
+                            </button>
                         </div>
-
-                        <div class="sa-form-group">
-                            <label class="sa-label" asp-for="DateOfBirth">Ngày sinh</label>
-                            <input class="sa-input" asp-for="DateOfBirth"
-                                   type="date" autocomplete="bday" />
-                            <span asp-validation-for="DateOfBirth"
-                                  style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
-                        </div>
-
-                        <div class="sa-form-group" style="margin-bottom:1.5rem;">
-                            <label class="sa-label" asp-for="Address">Địa chỉ</label>
-                            <textarea class="sa-input" asp-for="Address"
-                                      placeholder="123 Đường ABC, TP.Đà Nẵng"
-                                      rows="2"
-                                      style="resize:vertical;"></textarea>
-                            <span asp-validation-for="Address"
-                                  style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
-                        </div>
-
-                        <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
-                            <i class="bi bi-check-lg"></i> Lưu thay đổi
-                        </button>
                     </form>
-                </div>
 
-                <!-- Panel: Đổi mật khẩu -->
-                <div id="panel-password" style="display:none;">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Section: Đổi mật khẩu ── -->
+        <div id="section-password" class="profile-section @(activeSection == "password" ? "active" : "")">
+
+            <div class="section-header">
+                <div class="section-header-icon">
+                    <i class="bi bi-shield-lock-fill"></i>
+                </div>
+                <div>
+                    <div class="section-title">Đổi mật khẩu</div>
+                    <div class="section-subtitle">Sử dụng mật khẩu mạnh để bảo mật tài khoản của bạn</div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <i class="bi bi-shield-lock-fill" style="color:var(--gold);"></i>
+                    <span class="profile-card-title">Bảo mật tài khoản</span>
+                </div>
+                <div class="profile-card-body">
+
+                    @if (pwdErrors != null && pwdErrors.ContainsKey("_general"))
+                    {
+                        <div class="pf-alert pf-alert-error">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                            <span>@pwdErrors["_general"]</span>
+                        </div>
+                    }
+
                     <form asp-action="ChangePassword" method="post">
                         @Html.AntiForgeryToken()
 
-                        <div class="sa-form-group">
-                            <label class="sa-label" for="CurrentPassword">
-                                Mật khẩu hiện tại <span style="color:var(--danger)">*</span>
-                            </label>
-                            <div style="position:relative;">
-                                <input class="sa-input" type="password" id="CurrentPassword" name="CurrentPassword"
-                                       placeholder="Nhập mật khẩu hiện tại"
-                                       autocomplete="current-password"
-                                       style="padding-right:46px;" />
-                                <button type="button" onclick="togglePwd('CurrentPassword', this)"
-                                        style="position:absolute;right:1px;top:1px;bottom:1px;width:42px;border:none;
-                                           background:transparent;color:var(--text-light);cursor:pointer;
-                                           display:flex;align-items:center;justify-content:center;
-                                           border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
-                                    <i class="bi bi-eye"></i>
-                                </button>
+                        <div style="display:flex; flex-direction:column; gap:1rem; max-width:440px;">
+
+                            <div class="pf-field">
+                                <label class="pf-label" for="CurrentPassword">
+                                    Mật khẩu hiện tại <span class="req">*</span>
+                                </label>
+                                <div class="pw-wrap">
+                                    <input class="pf-input" type="password"
+                                           id="CurrentPassword" name="CurrentPassword"
+                                           placeholder="Nhập mật khẩu hiện tại"
+                                           autocomplete="current-password"
+                                           style="padding-right:42px;" />
+                                    <button type="button" class="pw-toggle"
+                                            onclick="togglePwd('CurrentPassword',this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                @if (pwdErrors != null && pwdErrors.ContainsKey("CurrentPassword"))
+                                {
+                                    <span class="pf-error">@pwdErrors["CurrentPassword"]</span>
+                                }
                             </div>
-                            @if (pwdErrors != null && pwdErrors.ContainsKey("CurrentPassword"))
-                            {
-                                <span style="font-size:.78rem;color:var(--danger);margin-top:4px;display:block;">@pwdErrors["CurrentPassword"]</span>
-                            }
+
+                            <div class="pf-field">
+                                <label class="pf-label" for="NewPassword">
+                                    Mật khẩu mới <span class="req">*</span>
+                                </label>
+                                <div class="pw-wrap">
+                                    <input class="pf-input" type="password"
+                                           id="NewPassword" name="NewPassword"
+                                           placeholder="Ít nhất 6 ký tự"
+                                           autocomplete="new-password"
+                                           style="padding-right:42px;" />
+                                    <button type="button" class="pw-toggle"
+                                            onclick="togglePwd('NewPassword',this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                @if (pwdErrors != null && pwdErrors.ContainsKey("NewPassword"))
+                                {
+                                    <span class="pf-error">@pwdErrors["NewPassword"]</span>
+                                }
+                            </div>
+
+                            <div class="pf-field">
+                                <label class="pf-label" for="ConfirmNewPassword">
+                                    Xác nhận mật khẩu mới <span class="req">*</span>
+                                </label>
+                                <div class="pw-wrap">
+                                    <input class="pf-input" type="password"
+                                           id="ConfirmNewPassword" name="ConfirmNewPassword"
+                                           placeholder="Nhập lại mật khẩu mới"
+                                           autocomplete="new-password"
+                                           style="padding-right:42px;" />
+                                    <button type="button" class="pw-toggle"
+                                            onclick="togglePwd('ConfirmNewPassword',this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                @if (pwdErrors != null && pwdErrors.ContainsKey("ConfirmNewPassword"))
+                                {
+                                    <span class="pf-error">@pwdErrors["ConfirmNewPassword"]</span>
+                                }
+                            </div>
+
                         </div>
 
-                        <div class="sa-form-group">
-                            <label class="sa-label" for="NewPassword">
-                                Mật khẩu mới <span style="color:var(--danger)">*</span>
-                            </label>
-                            <div style="position:relative;">
-                                <input class="sa-input" type="password" id="NewPassword" name="NewPassword"
-                                       placeholder="Ít nhất 6 ký tự"
-                                       autocomplete="new-password"
-                                       style="padding-right:46px;" />
-                                <button type="button" onclick="togglePwd('NewPassword', this)"
-                                        style="position:absolute;right:1px;top:1px;bottom:1px;width:42px;border:none;
-                                           background:transparent;color:var(--text-light);cursor:pointer;
-                                           display:flex;align-items:center;justify-content:center;
-                                           border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                            @if (pwdErrors != null && pwdErrors.ContainsKey("NewPassword"))
-                            {
-                                <span style="font-size:.78rem;color:var(--danger);margin-top:4px;display:block;">@pwdErrors["NewPassword"]</span>
-                            }
+                        <div class="section-actions">
+                            <button type="submit" class="pf-btn pf-btn-primary">
+                                <i class="bi bi-shield-check"></i> Cập nhật mật khẩu
+                            </button>
                         </div>
-
-                        <div class="sa-form-group" style="margin-bottom:1.5rem;">
-                            <label class="sa-label" for="ConfirmNewPassword">
-                                Xác nhận mật khẩu mới <span style="color:var(--danger)">*</span>
-                            </label>
-                            <div style="position:relative;">
-                                <input class="sa-input" type="password" id="ConfirmNewPassword" name="ConfirmNewPassword"
-                                       placeholder="Nhập lại mật khẩu mới"
-                                       autocomplete="new-password"
-                                       style="padding-right:46px;" />
-                                <button type="button" onclick="togglePwd('ConfirmNewPassword', this)"
-                                        style="position:absolute;right:1px;top:1px;bottom:1px;width:42px;border:none;
-                                           background:transparent;color:var(--text-light);cursor:pointer;
-                                           display:flex;align-items:center;justify-content:center;
-                                           border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
-                            @if (pwdErrors != null && pwdErrors.ContainsKey("ConfirmNewPassword"))
-                            {
-                                <span style="font-size:.78rem;color:var(--danger);margin-top:4px;display:block;">@pwdErrors["ConfirmNewPassword"]</span>
-                            }
-                        </div>
-
-                        <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
-                            <i class="bi bi-shield-check"></i> Đổi mật khẩu
-                        </button>
                     </form>
-                </div>
 
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        function switchTab(tab) {
-            var isProfile = tab === 'profile';
-            document.getElementById('panel-profile').style.display = isProfile ? '' : 'none';
-            document.getElementById('panel-password').style.display = isProfile ? 'none' : '';
+        function switchSection(name) {
+            document.querySelectorAll('.profile-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
 
-            var tabProfile = document.getElementById('tab-profile');
-            var tabPwd = document.getElementById('tab-password');
-
-            tabProfile.style.background = isProfile ? 'var(--navy)' : 'rgba(13,27,42,0.12)';
-            tabProfile.style.color = isProfile ? 'var(--gold)' : 'rgba(13,27,42,0.65)';
-            tabPwd.style.background = isProfile ? 'rgba(13,27,42,0.12)' : 'var(--navy)';
-            tabPwd.style.color = isProfile ? 'rgba(13,27,42,0.65)' : 'var(--gold)';
+            document.getElementById('section-' + name).classList.add('active');
+            document.querySelector('[onclick="switchSection(\'' + name + '\')"]').classList.add('active');
         }
 
-        function togglePwd(inputId, btn) {
-            var input = document.getElementById(inputId);
-            var icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.replace('bi-eye', 'bi-eye-slash');
+        function togglePwd(id, btn) {
+            var inp = document.getElementById(id);
+            var ico = btn.querySelector('i');
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                ico.classList.replace('bi-eye', 'bi-eye-slash');
             } else {
-                input.type = 'password';
-                icon.classList.replace('bi-eye-slash', 'bi-eye');
+                inp.type = 'password';
+                ico.classList.replace('bi-eye-slash', 'bi-eye');
             }
-        }
-
-        @if (TempData["ActiveTab"]?.ToString() == "password")
-        {
-                    <text>document.addEventListener('DOMContentLoaded', function() { switchTab('password'); });</text>
         }
     </script>
 }

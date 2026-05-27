@@ -8,6 +8,9 @@
     var percent = Model.MaxScore > 0
         ? (int)Math.Round((double)Model.Score * 100 / Model.MaxScore)
         : 0;
+    var courseCompleted = (bool)(ViewData["CourseCompleted"] ?? false);
+    var courseId = ViewData["CourseId"] as int?;
+    var courseName = ViewData["CourseName"] as string;
 
     // Group selected answers by QuestionId
     var selectedByQuestion = Model.Answers
@@ -16,6 +19,22 @@
 }
 
 <div class="container mt-4">
+
+    @if (courseCompleted && courseId.HasValue)
+    {
+        <div style="background:linear-gradient(135deg,#1b5e20,#388e3c);color:#fff;border-radius:12px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
+            <div style="font-size:3rem;">🎓</div>
+            <div style="flex:1;min-width:200px;">
+                <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a5d6a7;margin-bottom:.25rem;">Chúc mừng!</div>
+                <div style="font-size:1.3rem;font-weight:700;margin-bottom:.25rem;">Bạn đã hoàn thành khoá học!</div>
+                <div style="font-size:.9rem;color:#c8e6c9;">@(courseName ?? "Khoá học") — Tất cả bài học và bài kiểm tra đã hoàn tất.</div>
+            </div>
+            <a asp-controller="Enrollment" asp-action="MyEnrollments"
+               style="background:#fff;color:#1b5e20;font-weight:700;padding:.6rem 1.25rem;border-radius:8px;text-decoration:none;white-space:nowrap;">
+                <i class="bi bi-mortarboard-fill me-1"></i> Khóa học của tôi
+            </a>
+        </div>
+    }
 
     <!-- Score summary card -->
     <div class="card shadow mb-4">

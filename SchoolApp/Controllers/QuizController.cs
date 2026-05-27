@@ -3,6 +3,8 @@ using SchoolApp.DTOs;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
+using SchoolApp.Services;
+using SchoolApp.Services.CompletionService;
 using SchoolApp.UnitOfWork;
 
 namespace SchoolApp.Controllers
@@ -10,10 +12,12 @@ namespace SchoolApp.Controllers
     public class QuizController : Controller
     {
         private readonly IUnitOfWork _uow;
+        private readonly ICourseCompletionService _completionService;
 
-        public QuizController(IUnitOfWork uow)
+        public QuizController(IUnitOfWork uow, ICourseCompletionService completionService)
         {
             _uow = uow;
+            _completionService = completionService;
         }
        
         public class ReorderDto
@@ -554,32 +558,37 @@ namespace SchoolApp.Controllers
             // Clear session start time
             HttpContext.Session.Remove(startKey);
 
-            // ============================================================
-            // 🚧 LESSON PROGRESS (tuỳ chỉnh theo project)
-            // ============================================================
-            // Nếu pass, đánh dấu lesson đã hoàn thành. Bỏ comment khi đã có repository:
-            //
-            // if (passed)
-            // {
-            //     var progress = _uow.LessonProgresses.GetByStudentAndLesson(studentId, quiz.LessonId);
-            //     if (progress == null)
-            //     {
-            //         _uow.LessonProgresses.Add(new LessonProgress
-            //         {
-            //             StudentId = studentId,
-            //             LessonId = quiz.LessonId,
-            //             Status = ProgressStatus.Completed,
-            //             CompletedAt = DateTime.UtcNow
-            //         });
-            //     }
-            //     else if (progress.Status != ProgressStatus.Completed)
-            //     {
-            //         progress.Status = ProgressStatus.Completed;
-            //         progress.CompletedAt = DateTime.UtcNow;
-            //     }
-            //     _uow.SaveChanges();
-            // }
-            // ============================================================
+            // Nếu pass, tự động đánh dấu lesson hoàn thành
+            bool justCompletedCourse = false;
+            if (passed)
+            {
+                var progress = _uow.LessonProgresses.GetProgress(studentId, quiz.LessonId);
+                if (progress == null)
+                {
+                    _uow.LessonProgresses.Add(new LessonProgress
+                    {
+                        StudentId = studentId,
+                        LessonId = quiz.LessonId,
+                        Status = ProgressStatus.Completed,
+                        ProgressPercent = 100,
+                        CompletedAt = DateTime.UtcNow,
+                        LastAccessedAt = DateTime.UtcNow
+                    });
+                }
+                else if (progress.Status != ProgressStatus.Completed)
+                {
+                    progress.Status = ProgressStatus.Completed;
+                    progress.ProgressPercent = 100;
+                    progress.CompletedAt = DateTime.UtcNow;
+                    progress.LastAccessedAt = DateTime.UtcNow;
+                }
+                _uow.SaveChanges();
+
+                // Kiểm tra hoàn thành toàn bộ khoá học
+                var lessonWithModule = _uow.Lessons.GetWithModule(quiz.LessonId);
+                if (lessonWithModule?.Module != null)
+                    justCompletedCourse = _completionService.TryComplete(studentId, lessonWithModule.Module.CourseId);
+            }
 
             return Json(new
             {
@@ -592,6 +601,7 @@ namespace SchoolApp.Controllers
                 timeExceeded,
                 showAnswers = quiz.ShowAnswersAfterSubmit,
                 resultUrl = Url.Action("Result", new { id = attempt.QuizAttemptId }),
+                courseCompleted = justCompletedCourse,
                 message = passed
                     ? "Chúc mừng! Bạn đã đạt yêu cầu."
                     : "Bạn chưa đạt điểm qua môn."
@@ -606,6 +616,19 @@ namespace SchoolApp.Controllers
 
             var attempt = _uow.QuizAttempts.GetAttemptWithDetails(id);
             if (attempt == null || attempt.StudentId != studentId) return NotFound();
+
+            // Kiểm tra khoá học đã hoàn thành chưa
+            var lessonWithModule = _uow.Lessons.GetWithModule(attempt.Quiz.LessonId);
+            if (lessonWithModule?.Module != null)
+            {
+                int courseId = lessonWithModule.Module.CourseId;
+                var enrollment = _uow.Enrollments
+                    .Find(e => e.StudentId == studentId && e.CourseId == courseId)
+                    .FirstOrDefault();
+                ViewData["CourseCompleted"] = enrollment?.IsCompleted ?? false;
+                ViewData["CourseId"] = courseId;
+                ViewData["CourseName"] = _uow.Courses.GetById(courseId)?.CourseName;
+            }
 
             return View(attempt);
         }

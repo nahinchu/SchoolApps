@@ -52,12 +52,11 @@ namespace SchoolApp.Controllers
                 return RedirectToAction("Index");
             }
 
-            existing.Grade = enrollment.Grade;
             existing.Notes = enrollment.Notes;
 
             _uow.SaveChanges();
 
-            TempData["Success"] = "Chấm điểm thành công!";
+            TempData["Success"] = "Cập nhật ghi chú thành công!";
             return RedirectToAction("Index");
         }
 
@@ -103,6 +102,11 @@ namespace SchoolApp.Controllers
                 return Json(new { success = false, message = "Khóa học không tồn tại hoặc đã đóng" });
             }
 
+            if (course.Fee > 0)
+            {
+                return Json(new { success = false, message = "Khóa học này yêu cầu thanh toán. Vui lòng dùng chức năng đăng ký & thanh toán." });
+            }
+
             bool exists = _uow.Enrollments.Any(e =>
                 e.StudentId == studentId && e.CourseId == courseId);
 
@@ -125,7 +129,7 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, message = $"Đăng ký khóa học \"{course.CourseName}\" thành công!" });
         }
 
-        public IActionResult MyEnrollments(int page = 1)
+        public IActionResult MyEnrollments(int page = 1, string filter = "all")
         {
             var studentId = HttpContext.Session.GetInt32("StudentId");
             if (studentId == null)
@@ -134,11 +138,22 @@ namespace SchoolApp.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            int pageSize = 5;
-            var myEnrollments = _uow.Enrollments.GetByStudent(studentId.Value)
-                .ToPagedList(page, pageSize);
+            int pageSize = 6;
+            var all = _uow.Enrollments.GetByStudent(studentId.Value).ToList();
 
-            return View(myEnrollments);
+            ViewBag.AllCount = all.Count;
+            ViewBag.ActiveCount = all.Count(e => !e.IsCompleted);
+            ViewBag.CompletedCount = all.Count(e => e.IsCompleted);
+
+            IEnumerable<Enrollment> source = filter switch
+            {
+                "completed"  => all.Where(e => e.IsCompleted),
+                "inprogress" => all.Where(e => !e.IsCompleted),
+                _            => all
+            };
+
+            var model = source.ToPagedList(page, pageSize);
+            return View(model);
         }
         [HttpPost]
         [AuthorizeManager]
@@ -166,7 +181,6 @@ namespace SchoolApp.Controllers
                 studentName = enrollment.Student?.FullName,
                 courseName = enrollment.Course?.CourseName,
                 enrollDate = enrollment.EnrollDate.ToString("dd/MM/yyyy"),
-                grade = enrollment.Grade,
                 notes = enrollment.Notes ?? ""
             });
         }
@@ -192,11 +206,10 @@ namespace SchoolApp.Controllers
             if (existing == null)
                 return Json(new { success = false, message = "Không tìm thấy đăng ký" });
 
-            existing.Grade = enrollment.Grade;
             existing.Notes = enrollment.Notes;
 
             _uow.SaveChanges();
-            return Json(new { success = true, message = "Chấm điểm thành công!" });
+            return Json(new { success = true, message = "Cập nhật ghi chú thành công!" });
         }
     }
 }

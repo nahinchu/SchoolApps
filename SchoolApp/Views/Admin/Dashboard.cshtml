@@ -161,7 +161,6 @@
                 <th>Học viên</th>
                 <th>Khóa học</th>
                 <th>Ngày đăng ký</th>
-                <th>Điểm</th>
             </tr>
         </thead>
         <tbody>
@@ -175,7 +174,6 @@
                     <td>@e.StudentName</td>
                     <td>@e.CourseName</td>
                     <td>@e.EnrollDate.ToString("dd/MM/yyyy")</td>
-                    <td>@(e.Grade.HasValue? e.Grade.Value.ToString("0.0") : "—")</td>
                 </tr>
             }
         </tbody>

@@ -5,8 +5,14 @@
 
 @section Styles {
     <style>
+        .sa-header,
+        .sa-admin-bar {
+            display: none !important;
+        }
+
         body {
-            background: var(--navy-light) !important;
+            background: white !important;
+            overflow: hidden;
         }
 
         .sa-main {
@@ -18,221 +24,320 @@
                 padding: 0 !important;
                 width: 100% !important;
             }
+
+        .auth-page {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+        }
+
+        /* ── Left panel ── */
+        .auth-left {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-deco {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* ── Right panel ── */
+        .auth-right {
+            background: white;
+            display: flex;
+            flex-direction: column;
+            padding: 2.25rem 3.5rem;
+            overflow-y: auto;
+        }
+
+        .auth-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #1a1a1a;
+            font-family: var(--font-display, 'Georgia', serif);
+            text-decoration: none;
+        }
+
+        .auth-logo-icon {
+            color: var(--gold);
+            font-size: 1.35rem;
+        }
+
+        .auth-nav-text {
+            font-size: 0.82rem;
+            color: #888;
+        }
+
+            .auth-nav-text a {
+                color: var(--gold);
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+                .auth-nav-text a:hover {
+                    text-decoration: underline;
+                }
+
+        .auth-form-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 400px;
+        }
+
+        .auth-title {
+            font-family: var(--font-display, 'Georgia', serif);
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.35rem;
+            line-height: 1.15;
+        }
+
+        .auth-subtitle {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .auth-label {
+            display: block;
+            color: var(--gold);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.2px;
+        }
+
+        .auth-input {
+            width: 100%;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 11px 14px;
+            font-size: 0.88rem;
+            color: #333;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #fafafa;
+            box-sizing: border-box;
+        }
+
+            .auth-input:focus {
+                border-color: var(--gold);
+                background: white;
+            }
+
+            .auth-input::placeholder {
+                color: #c8c8c8;
+            }
+
+        .auth-form-group {
+            margin-bottom: 1rem;
+        }
+
+        .auth-btn {
+            width: 100%;
+            background: var(--gold);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 13px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            margin-top: 0.5rem;
+        }
+
+            .auth-btn:hover {
+                background: #d9921f;
+            }
+
+            .auth-btn:active {
+                transform: scale(0.99);
+            }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            margin: 1.4rem 0 1rem;
+            color: #c8c8c8;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+        }
+
+            .auth-divider::before,
+            .auth-divider::after {
+                content: '';
+                flex: 1;
+                height: 1px;
+                background: #ebebeb;
+            }
+
+        .auth-social-row {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .auth-social-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1.5px solid #e0e0e0;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.2s, color 0.2s;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+            .auth-social-btn:hover {
+                border-color: var(--gold);
+                color: var(--gold);
+            }
+
+        .auth-field-error {
+            font-size: 0.75rem;
+            color: #dc3545;
+            margin-top: 4px;
+            display: block;
+        }
+
+        @@media (max-width: 768px) {
+            body {
+                overflow: auto;
+            }
+
+            .auth-page {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .auth-left {
+                height: 220px;
+            }
+
+            .auth-right {
+                padding: 2rem 1.5rem;
+            }
+
+            .auth-form-wrapper {
+                max-width: 100%;
+            }
+        }
     </style>
 }
 
-<div style="
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: calc(100vh - 66px);
-    background: var(--navy-light);
-">
-    <!-- ===== Left: Decorative Panel ===== -->
-    <div style="
-        background: linear-gradient(135deg, rgb(201,168,76) 0%, rgb(232,201,110) 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 2.5rem;
-        position: relative;
-        overflow: hidden;
-    ">
-        <!-- Decorative circles -->
-        <div style="
-            position:absolute; top:-100px; left:-100px;
-            width:350px; height:350px;
-            border-radius:50%;
-            background: radial-gradient(circle, rgba(13,27,42,0.1) 0%, transparent 70%);
-            pointer-events:none;
-        "></div>
-        <div style="
-            position:absolute; bottom:-80px; right:-80px;
-            width:280px; height:280px;
-            border-radius:50%;
-            background: radial-gradient(circle, rgba(13,27,42,0.07) 0%, transparent 70%);
-            pointer-events:none;
-        "></div>
-        <div style="
-            position:absolute; top:40%; left:-40px;
-            width:180px; height:180px;
-            border-radius:50%;
-            border: 1px solid rgba(13,27,42,0.12);
-            pointer-events:none;
-        "></div>
+<div class="auth-page">
 
-        <!-- Logo + Brand -->
-        <div style="
-            width: 80px; height: 80px;
-            background: var(--navy-light);
-            border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 12px 32px rgba(13,27,42,0.25);
-        ">
-            🎓
-        </div>
+    <!-- ===== Left: Illustration ===== -->
+    <div class="auth-left">
+        <!-- Background decorative circles -->
+        <div class="auth-deco" style="width:380px;height:380px;top:-140px;left:-140px;background:rgba(255,255,255,0.10);"></div>
+        <div class="auth-deco" style="width:280px;height:280px;bottom:-90px;right:-90px;background:rgba(255,255,255,0.08);"></div>
+        <div class="auth-deco" style="width:160px;height:160px;top:42%;left:-55px;background:transparent;border:1px solid rgba(255,255,255,0.18);"></div>
 
-        <h1 style="
-            font-family: var(--font-display);
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: .5rem;
-            text-align: center;
-        ">
-            SchoolApp
-        </h1>
-
-        <p style="
-            color: rgba(13,27,42,0.65);
-            font-size: .95rem;
-            text-align: center;
-            margin-bottom: 2.5rem;
-            max-width: 280px;
-            line-height: 1.7;
-        ">Nền tảng học tập trực tuyến hiện đại — học mọi lúc, mọi nơi.</p>
-
-        <!-- Feature list -->
-        <div style="display:flex; flex-direction:column; gap:.85rem; width:100%; max-width:280px;">
-            <div style="display:flex; align-items:center; gap:.75rem;">
-                <div style="
-                    width:32px; height:32px; border-radius:8px; flex-shrink:0;
-                    background: rgba(13,27,42,0.12);
-                    display:flex; align-items:center; justify-content:center;
-                    color:var(--navy); font-size:.9rem;
-                ">
-                    <i class="bi bi-play-circle-fill"></i>
-                </div>
-                <span style="color:rgba(13,27,42,0.8); font-size:.88rem;">Khoá học video chất lượng cao</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:.75rem;">
-                <div style="
-                    width:32px; height:32px; border-radius:8px; flex-shrink:0;
-                    background: rgba(13,27,42,0.12);
-                    display:flex; align-items:center; justify-content:center;
-                    color:var(--navy); font-size:.9rem;
-                ">
-                    <i class="bi bi-patch-check-fill"></i>
-                </div>
-                <span style="color:rgba(13,27,42,0.8); font-size:.88rem;">Bài kiểm tra & chứng chỉ</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:.75rem;">
-                <div style="
-                    width:32px; height:32px; border-radius:8px; flex-shrink:0;
-                    background: rgba(13,27,42,0.12);
-                    display:flex; align-items:center; justify-content:center;
-                    color:var(--navy); font-size:.9rem;
-                ">
-                    <i class="bi bi-people-fill"></i>
-                </div>
-                <span style="color:rgba(13,27,42,0.8); font-size:.88rem;">Cộng đồng học viên năng động</span>
-            </div>
-        </div>
-
-        <!-- Divider line -->
-        <div style="
-            width:100%; max-width:280px;
-            height:1px;
-            background: rgba(13,27,42,0.15);
-            margin: 2rem 0 1.25rem;
-        "></div>
-
-        <p style="color:rgba(13,27,42,0.45); font-size:.78rem; text-align:center;">
-            © 2026 SchoolApp · Học không giới hạn
-        </p>
+        <!-- Illustration image — thay file tại wwwroot/images/Studying.gif để đổi ảnh -->
+        <img src="~/images/Studying.gif" alt="Minh hoạ học tập"
+             style="width:80%; max-width:340px; object-fit:contain; position:relative; z-index:1;
+                    filter: drop-shadow(0 12px 32px rgba(0,0,0,0.18));" />
     </div>
 
     <!-- ===== Right: Form ===== -->
-    <div style="
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2.5rem 2rem;
-        position: relative;
-    ">
-        <!-- Subtle bg decoration -->
-        <div style="
-            position:absolute; bottom:-60px; right:-60px;
-            width:280px; height:280px;
-            border-radius:50%;
-            background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
-            pointer-events:none;
-        "></div>
+    <div class="auth-right">
 
-        <!-- Card -->
-        <div class="sa-card" style="width:100%; max-width:400px; position:relative;">
-
-            <!-- Header -->
-            <div style="
-                background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-                border-radius: 12px 12px 0 0;
-                padding: 1.75rem 1.5rem 1.5rem;
-                text-align: center;
-            ">
-                <h2 style="
-                    font-family: var(--font-display);
-                    font-size: 1.5rem;
-                    font-weight: 700;
-                    color: var(--navy);
-                    margin-bottom: .2rem;
-                ">
-                    Đăng nhập
-                </h2>
-                <p style="color: rgba(13,27,42,0.6); font-size:.85rem;">
-                    Chào mừng trở lại SchoolApp
-                </p>
+        <!-- Top bar -->
+        <div class="auth-topbar">
+            <a class="auth-logo" asp-controller="Home" asp-action="Index">
+                <span class="auth-logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
+                SchoolApp
+            </a>
+            <div class="auth-nav-text">
+                Chưa có tài khoản?
+                <a asp-controller="Account" asp-action="Register">Đăng ký.</a>
             </div>
-
-            <!-- Body -->
-            <div class="sa-card-body">
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="sa-alert sa-alert-danger" style="margin-bottom:1rem;">
-                        <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
-                        <span>Sai email hoặc mật khẩu.</span>
-                    </div>
-                }
-
-                <form asp-action="Login" method="post">
-                    @Html.AntiForgeryToken()
-
-                    <div class="sa-form-group">
-                        <label class="sa-label" asp-for="Email">
-                            Email <span style="color:var(--danger)">*</span>
-                        </label>
-                        <input class="sa-input" asp-for="Email"
-                               type="email" placeholder="example@email.com"
-                               autocomplete="email" />
-                        <span asp-validation-for="Email"
-                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
-                    </div>
-
-                    <div class="sa-form-group" style="margin-bottom:1.5rem;">
-                        <label class="sa-label" asp-for="Password">
-                            Mật khẩu <span style="color:var(--danger)">*</span>
-                        </label>
-                        <input class="sa-input" asp-for="Password"
-                               type="password" placeholder="Nhập mật khẩu..."
-                               autocomplete="current-password" />
-                        <span asp-validation-for="Password"
-                              style="font-size:.78rem; color:var(--danger); margin-top:4px; display:block;"></span>
-                    </div>
-
-                    <button type="submit" class="sa-btn sa-btn-primary" style="width:100%; justify-content:center;">
-                        <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
-                    </button>
-                </form>
-
-                <p style="text-align:center; margin-top:1.25rem; font-size:.82rem; color:var(--text-light);">
-                    Chưa có tài khoản?
-                    <a asp-controller="Account" asp-action="Register"
-                       style="color:var(--gold); font-weight:600;">Đăng ký ngay</a>
-                </p>
-            </div>
-
         </div>
+
+        <!-- Form content -->
+        <div class="auth-form-wrapper">
+            <h1 class="auth-title">Đăng nhập.</h1>
+            <p class="auth-subtitle">Chào mừng trở lại SchoolApp.</p>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+            {
+                <div style="background:#fff8f0;border:1.5px solid var(--gold);border-radius:8px;padding:0.7rem 1rem;margin-bottom:1.2rem;font-size:0.85rem;color:#b37818;display:flex;gap:0.5rem;align-items:center;">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>Sai email hoặc mật khẩu. Vui lòng thử lại.</span>
+                </div>
+            }
+
+            <form asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="auth-form-group">
+                    <label class="auth-label" asp-for="Email">Địa chỉ Email</label>
+                    <input class="auth-input" asp-for="Email"
+                           type="email" placeholder="Nhập địa chỉ email ..."
+                           autocomplete="email" />
+                    <span asp-validation-for="Email" class="auth-field-error"></span>
+                </div>
+
+                <div class="auth-form-group" style="margin-bottom:1.5rem;">
+                    <label class="auth-label" asp-for="Password">Mật khẩu</label>
+                    <input class="auth-input" asp-for="Password"
+                           type="password" placeholder="Nhập mật khẩu ..."
+                           autocomplete="current-password" />
+                    <span asp-validation-for="Password" class="auth-field-error"></span>
+                </div>
+
+                <button type="submit" class="auth-btn">ĐĂNG NHẬP</button>
+            </form>
+
+            <div class="auth-divider">HOẶC ĐĂNG NHẬP VỚI</div>
+
+            <div class="auth-social-row">
+                <a asp-controller="Account" asp-action="GoogleLogin" class="auth-social-btn" title="Google">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                    </svg>
+                </a>
+                <a href="#" class="auth-social-btn" title="Twitter / X">
+                    <i class="bi bi-twitter-x"></i>
+                </a>
+                <a href="#" class="auth-social-btn" title="Facebook">
+                    <i class="bi bi-facebook"></i>
+                </a>
+            </div>
+        </div>
+
     </div>
 </div>
 

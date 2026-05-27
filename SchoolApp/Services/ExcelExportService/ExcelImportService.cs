@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using System.Text;
 
 namespace SchoolApp.Services.ExcelExportService
 {
@@ -8,6 +9,11 @@ namespace SchoolApp.Services.ExcelExportService
         {
             ExcelPackage.License.SetNonCommercialOrganization("SchoolApp");
         }
+
+        // Chuẩn hóa chuỗi: trim + NFC để tránh lỗi so sánh tiếng Việt
+        // Excel thường lưu NFD, C# string thường là NFC → "Họ và tên" != "Họ và tên"
+        private static string Normalize(string s) =>
+            s.Trim().Normalize(NormalizationForm.FormC);
 
         public ExcelImportResult<T> Import<T>(
             Stream fileStream,
@@ -34,10 +40,11 @@ namespace SchoolApp.Services.ExcelExportService
             int totalCols = ws.Dimension.Columns;
 
             // ── Đọc dòng header (dòng 1) → map tên cột → chỉ số cột ──────
+            // Normalize NFC để tránh lỗi Unicode với tiếng Việt
             var headerMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             for (int c = 1; c <= totalCols; c++)
             {
-                var header = ws.Cells[1, c].Text.Trim();
+                var header = Normalize(ws.Cells[1, c].Text);
                 if (!string.IsNullOrEmpty(header))
                     headerMap[header] = c;
             }
@@ -45,7 +52,7 @@ namespace SchoolApp.Services.ExcelExportService
             // ── Kiểm tra các cột bắt buộc có tồn tại trong file không ────
             foreach (var col in cols.Where(x => x.Required))
             {
-                if (!headerMap.ContainsKey(col.Header))
+                if (!headerMap.ContainsKey(Normalize(col.Header)))
                 {
                     result.Errors.Add(new ImportRowError
                     {
@@ -79,7 +86,7 @@ namespace SchoolApp.Services.ExcelExportService
                 foreach (var col in cols)
                 {
                     // Nếu cột không có trong file → đã báo lỗi cấp file ở trên
-                    if (!headerMap.TryGetValue(col.Header, out int colIdx))
+                    if (!headerMap.TryGetValue(Normalize(col.Header), out int colIdx))
                         continue;
 
                     var cellValue = ws.Cells[r, colIdx].Text.Trim();

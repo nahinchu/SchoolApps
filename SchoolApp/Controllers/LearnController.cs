@@ -2,6 +2,8 @@
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
+using SchoolApp.Services;
+using SchoolApp.Services.CompletionService;
 using SchoolApp.UnitOfWork;
 
 namespace SchoolApp.Controllers
@@ -9,10 +11,12 @@ namespace SchoolApp.Controllers
     public class LearnController : Controller
     {
         private readonly IUnitOfWork _uow;
+        private readonly ICourseCompletionService _completionService;
 
-        public LearnController(IUnitOfWork uow)
+        public LearnController(IUnitOfWork uow, ICourseCompletionService completionService)
         {
             _uow = uow;
+            _completionService = completionService;
         }
 
         // GET: /Learn/Course/5?lessonId=12
@@ -46,6 +50,7 @@ namespace SchoolApp.Controllers
                 ViewData["AccessState"] = "guest";
                 ViewData["CurrentLesson"] = allLessons.FirstOrDefault();
                 ViewData["ProgressMap"] = new Dictionary<int, LessonProgress>();
+                ViewData["QuizAttemptMap"] = new Dictionary<int, QuizAttempt>();
                 ViewData["TotalLessons"] = allLessons.Count;
                 ViewData["CompletedCount"] = 0;
                 return View(course);
@@ -58,6 +63,7 @@ namespace SchoolApp.Controllers
                 ViewData["AccessState"] = "not_enrolled";
                 ViewData["CurrentLesson"] = allLessons.FirstOrDefault();
                 ViewData["ProgressMap"] = new Dictionary<int, LessonProgress>();
+                ViewData["QuizAttemptMap"] = new Dictionary<int, QuizAttempt>();
                 ViewData["TotalLessons"] = allLessons.Count;
                 ViewData["CompletedCount"] = 0;
                 return View(course);
@@ -113,8 +119,18 @@ namespace SchoolApp.Controllers
             var nextLesson = (currentIndex >= 0 && currentIndex < allLessons.Count - 1)
                 ? allLessons[currentIndex + 1] : null;
 
+            // Load best quiz attempt cho mỗi quiz trong khoá
+            var quizAttemptMap = new Dictionary<int, QuizAttempt>();
+            foreach (var lesson in allLessons.Where(l => l.Quiz != null && l.Quiz.IsPublished))
+            {
+                var best = _uow.QuizAttempts.GetBestAttempt(studentId.Value, lesson.Quiz!.QuizId);
+                if (best != null)
+                    quizAttemptMap[lesson.Quiz.QuizId] = best;
+            }
+
             ViewData["CurrentLesson"] = currentLesson;
             ViewData["ProgressMap"] = progressMap;
+            ViewData["QuizAttemptMap"] = quizAttemptMap;
             ViewData["PrevLesson"] = prevLesson;
             ViewData["NextLesson"] = nextLesson;
             ViewData["TotalLessons"] = allLessons.Count;
@@ -161,7 +177,13 @@ namespace SchoolApp.Controllers
             }
             _uow.SaveChanges();
 
-            return Json(new { success = true, message = "Đã đánh dấu hoàn thành!" });
+            // Kiểm tra hoàn thành toàn bộ khoá học
+            var lessonWithModule = _uow.Lessons.GetWithModule(lessonId);
+            bool justCompletedCourse = false;
+            if (lessonWithModule?.Module != null)
+                justCompletedCourse = _completionService.TryComplete(studentId.Value, lessonWithModule.Module.CourseId);
+
+            return Json(new { success = true, message = "Đã đánh dấu hoàn thành!", courseCompleted = justCompletedCourse });
         }
     }
 }
