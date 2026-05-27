@@ -258,8 +258,7 @@ namespace SchoolApp.Controllers
                 enrollments = student.Enrollments.Select(e => new
                 {
                     courseName = e.Course != null ? e.Course.CourseName : "N/A",
-                    enrollDate = e.EnrollDate.ToString("dd/MM/yyyy"),
-                    grade = e.Grade.HasValue ? e.Grade.Value.ToString("0.00") : "Chưa có"
+                    enrollDate = e.EnrollDate.ToString("dd/MM/yyyy")
                 }).ToList()
             });
         }

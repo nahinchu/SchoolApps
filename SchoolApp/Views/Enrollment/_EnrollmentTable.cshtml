@@ -1,74 +1,79 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Enrollment>
 @{
     var searchTerm = ViewData["SearchTerm"] as string;
 }
-<table class="table table-bordered table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>#</th>
-            <th>Học viên</th>
-            <th>Khóa học</th>
-            <th>Ngày đăng ký</th>
-            <th>Điểm</th>
-            <th>Ghi chú</th>
-            <th class="text-center">Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (!Model.Any())
-        {
-            <tr><td colspan="7" class="text-center">Không có đăng ký nào</td></tr>
-        }
-        else
-        {
-            int i = (Model.PageNumber - 1) * Model.PageSize + 1;
-            foreach (var e in Model)
+
+<div class="adm-table-wrap ">
+    <table class="adm-table  adm-table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Học viên</th>
+                <th>Khóa học</th>
+                <th>Ngày đăng ký</th>
+                <th>Ghi chú</th>
+                <th class="text-center">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
             {
                 <tr>
-                    <td>@i</td>
-                    <td>@e.Student?.FullName</td>
-                    <td>@e.Course?.CourseName</td>
-                    <td>@e.EnrollDate.ToString("dd/MM/yyyy")</td>
-                    <td>
-                        @if (e.Grade.HasValue)
-                        {
-                            <span class="badge bg-success">@e.Grade.Value.ToString("0.00")</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary">Chưa có</span>
-                        }
-                    </td>
-                    <td>@(e.Notes ?? "-")</td>
-                    <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-warning"
-                                onclick="openEditModal(@e.EnrollmentId)">
-                            ✏️ Chấm điểm
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger btn-delete-enrollment"
-                                data-id="@e.EnrollmentId">
-                            🗑️ Xóa
-                        </button>
+                    <td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:2rem;">
+                        <i class="bi bi-inbox" style="font-size:1.5rem; display:block; margin-bottom:.4rem;"></i>
+                        Không có đăng ký nào
                     </td>
                 </tr>
-                i++;
             }
-        }
-    </tbody>
-</table>
-<div class="d-flex justify-content-between align-items-center">
-    <span>
+            else
+            {
+                int i = (Model.PageNumber - 1) * Model.PageSize + 1;
+                foreach (var e in Model)
+                {
+                    <tr>
+                        <td style="color:rgba(255,255,255,.4); font-size:.8rem;">@i</td>
+                        <td>
+                            <div style="font-weight:600; color:rgba(255,255,255,.9);">@e.Student?.FullName</div>
+                            <div style="font-size:.75rem; color:rgba(255,255,255,.4);">@e.Student?.Email</div>
+                        </td>
+                        <td style="color:rgba(255,255,255,.75);">@e.Course?.CourseName</td>
+                        <td style="color:rgba(255,255,255,.5); font-size:.82rem;">@e.EnrollDate.ToString("dd/MM/yyyy")</td>
+                        <td style="color:rgba(255,255,255,.5); font-size:.82rem; font-style:italic;">
+                            @(string.IsNullOrEmpty(e.Notes) ? "—" : e.Notes)
+                        </td>
+                        <td class="text-center" style="white-space:nowrap;">
+                            <button type="button"
+                                    class="adm-btn adm-btn-warning adm-btn-sm"
+                                    onclick="openEditModal(@e.EnrollmentId)">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </button>
+                            <button type="button"
+                                    class="adm-btn adm-btn-danger adm-btn-sm btn-delete-enrollment"
+                                    data-id="@e.EnrollmentId">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    i++;
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap:wrap; gap:.5rem;">
+    <span style="font-size:.8rem; color:rgba(255,255,255,.4);">
         Trang @Model.PageNumber / @Model.PageCount
-        (Tổng: @Model.TotalItemCount đăng ký)
+        &nbsp;·&nbsp; Tổng <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> đăng ký
     </span>
     @Html.PagedListPager(Model,
-    page => Url.Action("Index", new { page, searchTerm }),
+        page => Url.Action("Index", new { page, searchTerm }),
         new PagedListRenderOptions
         {
             LiElementClasses = new[] { "page-item" },
             PageClasses = new[] { "page-link ajax-page-link" },
-            UlElementClasses = new[] { "pagination" }
+            UlElementClasses = new[] { "pagination mb-0" }
         })
 </div>

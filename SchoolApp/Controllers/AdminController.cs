@@ -76,8 +76,7 @@ namespace SchoolApp.Controllers
                 {
                     StudentName = e.Student != null ? e.Student.FullName : "N/A",
                     CourseName = e.Course != null ? e.Course.CourseName : "N/A",
-                    EnrollDate = e.EnrollDate,
-                    Grade = e.Grade
+                    EnrollDate = e.EnrollDate
                 }).ToList(),
 
                 RecentPayments = allPayments

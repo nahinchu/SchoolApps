@@ -2,98 +2,99 @@
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Lesson>
 
-<table class="table table-bordered table-hover align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th style="width:70px" class="text-center">Thứ tự</th>
-            <th>Tiêu đề bài học</th>
-            <th>Loại</th>
-            <th class="text-center">Thời lượng</th>
-            <th class="text-center">Trạng thái</th>
-            <th style="width:220px">Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (!Model.Any())
-        {
+<div class="adm-table-wrap">
+    <table class="adm-table adm-table-bordered">
+        <thead>
             <tr>
-                <td colspan="6" class="text-center py-5 text-muted">
-                    <i class="bi bi-journal-x display-4"></i><br>
-                    Chưa có bài học nào trong chương này.
-                </td>
+                <th class="text-center" style="width:70px;">Thứ tự</th>
+                <th>Tiêu đề bài học</th>
+                <th>Loại</th>
+                <th class="text-center">Thời lượng</th>
+                <th class="text-center">Trạng thái</th>
+                <th style="width:220px;">Thao tác</th>
             </tr>
-        }
-        else
-        {
-            foreach (var item in Model)
+        </thead>
+        <tbody>
+            @if (!Model.Any())
             {
                 <tr>
-                    <td class="text-center fw-bold">@item.OrderIndex</td>
-                    <td>
-                        <strong>@item.Title</strong>
-                        @if (!string.IsNullOrEmpty(item.AttachmentPath))
-                        {
-                            <a href="@item.AttachmentPath" target="_blank" class="ms-1 text-secondary" title="Tệp đính kèm">
-                                <i class="bi bi-paperclip"></i>
-                            </a>
-                        }
-                    </td>
-                    <td>
-                        @switch (item.Type)
-                        {
-                            case SchoolApp.Models.Enums.LessonType.Video:
-                                <span class="badge bg-primary">📹 Video</span>
-                                break;
-                            case SchoolApp.Models.Enums.LessonType.Text:
-                                <span class="badge bg-success">📝 Bài viết</span>
-                                break;
-                            case SchoolApp.Models.Enums.LessonType.Mixed:
-                                <span class="badge bg-warning">📹 + 📝</span>
-                                break;
-                        }
-                    </td>
-                    <td class="text-center">
-                        @if (item.DurationMinutes > 0)
-                        {
-                            <span>@item.DurationMinutes phút</span>
-                        }
-                        else
-                        {
-                            <span class="text-muted">-</span>
-                        }
-                    </td>
-                    <td class="text-center">
-                        @if (item.IsPublished)
-                        {
-                            <span class="badge bg-success px-3 py-2">Đang mở</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-secondary px-3 py-2">Ẩn</span>
-                        }
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-sm btn-warning me-1"
-                                onclick="openEditModal(@item.LessonId)">
-                            <i class="bi bi-pencil"></i> Sửa
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger btn-delete-lesson"
-                                data-id="@item.LessonId">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                        <a href="@Url.Action("Manage", "Quiz", new { lessonId = item.LessonId })"
-                           class="btn btn-sm btn-info">
-                            <i class="bi bi-patch-question"></i> Quiz
-                        </a>
+                    <td colspan="6" style="text-align:center; padding:2.5rem; color:rgba(255,255,255,0.3);">
+                        <i class="bi bi-journal-x" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
+                        Chưa có bài học nào trong chương này.
                     </td>
                 </tr>
             }
-        }
-    </tbody>
-</table>
-
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center" style="font-weight:700;">@item.OrderIndex</td>
+                        <td>
+                            <strong>@item.Title</strong>
+                            @if (!string.IsNullOrEmpty(item.AttachmentPath))
+                            {
+                                <a href="@item.AttachmentPath" target="_blank" class="ms-1" style="color:rgba(255,255,255,0.4);" title="Tệp đính kèm">
+                                    <i class="bi bi-paperclip"></i>
+                                </a>
+                            }
+                        </td>
+                        <td>
+                            @switch (item.Type)
+                            {
+                                case SchoolApp.Models.Enums.LessonType.Video:
+                                    <span class="adm-badge adm-badge-info"><i class="bi bi-camera-video"></i> Video</span>
+                                    break;
+                                case SchoolApp.Models.Enums.LessonType.Text:
+                                    <span class="adm-badge adm-badge-success"><i class="bi bi-file-text"></i> Bài viết</span>
+                                    break;
+                                case SchoolApp.Models.Enums.LessonType.Mixed:
+                                    <span class="adm-badge adm-badge-warning"><i class="bi bi-layers"></i> Hỗn hợp</span>
+                                    break;
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (item.DurationMinutes > 0)
+                            {
+                                <span>@item.DurationMinutes phút</span>
+                            }
+                            else
+                            {
+                                <span style="color:rgba(255,255,255,0.3);">—</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @if (item.IsPublished)
+                            {
+                                <span class="adm-badge adm-badge-success">Đang mở</span>
+                            }
+                            else
+                            {
+                                <span class="adm-badge" style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.4);">Ẩn</span>
+                            }
+                        </td>
+                        <td style="white-space:nowrap;">
+                            <button type="button" class="adm-btn adm-btn-warning adm-btn-sm me-1"
+                                    onclick="openEditModal(@item.LessonId)">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </button>
+                            <button type="button" class="adm-btn adm-btn-danger adm-btn-sm btn-delete-lesson me-1"
+                                    data-id="@item.LessonId">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <a href="@Url.Action("Manage", "Quiz", new { lessonId = item.LessonId })"
+                               class="adm-btn adm-btn-info adm-btn-sm">
+                                <i class="bi bi-patch-question"></i> Quiz
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
 <div class="d-flex justify-content-between align-items-center mt-3">
-    <span class="text-muted">
+    <span style="color:rgba(255,255,255,0.45); font-size:.82rem;">
         Trang @Model.PageNumber / @Model.PageCount
         (Tổng: @Model.TotalItemCount bài học)
     </span>

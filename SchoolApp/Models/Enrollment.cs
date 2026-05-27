@@ -22,14 +22,16 @@ namespace SchoolApp.Models
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime EnrollDate { get; set; } = DateTime.Now;
 
-        [Range(0, 10, ErrorMessage = "Điểm phải từ 0 đến 10")]
-        [Display(Name = "Điểm")]
-        [Column(TypeName = "decimal(4,2)")]
-        public decimal? Grade { get; set; }
-
         [StringLength(500)]
         [Display(Name = "Ghi chú")]
         public string? Notes { get; set; }
+
+        [Display(Name = "Đã hoàn thành")]
+        public bool IsCompleted { get; set; } = false;
+
+        [Display(Name = "Ngày hoàn thành")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        public DateTime? CompletedAt { get; set; }
 
         // Navigation properties — EF tự động JOIN
         [ForeignKey("StudentId")]

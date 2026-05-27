@@ -9,6 +9,7 @@ using SchoolApp.Services.HashPassService;
 using SchoolApp.Services.MinioService;
 using SchoolApp.Services.PayosService;
 using SchoolApp.Services.ExcelExportService;
+using SchoolApp.Services.CompletionService;
 using SchoolApp.UnitOfWork;
 namespace SchoolApp
 {
@@ -31,6 +32,7 @@ namespace SchoolApp
             builder.Services.AddSession();
 
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             builder.Services.AddSingleton<IExcelExportService, ExcelExportService>();
             builder.Services.AddSingleton<IExcelImportService, ExcelImportService>();
             builder.Services.AddSingleton<IPasswordService, BCryptPasswordService>();

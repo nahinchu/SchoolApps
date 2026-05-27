@@ -552,6 +552,30 @@ body.adm-body {
         background: rgba(201,168,76,0.03);
     }
 
+/* bordered variant */
+.adm-table-bordered {
+    border-collapse: separate !important;
+    border-spacing: 0;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .adm-table-bordered th,
+    .adm-table-bordered td {
+        border-right: 1px solid var(--adm-border);
+        border-bottom: 1px solid var(--adm-border);
+    }
+
+        .adm-table-bordered th:last-child,
+        .adm-table-bordered td:last-child {
+            border-right: none;
+        }
+
+    .adm-table-bordered tr:last-child td {
+        border-bottom: none;
+    }
+
 /* ── BADGES ──────────────────────────────────────────────── */
 .adm-badge {
     display: inline-flex;
@@ -632,6 +656,36 @@ body.adm-body {
 
     .adm-btn-danger:hover {
         background: rgba(248,81,73,0.22);
+    }
+
+.adm-btn-warning {
+    background: rgba(227,179,65,0.12);
+    border: 1px solid rgba(227,179,65,0.3);
+    color: #e3b341;
+}
+
+    .adm-btn-warning:hover {
+        background: rgba(227,179,65,0.22);
+    }
+
+.adm-btn-info {
+    background: rgba(88,166,255,0.12);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: #58a6ff;
+}
+
+    .adm-btn-info:hover {
+        background: rgba(88,166,255,0.22);
+    }
+
+.adm-btn-success {
+    background: rgba(63,185,80,0.12);
+    border: 1px solid rgba(63,185,80,0.3);
+    color: #3fb950;
+}
+
+    .adm-btn-success:hover {
+        background: rgba(63,185,80,0.22);
     }
 
 .adm-btn-sm {

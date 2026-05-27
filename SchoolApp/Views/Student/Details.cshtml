@@ -32,7 +32,6 @@
         <tr>
             <th>Khóa học</th>
             <th>Ngày đăng ký</th>
-            <th>Điểm</th>
         </tr>
     </thead>
     <tbody>
@@ -47,7 +46,6 @@
                 <tr>
                     <td>@e.Course?.CourseName</td>
                     <td>@e.EnrollDate.ToString("dd/MM/yyyy")</td>
-                    <td>@(e.Grade?.ToString("0.00") ?? "Chưa có")</td>
                 </tr>
             }
         }

@@ -10,7 +10,7 @@
 <div class="adm-page-header">
     <div>
         <div class="adm-page-title">📋 Danh sách <span>Đăng ký học</span></div>
-        <div class="adm-page-sub">Quản lý đăng ký và chấm điểm học viên</div>
+        <div class="adm-page-sub">Quản lý đăng ký học viên</div>
     </div>
 </div>
 
@@ -48,7 +48,7 @@
                     font-family:var(--font-display); font-size:1.15rem; font-weight:600;
                     color:var(--gold-light); margin:0;
                 ">
-                    ✏️ Chấm điểm
+                    ✏️ Sửa ghi chú
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
@@ -79,16 +79,6 @@
 
                     <div style="height:1px; background:var(--smoke); margin:1.25rem 0;"></div>
 
-                    <!-- Phần chỉnh sửa -->
-                    <div class="sa-form-group">
-                        <label class="sa-label" for="Grade">
-                            Điểm <span style="color:var(--text-light); font-weight:400; text-transform:none;">(0 – 10)</span>
-                        </label>
-                        <input type="number" id="Grade" name="Grade"
-                               class="sa-input" min="0" max="10" step="0.01"
-                               placeholder="Để trống nếu chưa chấm" />
-                        <div class="invalid-feedback" id="err-Grade"></div>
-                    </div>
                     <div class="sa-form-group">
                         <label class="sa-label" for="Notes">Ghi chú</label>
                         <textarea id="Notes" name="Notes"
@@ -107,7 +97,7 @@
             ">
                 <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
                 <button type="button" class="sa-btn sa-btn-gold" id="btnSaveEnrollment">
-                    <i class="bi bi-check-lg"></i> Lưu điểm
+                    <i class="bi bi-check-lg"></i> Lưu
                 </button>
             </div>
 
@@ -127,7 +117,6 @@
         // ====== MỞ MODAL CHẤM ĐIỂM ======
         function openEditModal(id) {
             clearErrors();
-            $('#Grade').val('');
             $('#Notes').val('');
             $('#StudentName').val('Đang tải...');
             $('#CourseName').val('Đang tải...');
@@ -139,7 +128,6 @@
                 $('#StudentName').val(data.studentName);
                 $('#CourseName').val(data.courseName);
                 $('#EnrollDate').val(data.enrollDate);
-                $('#Grade').val(data.grade !== null ? data.grade : '');
                 $('#Notes').val(data.notes);
             }).fail(function () {
                 $('#enrollmentModal').modal('hide');
