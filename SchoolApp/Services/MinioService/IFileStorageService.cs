@@ -8,5 +8,6 @@
         Task DeleteAsync(string objectName, CancellationToken ct = default);
         Task<string?> UploadAttachmentAsync(IFormFile file);
         Task<string?> UploadVideoAsync(IFormFile file);
+        Task<string?> UploadThumbnailAsync(IFormFile file);
     }
 }

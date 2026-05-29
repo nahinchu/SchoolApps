@@ -40,6 +40,13 @@ namespace SchoolApp.Data
                 .HasForeignKey(e => e.CourseId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Course>(entity =>
+            {
+                entity.HasIndex(c => c.CourseName)
+                      .IsUnique()
+                      .HasDatabaseName("IX_Course_Name_Unique");
+            });
+
             modelBuilder.Entity<Module>(entity =>
             {
                 // Sắp xếp Module theo Course + thứ tự

@@ -13,6 +13,9 @@ public class MinioFileStorageService : IFileStorageService
     private static readonly string[] AllowedVideoExtensions =
         [".mp4", ".webm", ".ogg", ".mov"];
 
+    private static readonly string[] AllowedImageExtensions =
+        [".png", ".jpg", ".jpeg", ".gif", ".webp"];
+
     public MinioFileStorageService(IMinioClient client, IConfiguration config)
     {
         _client = client;
@@ -40,7 +43,7 @@ public class MinioFileStorageService : IFileStorageService
     }
 
     public async Task<string?> UploadAttachmentAsync(IFormFile file)
-    {   
+    {
         var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
         if (!AllowedAttachmentExtensions.Contains(ext))
             return null;
@@ -57,6 +60,18 @@ public class MinioFileStorageService : IFileStorageService
 
         var objectName = await UploadAsync(file, "videos");
         return $"/File/Video?path={Uri.EscapeDataString(objectName)}";
+    }
+
+    public async Task<string?> UploadThumbnailAsync(IFormFile file)
+    {
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!AllowedImageExtensions.Contains(ext))
+            return null;
+        if (file.Length > 5 * 1024 * 1024)
+            return null;
+
+        var objectName = await UploadAsync(file, "thumbnails");
+        return $"/File/Download?path={Uri.EscapeDataString(objectName)}";
     }
 
     public async Task<(Stream Stream, string ContentType)> DownloadAsync(
@@ -93,7 +108,7 @@ public class MinioFileStorageService : IFileStorageService
             await _client.RemoveObjectAsync(new RemoveObjectArgs()
                 .WithBucket(_bucket).WithObject(objectName), ct);
         }
-        catch {}
+        catch { }
     }
 
     private async Task EnsureBucketAsync(CancellationToken ct)

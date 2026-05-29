@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolApp.Models
-
 {
     [Table("Courses")]
     public class Course
@@ -34,16 +33,23 @@ namespace SchoolApp.Models
         [DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal Fee { get; set; }
 
+        [Display(Name = "Cấp độ")]
+        public CourseLevel Level { get; set; } = CourseLevel.Basic;
+
         [Display(Name = "Đang mở")]
         public bool IsActive { get; set; } = true;
 
         [Display(Name = "Ngày tạo")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-        // Thêm dòng này vào class Course
+
+        [Display(Name = "Cập nhật lần cuối")]
+        public DateTime? UpdatedDate { get; set; }
+
+        [StringLength(500)]
+        public string? ThumbnailUrl { get; set; }
+
         public virtual ICollection<Module> Modules { get; set; } = new List<Module>();
-        // Navigation property — quan hệ 1-N với Enrollment
-        public virtual ICollection<Enrollment> Enrollments { get; set; }
-            = new HashSet<Enrollment>();
+        public virtual ICollection<Enrollment> Enrollments { get; set; } = new HashSet<Enrollment>();
     }
 }

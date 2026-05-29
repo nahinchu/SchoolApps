@@ -1,6 +1,24 @@
 @using X.PagedList
 @using X.PagedList.Mvc.Core
+@using SchoolApp.Models
 @model IPagedList<SchoolApp.Models.Course>
+
+@{
+    string LevelLabel(CourseLevel l) => l switch
+    {
+        CourseLevel.Basic => "Cơ bản",
+        CourseLevel.Intermediate => "Trung cấp",
+        CourseLevel.Advanced => "Nâng cao",
+        _ => l.ToString()
+    };
+    string LevelColor(CourseLevel l) => l switch
+    {
+        CourseLevel.Basic => "#4caf50",
+        CourseLevel.Intermediate => "#ff9800",
+        CourseLevel.Advanced => "#e53935",
+        _ => "#888"
+    };
+}
 
 @{
     var role = Context.Session.GetString("Role");
@@ -10,6 +28,7 @@
     var isStudent = role == "Student";
     var studentId = Context.Session.GetInt32("StudentId");
     var enrolledIds = ViewBag.EnrolledCourseIds as HashSet<int> ?? new HashSet<int>();
+    var antiForgery = Html.AntiForgeryToken();
 }
 
 @if (isAdminOrManager)
@@ -21,6 +40,7 @@
                 <tr>
                     <th>#</th>
                     <th>Tên khóa học</th>
+                    <th class="text-center">Cấp độ</th>
                     <th class="text-center">Tín chỉ</th>
                     <th class="text-end">Học phí</th>
                     <th class="text-center">Trạng thái</th>
@@ -31,7 +51,7 @@
                 @if (!Model.Any())
                 {
                     <tr>
-                        <td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:2rem;">
+                        <td colspan="7" style="text-align:center; color:rgba(255,255,255,0.3); padding:2rem;">
                             <i class="bi bi-inbox" style="font-size:1.5rem; display:block; margin-bottom:.4rem;"></i>
                             Không có khóa học nào
                         </td>
@@ -45,32 +65,49 @@
                         <tr>
                             <td style="color:rgba(255,255,255,.4); font-size:.8rem;">@i</td>
                             <td>
-                                <div style="font-weight:600; color:rgba(255,255,255,.9);">@item.CourseName</div>
-                                @if (!string.IsNullOrEmpty(item.Description))
-                                {
-                                    <div style="font-size:.75rem; color:rgba(255,255,255,.4); margin-top:.2rem;
-                                                display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                        @item.Description
+                                <div style="display:flex; align-items:center; gap:.75rem;">
+                                    @if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                                    {
+                                        <img src="@item.ThumbnailUrl" alt=""
+                                             style="width:56px; height:38px; object-fit:cover; border-radius:4px; flex-shrink:0;" />
+                                    }
+                                    else
+                                    {
+                                        <div style="width:56px; height:38px; flex-shrink:0; border-radius:4px;
+                                                                    background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center;">
+                                            <i class="bi bi-image" style="color:rgba(255,255,255,.2);"></i>
+                                        </div>
+                                    }
+                                    <div>
+                                        <div style="font-weight:600; color:rgba(255,255,255,.9);">@item.CourseName</div>
+                                        @if (!string.IsNullOrEmpty(item.Description))
+                                        {
+                                            <div style="font-size:.75rem; color:rgba(255,255,255,.4); margin-top:.2rem;
+                                                                        display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                                @item.Description
+                                            </div>
+                                        }
                                     </div>
-                                }
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span style="
+                                                display:inline-block; padding:.2rem .55rem; border-radius:20px; font-size:.72rem; font-weight:600;
+                                                background:@(LevelColor(item.Level))22; color:@(LevelColor(item.Level)); border:1px solid @(LevelColor(item.Level))55;">
+                                    @LevelLabel(item.Level)
+                                </span>
                             </td>
                             <td class="text-center" style="color:rgba(255,255,255,.7);">@item.Credits</td>
                             <td class="text-end" style="font-weight:600; color:var(--adm-gold); white-space:nowrap;">
                                 @item.Fee.ToString("N0") <small style="font-weight:400; opacity:.6;">₫</small>
                             </td>
                             <td class="text-center">
-                                @if (item.IsActive)
-                                {
-                                    <span class="adm-badge adm-badge-success">
-                                        <i class="bi bi-circle-fill" style="font-size:.45rem;"></i> Đang mở
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="adm-badge adm-badge-danger">
-                                        <i class="bi bi-circle-fill" style="font-size:.45rem;"></i> Đã đóng
-                                    </span>
-                                }
+                                <button type="button" class="adm-btn adm-btn-sm btn-toggle-active"
+                                        data-id="@item.CourseId"
+                                        style="@(item.IsActive ? "background:rgba(76,175,80,.18); color:#4caf50; border:1px solid #4caf5055;" : "background:rgba(229,57,53,.18); color:#e53935; border:1px solid #e5393555;")">
+                                    <i class="bi @(item.IsActive ? "bi-toggle-on" : "bi-toggle-off")"></i>
+                                    @(item.IsActive ? "Đang mở" : "Đã đóng")
+                                </button>
                             </td>
                             <td class="text-center" style="white-space:nowrap;">
                                 <button type="button" class="adm-btn adm-btn-warning adm-btn-sm"
@@ -103,14 +140,14 @@
             &nbsp;·&nbsp; Tổng <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> khóa học
         </span>
         @Html.PagedListPager(Model,
-            page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"] }),
-            new PagedListRenderOptions
-            {
-                LiElementClasses = new[] { "page-item" },
-                PageClasses = new[] { "page-link ajax-page-link" },
-                UlElementClasses = new[] { "pagination mb-0" }
-            })
-    </div>
+        page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"] }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link ajax-page-link" },
+            UlElementClasses = new[] { "pagination mb-0" }
+        })
+</div>
 }
 else
 {
@@ -143,13 +180,36 @@ else
                     <tr>
                         <td class="text-center fw-bold">@item.CourseId</td>
                         <td>
-                            <strong>@item.CourseName</strong>
-                            @if (!string.IsNullOrEmpty(item.Description))
-                            {
-                                <div class="text-muted small mt-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                    @item.Description
+                            <div class="d-flex align-items-center gap-3">
+                                @if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                                {
+                                    <img src="@item.ThumbnailUrl" alt=""
+                                         style="width:64px; height:44px; object-fit:cover; border-radius:6px; flex-shrink:0;" />
+                                }
+                                else
+                                {
+                                    <div style="width:64px; height:44px; flex-shrink:0; border-radius:6px;
+                                                                background:#f0f0f0; display:flex; align-items:center; justify-content:center;">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                }
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <strong>@item.CourseName</strong>
+                                        <span style="
+                                                        display:inline-block; padding:.1rem .45rem; border-radius:20px; font-size:.68rem; font-weight:600;
+                                                        background:@(LevelColor(item.Level))18; color:@(LevelColor(item.Level)); border:1px solid @(LevelColor(item.Level))44;">
+                                            @LevelLabel(item.Level)
+                                        </span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(item.Description))
+                                    {
+                                        <div class="text-muted small mt-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                            @item.Description
+                                        </div>
+                                    }
                                 </div>
-                            }
+                            </div>
                         </td>
                         <td class="text-center">@item.Credits</td>
                         <td class="text-end fw-semibold">@item.Fee.ToString("N0") <small>VNĐ</small></td>
@@ -215,12 +275,12 @@ else
             (Tổng: @Model.TotalItemCount khóa học)
         </span>
         @Html.PagedListPager(Model,
-            page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"] }),
-            new PagedListRenderOptions
-            {
-                LiElementClasses = new[] { "page-item" },
-                PageClasses = new[] { "page-link ajax-page-link" },
-                UlElementClasses = new[] { "pagination" }
-            })
-    </div>
+        page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"] }),
+        new PagedListRenderOptions
+        {
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link ajax-page-link" },
+            UlElementClasses = new[] { "pagination" }
+        })
+</div>
 }
