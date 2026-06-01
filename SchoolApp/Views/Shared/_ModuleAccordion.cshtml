@@ -1,0 +1,493 @@
+﻿@using SchoolApp.Models
+@using SchoolApp.Models.Enums
+@model Course
+@*
+    ViewData params:
+      ReadOnly        bool                             — true=Detail(read-only), false=Learn(interactive)
+      CurrentLessonId int?                             — bài đang học (Learn only)
+      ProgressMap     Dictionary<int,LessonProgress>   — tiến độ (Learn only)
+      QuizAttemptMap  Dictionary<int,QuizAttempt>      — lần thi (Learn only)
+*@
+@{
+    var readOnly = (bool)(ViewData["ReadOnly"] ?? true);
+    var previewFirst = (bool)(ViewData["PreviewFirstModule"] ?? false);
+    var currentLessonId = ViewData["CurrentLessonId"] as int?;
+    var progressMap = (ViewData["ProgressMap"] as Dictionary<int, LessonProgress>) ?? new();
+    var quizAttemptMap = (ViewData["QuizAttemptMap"] as Dictionary<int, QuizAttempt>) ?? new();
+
+    string DurText(int m) => m >= 60
+        ? $"{m / 60}g{(m % 60 > 0 ? " " + (m % 60) + "p" : "")}".Trim()
+        : $"{m}p";
+
+    string TypeIcon(LessonType t) => t switch
+    {
+        LessonType.Video => "bi-play-circle-fill",
+        LessonType.Text => "bi-file-text-fill",
+        LessonType.Mixed => "bi-layers-fill",
+        _ => "bi-file"
+    };
+}
+
+<style>
+    .ma-module {
+        border-bottom: 1px solid var(--smoke);
+    }
+
+        .ma-module:last-child {
+            border-bottom: none;
+        }
+
+    .ma-mod-hdr {
+        padding: .85rem 1.1rem;
+        background: var(--off-white);
+        font-weight: 700;
+        color: var(--navy);
+        font-size: .9rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: .5rem;
+        border-left: 4px solid var(--navy);
+        transition: background var(--transition);
+        user-select: none;
+    }
+
+        .ma-mod-hdr:hover {
+            background: var(--smoke);
+        }
+
+        .ma-mod-hdr .ma-chev {
+            transition: transform .25s;
+            font-size: .75rem;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .ma-mod-hdr.open .ma-chev {
+            transform: rotate(180deg);
+        }
+
+    .ma-lesson-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .ma-lesson-row {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        padding: .7rem 1rem .7rem 1.4rem;
+        color: var(--text-mid);
+        font-size: .875rem;
+        border-left: 4px solid transparent;
+        transition: all .15s ease;
+        background: var(--white);
+    }
+
+    a.ma-lesson-row {
+        text-decoration: none;
+    }
+
+        a.ma-lesson-row:hover {
+            background: var(--off-white);
+            color: var(--navy);
+        }
+
+    .ma-lesson-row.active {
+        background: linear-gradient(90deg, rgba(20,33,61,.08) 0%, transparent 100%);
+        color: var(--navy);
+        border-left-color: var(--navy);
+        font-weight: 600;
+    }
+
+    .ma-icon {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: .8rem;
+    }
+
+        .ma-icon.done {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .ma-icon.current {
+            background: var(--navy);
+            color: var(--gold-light);
+        }
+
+        .ma-icon.todo {
+            background: var(--smoke);
+            color: var(--text-light);
+            border: 1.5px solid var(--text-light);
+        }
+
+        .ma-icon.plain {
+            color: var(--gold);
+        }
+
+    .ma-title {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ma-dur {
+        font-size: .72rem;
+        color: var(--text-light);
+        flex-shrink: 0;
+    }
+
+    .ma-unpub {
+        font-size: .62rem;
+        background: var(--gold-pale);
+        color: #8a6a00;
+        padding: .1rem .4rem;
+        border-radius: 4px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .ma-quiz-card {
+        margin: .4rem .75rem .65rem 2.4rem;
+        padding: .65rem .85rem;
+        background: linear-gradient(135deg, #fff8e1, #fff3cd);
+        border: 2px dashed var(--gold);
+        border-radius: var(--radius-sm);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        transition: all .2s ease;
+        position: relative;
+    }
+
+        .ma-quiz-card::before {
+            content: "QUIZ";
+            position: absolute;
+            top: -9px;
+            left: 12px;
+            background: var(--gold);
+            color: var(--navy);
+            font-size: .62rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 999px;
+            letter-spacing: .08em;
+        }
+
+        .ma-quiz-card:hover {
+            background: linear-gradient(135deg,#fff3cd,#ffe69c);
+            transform: translateX(2px);
+        }
+
+        .ma-quiz-card .qci {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            background: var(--gold);
+            color: var(--navy);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ma-quiz-card .qct {
+            flex: 1;
+        }
+
+        .ma-quiz-card .qct-title {
+            font-weight: 700;
+            color: var(--navy);
+            font-size: .82rem;
+            line-height: 1.2;
+        }
+
+        .ma-quiz-card .qct-sub {
+            font-size: .7rem;
+            color: var(--text-mid);
+            margin-top: 2px;
+        }
+
+        .ma-quiz-card.quiz-passed {
+            background: linear-gradient(135deg,#e8f5e9,#c8e6c9);
+            border-color: #43a047;
+        }
+
+            .ma-quiz-card.quiz-passed .qci {
+                background: #43a047;
+                color: #fff;
+            }
+
+            .ma-quiz-card.quiz-passed .qct-title {
+                color: #2e7d32;
+            }
+
+        .ma-quiz-card.quiz-failed {
+            background: linear-gradient(135deg,#fff3e0,#ffe0b2);
+            border-color: #fb8c00;
+        }
+
+            .ma-quiz-card.quiz-failed .qci {
+                background: #fb8c00;
+                color: #fff;
+            }
+
+            .ma-quiz-card.quiz-failed .qct-title {
+                color: #e65100;
+            }
+
+    /* ===== LOCKED MODULE ===== */
+    .ma-locked-body {
+        position: relative;
+    }
+
+    .ma-locked-blur {
+        filter: blur(5px);
+        pointer-events: none;
+        user-select: none;
+        opacity: .5;
+    }
+
+    .ma-locked-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: .5rem;
+        background: rgba(247,245,240,.6);
+        backdrop-filter: blur(1px);
+        z-index: 2;
+    }
+
+        .ma-locked-overlay i {
+            font-size: 1.4rem;
+            color: var(--text-light);
+        }
+
+        .ma-locked-overlay span {
+            font-size: .78rem;
+            color: var(--text-mid);
+            font-weight: 600;
+        }
+
+    /* ===== PREVIEW BUTTON ===== */
+    .ma-preview-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        font-size: .7rem;
+        font-weight: 700;
+        padding: .2rem .55rem;
+        border-radius: 20px;
+        flex-shrink: 0;
+        background: var(--gold-pale);
+        color: #8a6a00;
+        border: 1px solid var(--gold);
+        text-decoration: none;
+        transition: all .15s ease;
+    }
+
+        .ma-preview-btn:hover {
+            background: var(--gold);
+            color: var(--navy);
+        }
+</style>
+
+@if (!Model.Modules.Any())
+{
+    <div style="padding:1.5rem; text-align:center; color:var(--text-light); font-size:.875rem;">
+        <i class="bi bi-folder-x" style="font-size:1.8rem; display:block; margin-bottom:.5rem;"></i>
+        Khoá học chưa có nội dung
+    </div>
+}
+
+@{
+    int mIdx = 0;
+}
+@foreach (var m in Model.Modules.OrderBy(x => x.OrderIndex))
+{
+    mIdx++;
+    var mId = $"ma-{m.ModuleId}";
+    var lessons = m.Lessons?.OrderBy(l => l.OrderIndex).ToList() ?? new();
+    var lessCnt = lessons.Count;
+    var modMins = lessons.Sum(l => l.DurationMinutes);
+    var isFirstMod = (mIdx == 1);
+    var isLocked = previewFirst && !isFirstMod;
+
+    <div class="ma-module">
+        <div class="ma-mod-hdr @(isFirstMod || !previewFirst ? "open" : "")"
+             id="hdr-@mId" onclick="maTog('@mId')">
+            <span style="display:flex; align-items:center; gap:.5rem; min-width:0; overflow:hidden;">
+                <i class="bi @(isLocked ? "bi-lock-fill" : "bi-collection")"
+                   style="flex-shrink:0; @(isLocked ? "color:var(--text-light);" : "")"></i>
+                <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+                                 @(isLocked ? "color:var(--text-light);" : "")">
+                    Chương @mIdx: @m.Title
+                </span>
+            </span>
+            <span style="display:flex; align-items:center; gap:.5rem; flex-shrink:0;">
+                @if (isFirstMod && previewFirst)
+                {
+                    <small style="color:var(--gold); font-weight:600; font-size:.7rem; letter-spacing:.03em;">
+                        XEM TRƯỚC
+                    </small>
+                }
+                <small style="color:var(--text-light); font-weight:400;">
+                    @lessCnt bài@(modMins > 0 ? " · " + DurText(modMins) : "")
+                </small>
+                <i class="bi bi-chevron-down ma-chev"></i>
+            </span>
+        </div>
+
+        <div class="ma-locked-body">
+            <ul class="ma-lesson-list @(isLocked ? "ma-locked-blur" : "")" id="@mId"
+                style="@(isLocked ? "display:block;" : "")">
+                @if (!lessons.Any())
+                {
+                    <li style="padding:.6rem 1rem .6rem 1.4rem; color:var(--text-light); font-size:.82rem; font-style:italic;">
+                        Chương này chưa có bài học
+                    </li>
+                }
+                @foreach (var l in lessons)
+                {
+                    if (readOnly)
+                    {
+                        var isCurRO = currentLessonId == l.LessonId;
+                        // Trong Learn preview mode: lesson chương 1 là link, chương khác plain
+                        // Trong Detail mode (previewFirst=true, currentLessonId=null): chương 1 có nút Xem trước
+                        var showPreviewBtn = isFirstMod && previewFirst && l.IsPublished && currentLessonId == null;
+                        var showAsLink = isFirstMod && previewFirst && l.IsPublished && currentLessonId != null;
+                        <li>
+                            @if (showAsLink && !isCurRO)
+                            {
+                                <a class="ma-lesson-row"
+                                   asp-controller="Learn" asp-action="Course"
+                                   asp-route-id="@Model.CourseId" asp-route-lessonId="@l.LessonId">
+                                    <span class="ma-icon plain"><i class="bi @TypeIcon(l.Type)"></i></span>
+                                    <span class="ma-title">@l.Title</span>
+                                    @if (l.DurationMinutes > 0)
+                                    {
+                                        <span class="ma-dur">@DurText(l.DurationMinutes)</span>
+                                    }
+                                </a>
+                            }
+                            else
+                            {
+                                <div class="ma-lesson-row @(isCurRO ? "active" : "")">
+                                    <span class="ma-icon @(isCurRO ? "current" : "plain")">
+                                        <i class="bi @(isCurRO ? "bi-play-fill" : TypeIcon(l.Type))"></i>
+                                    </span>
+                                    <span class="ma-title">@l.Title</span>
+                                    @if (!l.IsPublished)
+                                    {
+                                        <span class="ma-unpub">Chưa đăng</span>
+                                    }
+                                    @if (l.DurationMinutes > 0)
+                                    {
+                                        <span class="ma-dur">@DurText(l.DurationMinutes)</span>
+                                    }
+                                    @if (showPreviewBtn)
+                                    {
+                                        <a class="ma-preview-btn"
+                                           asp-controller="Learn" asp-action="Course"
+                                           asp-route-id="@Model.CourseId" asp-route-lessonId="@l.LessonId">
+                                            <i class="bi bi-eye-fill"></i> Xem trước
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </li>
+                    }
+                    else
+                    {
+                        var prog = progressMap.TryGetValue(l.LessonId, out var pv) ? pv : null;
+                        var isDone = prog != null && prog.Status == ProgressStatus.Completed;
+                        var isCur = currentLessonId == l.LessonId;
+                        var icoClass = isDone ? "done" : (isCur ? "current" : "todo");
+                        var icoGlyph = isDone ? "bi-check-lg" : (isCur ? "bi-play-fill" : "bi-circle");
+
+                        <li>
+                            <a class="ma-lesson-row @(isCur ? "active" : "")"
+                               asp-controller="Learn" asp-action="Course"
+                               asp-route-id="@Model.CourseId" asp-route-lessonId="@l.LessonId">
+                                <span class="ma-icon @icoClass"><i class="bi @icoGlyph"></i></span>
+                                <span class="ma-title">@l.Title</span>
+                                @if (l.DurationMinutes > 0)
+                                {
+                                    <span class="ma-dur">@l.DurationMinutes'</span>
+                                }
+                            </a>
+
+                            @if (l.Quiz != null && l.Quiz.IsPublished)
+                            {
+                                quizAttemptMap.TryGetValue(l.Quiz.QuizId, out var qa);
+                                var qClass = qa == null ? "" : (qa.Passed ? "quiz-passed" : "quiz-failed");
+                                var qIcon = qa == null ? "bi-pencil-square" : (qa.Passed ? "bi-check-lg" : "bi-arrow-repeat");
+                                <a class="ma-quiz-card @qClass" href="#"
+                                   onclick="openQuizConfirm(event,
+                                                   '@Url.Action("Take", "Quiz", new { id = l.Quiz.QuizId })',
+                                                   '@Html.Raw(l.Quiz.Title.Replace("'", "\\\'"))',
+                                                   @l.Quiz.Questions.Count,
+                                                   @l.Quiz.PassingScore,
+                                                   '@(qa == null ? "new" : (qa.Passed ? "passed" : "retry"))')">
+                                    <span class="qci"><i class="bi @qIcon"></i></span>
+                                    <div class="qct">
+                                        <div class="qct-title">@l.Quiz.Title</div>
+                                        <div class="qct-sub">
+                                            @if (qa != null)
+                                            {
+                                                <text>@qa.Score/@qa.MaxScore điểm (@qa.ScorePercent%)</text>
+                                                <text> · </text>
+                                                @(qa.Passed ? "✓ Đạt" : "✗ Chưa đạt — cần " + l.Quiz.PassingScore + "%")
+                                            }
+                                            else
+                                            {
+                                                <text>@l.Quiz.Questions.Count câu · Đạt @l.Quiz.PassingScore%</text>
+                                            }
+                                        </div>
+                                    </div>
+                                    <i class="bi bi-arrow-right-circle-fill" style="color:var(--navy);"></i>
+                                </a>
+                            }
+                        </li>
+                    }
+                }
+            </ul>
+            @if (isLocked)
+            {
+                <div class="ma-locked-overlay">
+                    <i class="bi bi-lock-fill"></i>
+                    <span>Đăng ký để xem nội dung</span>
+                </div>
+            }
+        </div>@*ma-locked-body*@
+    </div>@*ma-module*@ 
+}
+
+<script>
+    function maTog(id) {
+        var list = document.getElementById(id);
+        var hdr  = document.getElementById('hdr-' + id);
+        if (!list || !hdr) return;
+        var open = list.style.display !== 'none';
+        list.style.display = open ? 'none' : 'block';
+        hdr.classList.toggle('open', !open);
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('[id^="ma-"]').forEach(function (el) {
+            if (el.tagName === 'UL') el.style.display = 'block';
+        });
+    });
+</script>

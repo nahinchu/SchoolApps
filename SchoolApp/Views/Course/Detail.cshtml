@@ -1,0 +1,364 @@
+﻿@using SchoolApp.Models
+@using SchoolApp.Models.Enums
+@model Course
+
+@{
+    var role         = ViewBag.Role as string;
+    var isEnrolled   = (bool)(ViewBag.IsEnrolled ?? false);
+    var studentId    = ViewBag.StudentId as int?;
+    var enrollCount  = (int)(ViewBag.EnrollmentCount ?? 0);
+    var isAdminOrMgr = role == "Admin" || role == "Manager";
+    var isStudent    = role == "Student";
+
+    Layout = isAdminOrMgr
+        ? "~/Views/Shared/_AdminLayout.cshtml"
+        : "~/Views/Shared/_Layout.cshtml";
+
+    ViewData["Title"] = Model.CourseName;
+
+    string LevelLabel(CourseLevel l) => l switch
+    {
+        CourseLevel.Basic        => "Cơ bản",
+        CourseLevel.Intermediate => "Trung cấp",
+        CourseLevel.Advanced     => "Nâng cao",
+        _                        => l.ToString()
+    };
+    string LevelBadgeClass(CourseLevel l) => l switch
+    {
+        CourseLevel.Basic        => "sa-badge sa-badge-green",
+        CourseLevel.Intermediate => "sa-badge sa-badge-gold",
+        CourseLevel.Advanced     => "sa-badge sa-badge-red",
+        _                        => "sa-badge"
+    };
+
+    var totalLessons = Model.Modules?.Sum(m => m.Lessons?.Count ?? 0) ?? 0;
+    var totalMinutes = Model.Modules?.Sum(m => m.Lessons?.Sum(l => l.DurationMinutes) ?? 0) ?? 0;
+    var totalHours   = totalMinutes / 60;
+    var remMinutes   = totalMinutes % 60;
+    var moduleCount  = Model.Modules?.Count ?? 0;
+
+    string DurationText(int mins) => mins >= 60
+        ? $"{mins / 60}g {(mins % 60 > 0 ? (mins % 60) + "p" : "")}".Trim()
+        : $"{mins}p";
+}
+
+<!-- ==================== HERO ==================== -->
+<div style="background:linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            margin: -2.5rem -1.5rem 0; padding: 2.5rem 2rem 2rem;">
+    <div style="display:flex; gap:2.5rem; align-items:flex-start; flex-wrap:wrap;">
+
+        <!-- Info -->
+        <div style="flex:1; min-width:280px;">
+
+            <!-- Breadcrumb -->
+            <div style="font-size:.78rem; color:rgba(255,255,255,.45); margin-bottom:.85rem; display:flex; align-items:center; gap:.4rem;">
+                <a asp-action="Index" style="color:rgba(255,255,255,.45); text-decoration:none; transition:color .2s;"
+                   onmouseenter="this.style.color='var(--gold-light)'"
+                   onmouseleave="this.style.color='rgba(255,255,255,.45)'">
+                    Khóa học
+                </a>
+                <i class="bi bi-chevron-right" style="font-size:.65rem;"></i>
+                <span style="color:rgba(255,255,255,.7); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:260px;">
+                    @Model.CourseName
+                </span>
+            </div>
+
+            <!-- Title -->
+            <h1 style="font-family:var(--font-display); font-size:clamp(1.5rem,3vw,2.1rem);
+                       font-weight:700; color:#fff; line-height:1.3; margin:0 0 .9rem;">
+                @Model.CourseName
+            </h1>
+
+            <!-- Description -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p style="color:rgba(255,255,255,.7); font-size:.95rem; line-height:1.7;
+                          margin:0 0 1.1rem; max-width:600px;">
+                    @Model.Description
+                </p>
+            }
+
+            <!-- Meta chips -->
+            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:.55rem .9rem; margin-bottom:.85rem;">
+                <span class="@LevelBadgeClass(Model.Level)" style="font-size:.72rem; padding:.25rem .65rem;">
+                    @LevelLabel(Model.Level)
+                </span>
+                @if (!Model.IsActive)
+                {
+                    <span class="sa-badge sa-badge-red" style="font-size:.72rem; padding:.25rem .65rem;">Đã đóng đăng ký</span>
+                }
+                <span style="font-size:.82rem; color:rgba(255,255,255,.55); display:flex; align-items:center; gap:.3rem;">
+                    <i class="bi bi-people-fill" style="color:var(--gold-light);"></i> @enrollCount học viên
+                </span>
+                <span style="font-size:.82rem; color:rgba(255,255,255,.55); display:flex; align-items:center; gap:.3rem;">
+                    <i class="bi bi-journal-bookmark-fill" style="color:var(--gold-light);"></i> @Model.Credits tín chỉ
+                </span>
+                @if (moduleCount > 0)
+                {
+                    <span style="font-size:.82rem; color:rgba(255,255,255,.55); display:flex; align-items:center; gap:.3rem;">
+                        <i class="bi bi-collection-fill" style="color:var(--gold-light);"></i> @moduleCount chương
+                    </span>
+                }
+                @if (totalLessons > 0)
+                {
+                    <span style="font-size:.82rem; color:rgba(255,255,255,.55); display:flex; align-items:center; gap:.3rem;">
+                        <i class="bi bi-play-circle-fill" style="color:var(--gold-light);"></i> @totalLessons bài học
+                    </span>
+                }
+                @if (totalMinutes > 0)
+                {
+                    <span style="font-size:.82rem; color:rgba(255,255,255,.55); display:flex; align-items:center; gap:.3rem;">
+                        <i class="bi bi-clock-fill" style="color:var(--gold-light);"></i> @DurationText(totalMinutes)
+                    </span>
+                }
+                @if (Model.UpdatedDate.HasValue)
+                {
+                    <span style="font-size:.78rem; color:rgba(255,255,255,.35); display:flex; align-items:center; gap:.3rem;">
+                        <i class="bi bi-pencil-fill"></i> Cập nhật @Model.UpdatedDate.Value.ToString("MM/yyyy")
+                    </span>
+                }
+            </div>
+        </div>
+
+        <!-- Thumbnail (chỉ hiện trên desktop, sidebar sẽ hiện trên mobile) -->
+        <div style="width:280px; flex-shrink:0; display:none;" class="hero-thumb-desktop">
+            @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+            {
+                <img src="@Model.ThumbnailUrl" alt="@Model.CourseName"
+                     style="width:100%; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); display:block;" />
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    @@media (min-width: 900px) {
+        .hero-thumb-desktop { display: block !important; }
+    }
+</style>
+
+<!-- ==================== BODY ==================== -->
+<div style="max-width:1080px; margin:2rem auto 0; display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap;">
+
+    <!-- ===== LEFT: NỘI DUNG ===== -->
+    <div style="flex:1; min-width:280px; display:flex; flex-direction:column; gap:1.5rem;">
+
+        <!-- CHƯƠNG TRÌNH HỌC -->
+        @if (Model.Modules != null && Model.Modules.Any())
+        {
+            <div class="sa-card" style="padding:0; overflow:hidden;">
+                <div class="sa-card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 class="sa-card-title" style="margin:0; font-size:1rem;">
+                        <i class="bi bi-list-ul me-2" style="color:var(--gold);"></i>Nội dung khóa học
+                    </h2>
+                    <span style="font-size:.78rem; color:var(--text-light);">
+                        @moduleCount chương · @totalLessons bài
+                        @if (totalMinutes > 0) { <text> · @DurationText(totalMinutes)</text> }
+                    </span>
+                </div>
+                @await Html.PartialAsync("_ModuleAccordion", Model,
+                    new ViewDataDictionary(ViewData) {
+                        ["ReadOnly"]           = true,
+                        ["PreviewFirstModule"] = !isEnrolled && !isAdminOrMgr
+                    })
+            </div>
+        }
+
+        <!-- THÔNG TIN KHÓA HỌC -->
+        <div class="sa-card">
+            <div class="sa-card-header">
+                <h2 class="sa-card-title" style="font-size:1rem; margin:0;">
+                    <i class="bi bi-info-circle-fill me-2" style="color:var(--gold);"></i>Thông tin khóa học
+                </h2>
+            </div>
+            <div class="sa-card-body">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem .5rem;">
+                    <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                        <i class="bi bi-bar-chart-fill" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                        Cấp độ: <strong style="color:var(--text-dark);">@LevelLabel(Model.Level)</strong>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                        <i class="bi bi-journal-bookmark-fill" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                        Tín chỉ: <strong style="color:var(--text-dark);">@Model.Credits</strong>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                        <i class="bi bi-collection-fill" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                        Số chương: <strong style="color:var(--text-dark);">@moduleCount</strong>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                        <i class="bi bi-play-circle-fill" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                        Số bài học: <strong style="color:var(--text-dark);">@totalLessons</strong>
+                    </div>
+                    @if (totalMinutes > 0)
+                    {
+                        <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                            <i class="bi bi-clock-fill" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                            Thời lượng: <strong style="color:var(--text-dark);">@DurationText(totalMinutes)</strong>
+                        </div>
+                    }
+                    <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                        <i class="bi bi-people-fill" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                        Học viên: <strong style="color:var(--text-dark);">@enrollCount</strong>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                        <i class="bi bi-calendar3" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                        Tạo ngày: <strong style="color:var(--text-dark);">@Model.CreatedDate.ToString("dd/MM/yyyy")</strong>
+                    </div>
+                    @if (Model.UpdatedDate.HasValue)
+                    {
+                        <div style="display:flex; align-items:center; gap:.6rem; font-size:.875rem; color:var(--text-mid);">
+                            <i class="bi bi-pencil-square" style="color:var(--gold); width:16px; flex-shrink:0;"></i>
+                            Cập nhật: <strong style="color:var(--text-dark);">@Model.UpdatedDate.Value.ToString("dd/MM/yyyy")</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div style="width:290px; flex-shrink:0;">
+        <div class="sa-card" style="position:sticky; top:80px; padding:0; overflow:hidden;">
+
+            <!-- Thumbnail -->
+            @if (!string.IsNullOrEmpty(Model.ThumbnailUrl))
+            {
+                <img src="@Model.ThumbnailUrl" alt="@Model.CourseName"
+                     style="width:100%; height:165px; object-fit:cover; display:block;" />
+            }
+            else
+            {
+                <div style="width:100%; height:130px; background:linear-gradient(135deg,var(--navy),var(--navy-light));
+                            display:flex; align-items:center; justify-content:center;">
+                    <i class="bi bi-book-fill" style="font-size:3rem; color:var(--gold); opacity:.45;"></i>
+                </div>
+            }
+
+            <div style="padding:1.25rem 1.25rem 1.5rem;">
+                <!-- Price -->
+                <div style="margin-bottom:1.1rem;">
+                    @if (Model.Fee == 0)
+                    {
+                        <span style="font-family:var(--font-display); font-size:1.9rem; font-weight:700; color:var(--success);">
+                            Miễn phí
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="font-family:var(--font-display); font-size:1.9rem; font-weight:700; color:var(--text-dark);">
+                            @Model.Fee.ToString("N0")
+                            <span style="font-size:.85rem; font-weight:400; color:var(--text-light);"> ₫</span>
+                        </span>
+                    }
+                </div>
+
+                <!-- CTA -->
+                @if (isEnrolled)
+                {
+                    <a asp-controller="Learn" asp-action="Course" asp-route-id="@Model.CourseId"
+                       class="sa-btn sa-btn-gold" style="width:100%; justify-content:center; font-size:.95rem; padding:11px;">
+                        <i class="bi bi-play-circle-fill me-2"></i> Tiếp tục học
+                    </a>
+                }
+                else if (isStudent && Model.IsActive)
+                {
+                    @if (Model.Fee > 0)
+                    {
+                        <a href="/Payment/Checkout?courseID=@Model.CourseId"
+                           class="sa-btn sa-btn-gold" style="width:100%; justify-content:center; font-size:.95rem; padding:11px; margin-bottom:.6rem;">
+                            <i class="bi bi-credit-card-fill me-2"></i> Đăng ký & Thanh toán
+                        </a>
+                    }
+                    else
+                    {
+                        <form id="enrollForm" style="margin-bottom:.6rem;">
+                            @Html.AntiForgeryToken()
+                            <button type="button" id="btnEnrollSidebar"
+                                    class="sa-btn sa-btn-gold"
+                                    style="width:100%; justify-content:center; font-size:.95rem; padding:11px;">
+                                <i class="bi bi-plus-circle-fill me-2"></i> Đăng ký miễn phí
+                            </button>
+                        </form>
+                    }
+                }
+                else if (!isStudent && !isAdminOrMgr)
+                {
+                    <a asp-controller="Account" asp-action="Login"
+                       class="sa-btn sa-btn-primary" style="width:100%; justify-content:center; font-size:.95rem; padding:11px;">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Đăng nhập để đăng ký
+                    </a>
+                }
+                else if (!Model.IsActive)
+                {
+                    <div class="sa-alert sa-alert-danger" style="margin:0; font-size:.85rem;">
+                        <span class="sa-alert-icon"><i class="bi bi-lock-fill"></i></span>
+                        <span>Khóa học đã đóng đăng ký</span>
+                    </div>
+                }
+
+                <!-- Quick stats -->
+                <div style="margin-top:1.1rem; padding-top:1rem; border-top:1px solid var(--smoke);
+                            display:flex; flex-direction:column; gap:.5rem;">
+                    @foreach (var stat in new[] {
+                        new { Icon="bi-bar-chart",   Label="Cấp độ",    Value=LevelLabel(Model.Level) },
+                        new { Icon="bi-collection",  Label="Chương học",Value=moduleCount+" chương" },
+                        new { Icon="bi-play-circle", Label="Bài học",   Value=totalLessons+" bài" },
+                        new { Icon="bi-people",      Label="Học viên",  Value=enrollCount+" người" },
+                    })
+                    {
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
+                            <span style="color:var(--text-light); display:flex; align-items:center; gap:.4rem;">
+                                <i class="bi @stat.Icon" style="color:var(--gold);"></i> @stat.Label
+                            </span>
+                            <strong style="color:var(--text-dark);">@stat.Value</strong>
+                        </div>
+                    }
+                    @if (totalMinutes > 0)
+                    {
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:.82rem;">
+                            <span style="color:var(--text-light); display:flex; align-items:center; gap:.4rem;">
+                                <i class="bi bi-clock" style="color:var(--gold);"></i> Thời lượng
+                            </span>
+                            <strong style="color:var(--text-dark);">@DurationText(totalMinutes)</strong>
+                        </div>
+                    }
+                </div>
+
+                <!-- Back -->
+                <div style="margin-top:1rem; text-align:center;">
+                    <a asp-action="Index"
+                       style="font-size:.8rem; color:var(--text-light); text-decoration:none; transition:color var(--transition);"
+                       onmouseenter="this.style.color='var(--gold)'"
+                       onmouseleave="this.style.color='var(--text-light)'">
+                        <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <form id="aff">@Html.AntiForgeryToken()</form>
+    <script>
+@if (isStudent && !isEnrolled && Model.IsActive && Model.Fee == 0)
+        {
+            <text>
+            document.getElementById('btnEnrollSidebar')?.addEventListener('click', function () {
+                if (!confirm('Bạn có chắc muốn đăng ký khóa học miễn phí này?')) return;
+                var token = document.querySelector('#aff input[name="__RequestVerificationToken"]').value;
+                fetch('@Url.Action("Register", "Enrollment")', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'courseId=@Model.CourseId&__RequestVerificationToken=' + encodeURIComponent(token)
+                })
+                .then(r => r.json())
+                .then(res => { if (res.success) location.reload(); else alert(res.message); })
+                .catch(() => alert('Lỗi, vui lòng thử lại.'));
+            });
+            </text>
+        }
+    </script>
+}

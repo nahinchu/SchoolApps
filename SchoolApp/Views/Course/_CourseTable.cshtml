@@ -74,7 +74,7 @@
                                     else
                                     {
                                         <div style="width:56px; height:38px; flex-shrink:0; border-radius:4px;
-                                                                    background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center;">
+                                                                                    background:rgba(255,255,255,.06); display:flex; align-items:center; justify-content:center;">
                                             <i class="bi bi-image" style="color:rgba(255,255,255,.2);"></i>
                                         </div>
                                     }
@@ -83,7 +83,7 @@
                                         @if (!string.IsNullOrEmpty(item.Description))
                                         {
                                             <div style="font-size:.75rem; color:rgba(255,255,255,.4); margin-top:.2rem;
-                                                                        display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                                                                        display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
                                                 @item.Description
                                             </div>
                                         }
@@ -92,8 +92,8 @@
                             </td>
                             <td class="text-center">
                                 <span style="
-                                                display:inline-block; padding:.2rem .55rem; border-radius:20px; font-size:.72rem; font-weight:600;
-                                                background:@(LevelColor(item.Level))22; color:@(LevelColor(item.Level)); border:1px solid @(LevelColor(item.Level))55;">
+                                                            display:inline-block; padding:.2rem .55rem; border-radius:20px; font-size:.72rem; font-weight:600;
+                                                            background:@(LevelColor(item.Level))22; color:@(LevelColor(item.Level)); border:1px solid @(LevelColor(item.Level))55;">
                                     @LevelLabel(item.Level)
                                 </span>
                             </td>
@@ -151,136 +151,287 @@
 }
 else
 {
-    <!-- ===== STUDENT / GUEST TABLE ===== -->
-    <table class="table table-bordered table-hover align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th style="width:50px" class="text-center">#</th>
-                <th>Tên khóa học</th>
-                <th class="text-center">Tín chỉ</th>
-                <th class="text-end">Học phí</th>
-                <th class="text-center">Trạng thái</th>
-                <th style="width:280px">Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Any())
-            {
-                <tr>
-                    <td colspan="6" class="text-center py-5 text-muted">
-                        <i class="bi bi-inbox display-4"></i><br>
-                        Không có khóa học nào
-                    </td>
-                </tr>
-            }
-            else
-            {
-                foreach (var item in Model)
-                {
-                    <tr>
-                        <td class="text-center fw-bold">@item.CourseId</td>
-                        <td>
-                            <div class="d-flex align-items-center gap-3">
-                                @if (!string.IsNullOrEmpty(item.ThumbnailUrl))
-                                {
-                                    <img src="@item.ThumbnailUrl" alt=""
-                                         style="width:64px; height:44px; object-fit:cover; border-radius:6px; flex-shrink:0;" />
-                                }
-                                else
-                                {
-                                    <div style="width:64px; height:44px; flex-shrink:0; border-radius:6px;
-                                                                background:#f0f0f0; display:flex; align-items:center; justify-content:center;">
-                                        <i class="bi bi-image text-muted"></i>
-                                    </div>
-                                }
-                                <div>
-                                    <div class="d-flex align-items-center gap-2 mb-1">
-                                        <strong>@item.CourseName</strong>
-                                        <span style="
-                                                        display:inline-block; padding:.1rem .45rem; border-radius:20px; font-size:.68rem; font-weight:600;
-                                                        background:@(LevelColor(item.Level))18; color:@(LevelColor(item.Level)); border:1px solid @(LevelColor(item.Level))44;">
-                                            @LevelLabel(item.Level)
-                                        </span>
-                                    </div>
-                                    @if (!string.IsNullOrEmpty(item.Description))
-                                    {
-                                        <div class="text-muted small mt-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
-                                            @item.Description
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-center">@item.Credits</td>
-                        <td class="text-end fw-semibold">@item.Fee.ToString("N0") <small>VNĐ</small></td>
-                        <td class="text-center">
-                            @if (item.IsActive)
-                            {
-                                <span class="badge bg-success px-3 py-2">Đang mở</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary px-3 py-2">Đã đóng</span>
-                            }
-                        </td>
-                        <td>
-                            @if (isStudent && enrolledIds.Contains(item.CourseId))
-                            {
-                                <a asp-controller="Learn" asp-action="Course" asp-route-id="@item.CourseId"
-                                   class="btn btn-sm btn-primary">
-                                    <i class="bi bi-play-circle me-1"></i> Học ngay
-                                </a>
-                            }
-                            else if (isStudent && item.IsActive)
-                            {
-                                <button type="button" class="btn btn-sm btn-success btn-register-course me-1"
-                                        data-id="@item.CourseId" data-fee="@item.Fee">
-                                    @if (item.Fee > 0)
-                                    {
-                                        <i class="bi bi-credit-card me-1"></i>
-                                        <span>Đăng ký & Thanh toán</span>
-                                    }
-                                    else
-                                    {
-                                        <i class="bi bi-plus-circle me-1"></i>
-                                        <span>Đăng ký miễn phí</span>
-                                    }
-                                </button>
-                                <a asp-controller="Learn" asp-action="Course" asp-route-id="@item.CourseId"
-                                   class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-eye me-1"></i> Xem
-                                </a>
-                            }
-                            else if (studentId == null)
-                            {
-                                <a asp-controller="Learn" asp-action="Course" asp-route-id="@item.CourseId"
-                                   class="btn btn-sm btn-outline-primary me-1">
-                                    <i class="bi bi-eye me-1"></i> Xem
-                                </a>
-                                <a asp-controller="Account" asp-action="Login"
-                                   class="btn btn-sm btn-outline-success">
-                                    <i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập
-                                </a>
-                            }
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+    <!-- ===== STUDENT / GUEST: CARD GRID 3 CỘT ===== -->
+    <style>
+        .ci-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
 
-    <div class="d-flex justify-content-between align-items-center mt-3">
-        <span class="text-muted">
-            Trang @Model.PageNumber / @Model.PageCount
-            (Tổng: @Model.TotalItemCount khóa học)
-        </span>
-        @Html.PagedListPager(Model,
-        page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"] }),
+        @@media (max-width: 900px) {
+            .ci-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @@media (max-width: 560px) {
+            .ci-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .ci-card {
+            background: var(--white);
+            border: 1px solid var(--smoke);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow .2s ease, transform .2s ease;
+            position: relative;
+        }
+
+            .ci-card:hover {
+                box-shadow: var(--shadow-md);
+                transform: translateY(-3px);
+                color: inherit;
+                text-decoration: none;
+            }
+
+        .ci-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: var(--smoke);
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+            .ci-thumb img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+                transition: transform .3s ease;
+            }
+
+        .ci-card:hover .ci-thumb img {
+            transform: scale(1.04);
+        }
+
+        .ci-thumb-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ci-closed-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(20,33,61,.75);
+            color: var(--gold-light);
+            font-size: .6rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: .06em;
+        }
+
+        .ci-enrolled-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--success);
+            color: #fff;
+            font-size: .6rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .ci-body {
+            padding: .9rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: .45rem;
+        }
+
+        .ci-title {
+            font-family: var(--font-display);
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--navy);
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .ci-desc {
+            font-size: .8rem;
+            color: var(--text-mid);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin: 0;
+            flex: 1;
+        }
+
+        .ci-meta {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            flex-wrap: wrap;
+            margin-top: auto;
+            padding-top: .4rem;
+        }
+
+        .ci-level {
+            display: inline-block;
+            padding: .12rem .5rem;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+        }
+
+        .ci-credits {
+            font-size: .75rem;
+            color: var(--text-light);
+        }
+
+        .ci-footer {
+            padding: .65rem 1rem;
+            border-top: 1px solid var(--smoke);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--off-white);
+        }
+
+        .ci-price-free {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        .ci-price {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--navy);
+            white-space: nowrap;
+        }
+
+            .ci-price small {
+                font-size: .7rem;
+                font-weight: 500;
+                color: var(--text-light);
+            }
+
+        .ci-cta {
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+            white-space: nowrap;
+        }
+    </style>
+
+    @if (!Model.Any())
+    {
+        <div style="text-align:center; padding:4rem 1rem; color:var(--text-light);">
+            <i class="bi bi-inbox" style="font-size:3rem; display:block; margin-bottom:.75rem;"></i>
+            <p style="font-size:1rem; margin:0; color:var(--text-mid);">Không tìm thấy khóa học nào</p>
+        </div>
+    }
+    else
+    {
+        <div class="ci-grid">
+            @foreach (var item in Model)
+            {
+                var isEnrolled = enrolledIds.Contains(item.CourseId);
+                <a class="ci-card"
+                   asp-controller="Course" asp-action="Detail" asp-route-id="@item.CourseId">
+
+                    <!-- Thumbnail -->
+                    <div class="ci-thumb">
+                        @if (!string.IsNullOrEmpty(item.ThumbnailUrl))
+                        {
+                            <img src="@item.ThumbnailUrl" alt="@item.CourseName" />
+                        }
+                        else
+                        {
+                            <div class="ci-thumb-placeholder">
+                                <i class="bi bi-play-btn" style="font-size:2.5rem; color:var(--text-light);"></i>
+                            </div>
+                        }
+                        @if (!item.IsActive)
+                        {
+                            <span class="ci-closed-badge">ĐÃ ĐÓNG</span>
+                        }
+                        @if (isEnrolled)
+                        {
+                            <span class="ci-enrolled-badge"><i class="bi bi-check-lg"></i> Đã đăng ký</span>
+                        }
+                    </div>
+
+                    <!-- Body -->
+                    <div class="ci-body">
+                        <h3 class="ci-title">@item.CourseName</h3>
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            <p class="ci-desc">@item.Description</p>
+                        }
+                        <div class="ci-meta">
+                            <span class="ci-level"
+                                  style="background:@(LevelColor(item.Level))1a; color:@(LevelColor(item.Level)); border:1px solid @(LevelColor(item.Level))44;">
+                                @LevelLabel(item.Level)
+                            </span>
+                            <span class="ci-credits">
+                                <i class="bi bi-journal-bookmark me-1"></i>@item.Credits tín chỉ
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="ci-footer">
+                        @if (item.Fee == 0)
+                        {
+                            <span class="ci-price-free">Miễn phí</span>
+                        }
+                        else
+                        {
+                            <span class="ci-price">
+                                @item.Fee.ToString("N0") <small>₫</small>
+                            </span>
+                        }
+                        <span class="ci-cta">
+                            Xem chi tiết <i class="bi bi-arrow-right"></i>
+                        </span>
+                    </div>
+                </a>
+            }
+        </div>
+
+        <!-- Phân trang -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; flex-wrap:wrap; gap:.5rem;">
+            <span style="font-size:.8rem; color:var(--text-light);">
+                Trang @Model.PageNumber / @Model.PageCount
+                &nbsp;·&nbsp; Tổng <strong style="color:var(--text-dark);">@Model.TotalItemCount</strong> khóa học
+            </span>
+            @Html.PagedListPager(Model,
+            page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"], level = ViewData["Level"], sort = ViewData["Sort"] }),
         new PagedListRenderOptions
         {
             LiElementClasses = new[] { "page-item" },
             PageClasses = new[] { "page-link ajax-page-link" },
-            UlElementClasses = new[] { "pagination" }
+            UlElementClasses = new[] { "pagination mb-0" }
         })
 </div>
+    }
 }

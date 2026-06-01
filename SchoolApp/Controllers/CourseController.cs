@@ -28,14 +28,28 @@ namespace SchoolApp.Controllers
         }
 
         // GET: /Course
-        public IActionResult Index(string searchTerm, int page = 1)
+        public IActionResult Index(string searchTerm, int page = 1, int? level = null, string sort = null)
         {
             int pageSize = 5;
 
-            var result = _uow.Courses.SearchByName(searchTerm)
-                .ToPagedList(page, pageSize);
+            var query = _uow.Courses.SearchByName(searchTerm);
+
+            if (level.HasValue)
+                query = query.Where(c => (int)c.Level == level.Value);
+
+            query = sort switch
+            {
+                "price_asc" => query.OrderBy(c => c.Fee),
+                "price_desc" => query.OrderByDescending(c => c.Fee),
+                "name_az" => query.OrderBy(c => c.CourseName),
+                _ => query
+            };
+
+            var result = query.ToPagedList(page, pageSize);
 
             ViewData["SearchTerm"] = searchTerm;
+            ViewData["Level"] = level?.ToString() ?? "";
+            ViewData["Sort"] = sort ?? "";
 
             var studentId = HttpContext.Session.GetInt32("StudentId");
             if (studentId.HasValue)
@@ -50,6 +64,32 @@ namespace SchoolApp.Controllers
                 return PartialView("_CourseTable", result);
 
             return View(result);
+        }
+
+        // GET: /Course/Detail/{id}
+        public IActionResult Detail(int id)
+        {
+            var course = _uow.Courses.GetCourseWithFullTree(id);
+            if (course == null) return NotFound();
+
+            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var role = HttpContext.Session.GetString("Role");
+
+            ViewBag.IsEnrolled = false;
+            ViewBag.StudentId = studentId;
+            ViewBag.Role = role;
+
+            if (studentId.HasValue)
+            {
+                ViewBag.IsEnrolled = _uow.Enrollments
+                    .GetByStudent(studentId.Value)
+                    .Any(e => e.CourseId == id);
+            }
+
+            ViewBag.EnrollmentCount = _uow.Enrollments.GetAll()
+                .Count(e => e.CourseId == id);
+
+            return View(course);
         }
 
         [HttpGet]
