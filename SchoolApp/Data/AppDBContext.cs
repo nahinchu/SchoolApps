@@ -22,6 +22,9 @@ namespace SchoolApp.Data
         public DbSet<QuizAttempt> QuizAttempts { get; set; }
         public DbSet<QuizAnswer> QuizAnswers { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
+        public DbSet<CourseReview> CourseReviews { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -186,6 +189,60 @@ namespace SchoolApp.Data
                       .WithMany()
                       .HasForeignKey(p => p.CourseId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Certificate>(entity =>
+            {
+                entity.HasIndex(c => c.CertificateCode)
+                      .IsUnique()
+                      .HasDatabaseName("IX_Certificate_Code_Unique");
+
+                entity.HasIndex(c => c.EnrollmentId)
+                      .IsUnique()
+                      .HasDatabaseName("IX_Certificate_Enrollment_Unique");
+
+                entity.HasOne(c => c.Enrollment)
+                      .WithMany()
+                      .HasForeignKey(c => c.EnrollmentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(c => c.Student)
+                      .WithMany()
+                      .HasForeignKey(c => c.StudentId)
+                      .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(c => c.Course)
+                      .WithMany()
+                      .HasForeignKey(c => c.CourseId)
+                      .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<CourseReview>(entity =>
+            {
+                entity.HasIndex(r => new { r.CourseId, r.StudentId })
+                      .IsUnique()
+                      .HasDatabaseName("IX_CourseReview_Course_Student");
+
+                entity.HasOne(r => r.Student)
+                      .WithMany()
+                      .HasForeignKey(r => r.StudentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(r => r.Course)
+                      .WithMany()
+                      .HasForeignKey(r => r.CourseId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasIndex(n => new { n.StudentId, n.IsRead })
+                      .HasDatabaseName("IX_Notification_Student_Read");
+
+                entity.HasOne(n => n.Student)
+                      .WithMany()
+                      .HasForeignKey(n => n.StudentId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

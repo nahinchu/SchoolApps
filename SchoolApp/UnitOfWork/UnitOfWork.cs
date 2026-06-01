@@ -8,6 +8,9 @@ using SchoolApp.Repositories.ModuleRepository;
 using SchoolApp.Repositories.StudentRepository;
 using SchoolApp.Repositories.LearnRepository;
 using SchoolApp.Repositories.PaymentRepository;
+using SchoolApp.Repositories.CertificateRepository;
+using SchoolApp.Repositories.ReviewRepository;
+using SchoolApp.Repositories.NotificationRepository;
 using System.Reflection;
 
 namespace SchoolApp.UnitOfWork
@@ -27,6 +30,9 @@ namespace SchoolApp.UnitOfWork
         public IQuizAttemptRepository QuizAttempts { get; }
         public IQuizAnswerRepository QuizAnswers { get; }
         public IPaymentRepository Payments { get; private set; }
+        public ICertificateRepository Certificates { get; private set; }
+        public IReviewRepository Reviews { get; private set; }
+        public INotificationRepository Notifications { get; private set; }
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
@@ -42,6 +48,9 @@ namespace SchoolApp.UnitOfWork
             QuizAttempts = new QuizAttemptRepository(context);
             QuizAnswers = new QuizAnswerRepository(context);
             Payments = new PaymentRepository(context);
+            Certificates = new CertificateRepository(context);
+            Reviews = new ReviewRepository(context);
+            Notifications = new NotificationRepository(context);
         }
 
         public int SaveChanges()

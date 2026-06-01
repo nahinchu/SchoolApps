@@ -84,10 +84,14 @@ namespace SchoolApp.Controllers
                 ViewBag.IsEnrolled = _uow.Enrollments
                     .GetByStudent(studentId.Value)
                     .Any(e => e.CourseId == id);
+                ViewBag.UserReview = _uow.Reviews.GetByStudentAndCourse(studentId.Value, id);
             }
 
             ViewBag.EnrollmentCount = _uow.Enrollments.GetAll()
                 .Count(e => e.CourseId == id);
+
+            ViewBag.Reviews = _uow.Reviews.GetByCourse(id).ToList();
+            ViewBag.AverageRating = _uow.Reviews.GetAverageRating(id);
 
             return View(course);
         }

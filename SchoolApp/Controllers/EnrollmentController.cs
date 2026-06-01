@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SchoolApp.Filters;
 using SchoolApp.Models;
+using SchoolApp.Services.NotificationService;
 using SchoolApp.UnitOfWork;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -10,10 +11,12 @@ namespace SchoolApp.Controllers
     public class EnrollmentController : Controller
     {
         private readonly IUnitOfWork _uow;
+        private readonly INotificationService _notifService;
 
-        public EnrollmentController(IUnitOfWork uow)
+        public EnrollmentController(IUnitOfWork uow, INotificationService notifService)
         {
             _uow = uow;
+            _notifService = notifService;
         }
 
         [AuthorizeManager]
@@ -126,6 +129,11 @@ namespace SchoolApp.Controllers
             _uow.Enrollments.Add(enrollment);
             _uow.SaveChanges();
 
+            _notifService.Create(studentId.Value,
+                "Đăng ký khóa học thành công",
+                $"Bạn đã đăng ký khóa học \"{course.CourseName}\" thành công. Bắt đầu học ngay!",
+                "/Enrollment/MyEnrollments");
+
             return Json(new { success = true, message = $"Đăng ký khóa học \"{course.CourseName}\" thành công!" });
         }
 
@@ -144,6 +152,20 @@ namespace SchoolApp.Controllers
             ViewBag.AllCount = all.Count;
             ViewBag.ActiveCount = all.Count(e => !e.IsCompleted);
             ViewBag.CompletedCount = all.Count(e => e.IsCompleted);
+
+            var reviewedCourseIds = _uow.Reviews
+                .Find(r => r.StudentId == studentId.Value)
+                .Select(r => r.CourseId)
+                .ToHashSet();
+            ViewBag.ReviewedCourseIds = reviewedCourseIds;
+
+            // enrollmentId -> certificateId cho các khóa đã hoàn thành
+            var completedEnrollmentIds = all.Where(e => e.IsCompleted).Select(e => e.EnrollmentId).ToHashSet();
+            var certMap = _uow.Certificates
+                .Find(c => completedEnrollmentIds.Contains(c.EnrollmentId))
+                .Select(c => new { c.EnrollmentId, c.CertificateId })
+                .ToDictionary(c => c.EnrollmentId, c => c.CertificateId);
+            ViewBag.CertMap = certMap;
 
             IEnumerable<Enrollment> source = filter switch
             {
