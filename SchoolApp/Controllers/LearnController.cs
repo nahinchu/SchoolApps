@@ -44,9 +44,41 @@ namespace SchoolApp.Controllers
 
             var allLessons = visibleModules.SelectMany(m => m.Lessons).ToList();
 
-            // Chưa đăng nhập → hiện overlay yêu cầu đăng nhập
+            // Helper: kiểm tra lesson có thuộc chương đầu không
+            var firstModule = visibleModules.FirstOrDefault();
+
+            Lesson? ResolveLesson(int? lid) =>
+                lid.HasValue ? allLessons.FirstOrDefault(l => l.LessonId == lid.Value)
+                             : allLessons.FirstOrDefault();
+
+            bool IsFirstModuleLesson(Lesson? lesson) =>
+                lesson != null && firstModule != null &&
+                firstModule.Lessons.Any(l => l.LessonId == lesson.LessonId);
+
+            void SetPreviewViewData(Lesson? lesson)
+            {
+                var firstModLessons = firstModule?.Lessons.ToList() ?? new();
+                int idx = lesson != null ? firstModLessons.FindIndex(l => l.LessonId == lesson.LessonId) : -1;
+                ViewData["AccessState"] = "preview";
+                ViewData["CurrentLesson"] = lesson;
+                ViewData["ProgressMap"] = new Dictionary<int, LessonProgress>();
+                ViewData["QuizAttemptMap"] = new Dictionary<int, QuizAttempt>();
+                ViewData["TotalLessons"] = allLessons.Count;
+                ViewData["CompletedCount"] = 0;
+                ViewData["PrevLesson"] = idx > 0 ? firstModLessons[idx - 1] : null;
+                ViewData["NextLesson"] = idx >= 0 && idx < firstModLessons.Count - 1
+                                            ? firstModLessons[idx + 1] : null;
+            }
+
+            // Chưa đăng nhập
             if (studentId == null)
             {
+                var target = ResolveLesson(lessonId);
+                if (IsFirstModuleLesson(target))
+                {
+                    SetPreviewViewData(target);
+                    return View(course);
+                }
                 ViewData["AccessState"] = "guest";
                 ViewData["CurrentLesson"] = allLessons.FirstOrDefault();
                 ViewData["ProgressMap"] = new Dictionary<int, LessonProgress>();
@@ -56,10 +88,16 @@ namespace SchoolApp.Controllers
                 return View(course);
             }
 
-            // Đã đăng nhập nhưng chưa đăng ký → hiện overlay yêu cầu đăng ký
+            // Đã đăng nhập nhưng chưa đăng ký
             var isEnrolled = _uow.Enrollments.IsEnrolled(studentId.Value, id);
             if (!isEnrolled)
             {
+                var target = ResolveLesson(lessonId);
+                if (IsFirstModuleLesson(target))
+                {
+                    SetPreviewViewData(target);
+                    return View(course);
+                }
                 ViewData["AccessState"] = "not_enrolled";
                 ViewData["CurrentLesson"] = allLessons.FirstOrDefault();
                 ViewData["ProgressMap"] = new Dictionary<int, LessonProgress>();

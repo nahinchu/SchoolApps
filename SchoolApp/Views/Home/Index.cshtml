@@ -1,7 +1,24 @@
+@using SchoolApp.Models
 @{
     ViewData["Title"] = "Trang chủ";
     var role = Context.Session.GetString("Role");
     var studentName = Context.Session.GetString("StudentName");
+    var trendingCourses = ViewBag.TrendingCourses as List<Course> ?? new List<Course>();
+
+    string LevelLabel(CourseLevel l) => l switch
+    {
+        CourseLevel.Basic => "Cơ bản",
+        CourseLevel.Intermediate => "Trung cấp",
+        CourseLevel.Advanced => "Nâng cao",
+        _ => l.ToString()
+    };
+    string LevelColor(CourseLevel l) => l switch
+    {
+        CourseLevel.Basic => "#16a34a",
+        CourseLevel.Intermediate => "#d97706",
+        CourseLevel.Advanced => "#dc2626",
+        _ => "#6b7280"
+    };
 }
 
 @if (role == "Admin")
@@ -102,7 +119,7 @@ else if (role == "Student")
                     <i class="bi bi-mortarboard-fill"></i> Khóa học của tôi
                 </a>
                 <a asp-controller="Course" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
-                    <i class="bi bi-search"></i> Duyệt khóa học
+                    <i class="bi bi-search"></i> Tìm khóa học
                 </a>
             </div>
         </div>
@@ -112,6 +129,7 @@ else if (role == "Student")
         </div>
 
     </div>
+    @await Html.PartialAsync("_TrendingCourses", trendingCourses)
 
     <div class="sa-student-feature-row">
         <div class="sa-student-feature-item">
@@ -136,6 +154,8 @@ else if (role == "Student")
             </div>
         </div>
     </div>
+
+   
 }
 else
 {
@@ -144,7 +164,7 @@ else
 
         <div style="flex:1; min-width:280px;">
             <h1 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3.2rem);
-                       color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
+                           color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
                 Chào mừng đến với<br>
                 <span style="color:var(--gold);">SchoolApp</span>
             </h1>
@@ -193,6 +213,8 @@ else
         </div>
     </div>
 
+    @await Html.PartialAsync("_TrendingCourses", trendingCourses)
+
     <div style="background:var(--navy); border-radius:var(--radius-lg); padding:2.5rem; margin-top:2rem;">
         <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:1.5rem;">
             <div style="text-align:center;">
@@ -211,4 +233,6 @@ else
             </div>
         </div>
     </div>
+
+    
 }

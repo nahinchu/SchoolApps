@@ -12,8 +12,9 @@
     var totalLessons = (int)(ViewData["TotalLessons"] ?? 0);
     var completedCount = (int)(ViewData["CompletedCount"] ?? 0);
     var pctComplete = totalLessons > 0 ? completedCount * 100 / totalLessons : 0;
-    var accessState = ViewData["AccessState"] as string; // "guest" | "not_enrolled" | null
-    var isLocked = accessState == "guest" || accessState == "not_enrolled";
+    var accessState = ViewData["AccessState"] as string; // "guest" | "not_enrolled" | "preview" | null
+    var isLocked  = accessState == "guest" || accessState == "not_enrolled";
+    var isPreview = accessState == "preview";
 
     string GetEmbedUrl(string? url)
     {
@@ -529,9 +530,9 @@
         }
         else
         {
-            <a asp-controller="Course" asp-action="Index"
+            <a asp-controller="Course" asp-action="Detail" asp-route-id="@Model.CourseId"
                class="sa-btn sa-btn-outline" style="border-color:var(--gold-light); color:var(--gold-light);">
-                ← Danh sách khoá học
+                ← Chi tiết khoá học
             </a>
         }
     </div>
@@ -540,6 +541,14 @@
         <div class="learn-progress-bar"><div style="width:@(pctComplete)%;"></div></div>
         <div class="learn-progress-text">
             Tiến độ: <strong>@completedCount / @totalLessons</strong> bài đã hoàn thành (@pctComplete%)
+        </div>
+    }
+    else if (isPreview)
+    {
+        <div class="learn-progress-text" style="margin-top:.5rem;">
+            <i class="bi bi-eye me-1"></i> Đang xem thử chương 1 —
+            <a asp-controller="Course" asp-action="Detail" asp-route-id="@Model.CourseId"
+               style="color:var(--gold-light); font-weight:600;">Đăng ký để mở khoá toàn bộ</a>
         </div>
     }
     else
@@ -554,95 +563,45 @@
 
     <!-- ============ SIDEBAR ============ -->
     <aside class="learn-sidebar">
-        @if (!Model.Modules.Any())
+        @if (isPreview)
         {
-            <div class="empty-state">
-                <i class="bi bi-folder-x" style="font-size:2rem;"></i>
-                <p>Khoá học chưa có nội dung</p>
-            </div>
+            @await Html.PartialAsync("_ModuleAccordion", Model,
+                new ViewDataDictionary(ViewData) {
+                    ["ReadOnly"]           = true,
+                    ["PreviewFirstModule"] = true,
+                    ["CurrentLessonId"]    = currentLesson?.LessonId
+                })
         }
-        @foreach (var m in Model.Modules)
+        else
         {
-            <div class="module-block">
-                <div class="module-header" onclick="$(this).next('.lesson-list').slideToggle(150);">
-                    <span><i class="bi bi-collection"></i> @m.Title</span>
-                    <small class="text-muted">@m.Lessons.Count bài</small>
-                </div>
-                <ul class="lesson-list">
-                    @foreach (var l in m.Lessons)
-                    {
-                        var p = progressMap.TryGetValue(l.LessonId, out var pv) ? pv : null;
-                        var isDone = p != null && p.Status == ProgressStatus.Completed;
-                        var isCurrent = currentLesson != null && currentLesson.LessonId == l.LessonId;
-                        var iconClass = isDone ? "done" : (isCurrent ? "current" : "todo");
-                        var iconChar = isDone ? "bi-check-lg"
-                        : (isCurrent ? "bi-play-fill" : "bi-circle");
-
-                        <li>
-                            <a class="lesson-row @(isCurrent ? "active" : "")"
-                               asp-action="Course" asp-route-id="@Model.CourseId" asp-route-lessonId="@l.LessonId">
-                                <span class="lesson-icon @iconClass"><i class="bi @iconChar"></i></span>
-                                <span class="lesson-title">@l.Title</span>
-                                @if (l.DurationMinutes > 0)
-                                {
-                                    <span class="lesson-meta">@l.DurationMinutes'</span>
-                                }
-                            </a>
-
-                            @if (l.Quiz != null && l.Quiz.IsPublished)
-                            {
-                                quizAttemptMap.TryGetValue(l.Quiz.QuizId, out var qa);
-                                var qCardClass = qa == null ? "" : (qa.Passed ? "quiz-passed" : "quiz-failed");
-                                var qIcon = qa == null ? "bi-pencil-square"
-                                          : (qa.Passed ? "bi-check-lg" : "bi-arrow-repeat");
-                                <a class="quiz-card @qCardClass" href="#"
-                                   onclick="openQuizConfirm(event,
-                                       '@Url.Action("Take","Quiz",new{id=l.Quiz.QuizId})',
-                                       '@Html.Raw(l.Quiz.Title.Replace("'","\\\'"))',
-                                       @l.Quiz.Questions.Count,
-                                       @l.Quiz.PassingScore,
-                                       '@(qa == null ? "new" : (qa.Passed ? "passed" : "retry"))')">
-                                    <span class="quiz-icon-circle"><i class="bi @qIcon"></i></span>
-                                    <div class="quiz-text">
-                                        <div class="quiz-text-title">@l.Quiz.Title</div>
-                                        <div class="quiz-text-sub">
-                                            @if (qa != null)
-                                            {
-                                                <text>@qa.Score/@qa.MaxScore điểm (@qa.ScorePercent%)</text>
-                                                <text> · </text>
-                                                if (qa.Passed)
-                                                {
-                                                    <text>✓ Đạt</text>
-                                                }
-                                                else
-                                                {
-                                                    <text>✗ Chưa đạt — cần @l.Quiz.PassingScore%</text>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <text>@l.Quiz.Questions.Count câu · Đạt @l.Quiz.PassingScore%</text>
-                                            }
-                                        </div>
-                                    </div>
-                                    <i class="bi bi-arrow-right-circle-fill quiz-arrow"></i>
-                                </a>
-                            }
-                        </li>
-                    }
-                    @if (!m.Lessons.Any())
-                    {
-                        <li style="padding:.65rem 1rem .65rem 1.5rem; color:var(--text-light); font-size:.85rem; font-style:italic;">
-                            Chương này chưa có bài học
-                        </li>
-                    }
-                </ul>
-            </div>
+            @await Html.PartialAsync("_ModuleAccordion", Model,
+                new ViewDataDictionary(ViewData) {
+                    ["ReadOnly"]        = false,
+                    ["CurrentLessonId"] = currentLesson?.LessonId,
+                    ["ProgressMap"]     = progressMap,
+                    ["QuizAttemptMap"]  = quizAttemptMap
+                })
         }
     </aside>
 
     <!-- ============ MAIN CONTENT ============ -->
     <div class="@(isLocked ? "locked-wrap" : "")">
+        @if (isPreview)
+        {
+            <div style="background:linear-gradient(90deg,#fff8e1,#fff3cd); border:1.5px solid var(--gold);
+                        border-radius:var(--radius-md); padding:.75rem 1.25rem; margin-bottom:1rem;
+                        display:flex; align-items:center; gap:.75rem; font-size:.88rem;">
+                <i class="bi bi-eye-fill" style="color:var(--gold); font-size:1.1rem; flex-shrink:0;"></i>
+                <span style="flex:1; color:#7a5900;">
+                    <strong>Đang xem thử chương 1.</strong>
+                    Đăng ký để làm quiz, theo dõi tiến độ và xem toàn bộ khoá học.
+                </span>
+                <a asp-controller="Course" asp-action="Detail" asp-route-id="@Model.CourseId"
+                   class="sa-btn sa-btn-gold" style="font-size:.8rem; padding:.35rem .85rem; white-space:nowrap;">
+                    Xem khoá học <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        }
         @if (isLocked)
         {
             <div class="locked-overlay">
@@ -798,7 +757,7 @@
                         </div>
                     }
 
-                    @if (currentLesson.Quiz != null && currentLesson.Quiz.IsPublished)
+                    @if (!isPreview && currentLesson.Quiz != null && currentLesson.Quiz.IsPublished)
                     {
                         quizAttemptMap.TryGetValue(currentLesson.Quiz.QuizId, out var curQa);
                         var bannerBg = curQa == null
@@ -894,7 +853,13 @@
                     </div>
 
                     <div style="display:flex; gap:.5rem; align-items:center;">
-                        @if (!isCompleted)
+                        @if (isPreview)
+                        {
+                            <span style="font-size:.82rem; color:var(--text-light);">
+                                <i class="bi bi-lock me-1"></i>Đăng ký để theo dõi tiến độ
+                            </span>
+                        }
+                        else if (!isCompleted)
                         {
                             @if (currentLesson.Quiz != null && currentLesson.Quiz.IsPublished)
                             {
