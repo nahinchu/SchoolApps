@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolApp.Data;
 
@@ -11,9 +12,11 @@ using SchoolApp.Data;
 namespace SchoolApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260601023139_AddCertificate")]
+    partial class AddCertificate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -140,41 +143,6 @@ namespace SchoolApp.Migrations
                         .HasDatabaseName("IX_Course_Name_Unique");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("SchoolApp.Models.CourseReview", b =>
-                {
-                    b.Property<int>("ReviewId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReviewId");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("CourseId", "StudentId")
-                        .IsUnique()
-                        .HasDatabaseName("IX_CourseReview_Course_Student");
-
-                    b.ToTable("CourseReviews");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Enrollment", b =>
@@ -335,45 +303,6 @@ namespace SchoolApp.Migrations
                         .HasDatabaseName("IX_Module_Course_Order");
 
                     b.ToTable("Modules");
-                });
-
-            modelBuilder.Entity("SchoolApp.Models.Notification", b =>
-                {
-                    b.Property<int>("NotificationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Link")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("NotificationId");
-
-                    b.HasIndex("StudentId", "IsRead")
-                        .HasDatabaseName("IX_Notification_Student_Read");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Payment", b =>
@@ -666,25 +595,6 @@ namespace SchoolApp.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("SchoolApp.Models.CourseReview", b =>
-                {
-                    b.HasOne("SchoolApp.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SchoolApp.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("SchoolApp.Models.Enrollment", b =>
                 {
                     b.HasOne("SchoolApp.Models.Course", "Course")
@@ -743,17 +653,6 @@ namespace SchoolApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
-                });
-
-            modelBuilder.Entity("SchoolApp.Models.Notification", b =>
-                {
-                    b.HasOne("SchoolApp.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Payment", b =>

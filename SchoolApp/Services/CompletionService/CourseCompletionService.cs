@@ -1,5 +1,7 @@
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
+using SchoolApp.Services.CertificateService;
+using SchoolApp.Services.NotificationService;
 using SchoolApp.UnitOfWork;
 
 namespace SchoolApp.Services.CompletionService
@@ -7,8 +9,15 @@ namespace SchoolApp.Services.CompletionService
     public class CourseCompletionService : ICourseCompletionService
     {
         private readonly IUnitOfWork _uow;
+        private readonly ICertificateService _certificateService;
+        private readonly INotificationService _notifService;
 
-        public CourseCompletionService(IUnitOfWork uow) => _uow = uow;
+        public CourseCompletionService(IUnitOfWork uow, ICertificateService certificateService, INotificationService notifService)
+        {
+            _uow = uow;
+            _certificateService = certificateService;
+            _notifService = notifService;
+        }
 
         public bool TryComplete(int studentId, int courseId)
         {
@@ -51,6 +60,14 @@ namespace SchoolApp.Services.CompletionService
             enrollment.IsCompleted = true;
             enrollment.CompletedAt = DateTime.UtcNow;
             _uow.SaveChanges();
+
+            _certificateService.GetOrCreate(enrollment.EnrollmentId);
+
+            _notifService.Create(studentId,
+                "Hoàn thành khóa học",
+                $"Chúc mừng! Bạn đã hoàn thành khóa học \"{course.CourseName}\". Chứng chỉ đã được tạo.",
+                $"/Certificate/Download/{enrollment.EnrollmentId}");
+
             return true;
         }
     }

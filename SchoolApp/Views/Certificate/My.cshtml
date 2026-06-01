@@ -1,0 +1,175 @@
+@model List<SchoolApp.Models.Certificate>
+@{
+    ViewData["Title"] = "Chứng chỉ của tôi";
+}
+
+<style>
+    .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .cert-card {
+        background: linear-gradient(135deg, #1b2d42 0%, #243650 100%);
+        border: 1px solid rgba(201,168,76,0.3);
+        border-radius: 16px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform .2s, box-shadow .2s;
+    }
+
+        .cert-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+        }
+
+        .cert-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #c9a84c, #e8d08a, #c9a84c);
+        }
+
+    .cert-icon {
+        width: 48px; height: 48px;
+        background: rgba(201,168,76,0.15);
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .cert-course-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: .4rem;
+        line-height: 1.4;
+    }
+
+    .cert-meta {
+        font-size: .8rem;
+        color: #8090a0;
+        margin-bottom: 1rem;
+    }
+
+    .cert-code {
+        font-family: monospace;
+        font-size: .7rem;
+        color: #c9a84c;
+        background: rgba(201,168,76,0.08);
+        border: 1px solid rgba(201,168,76,0.2);
+        border-radius: 6px;
+        padding: .3rem .6rem;
+        margin-bottom: 1rem;
+        word-break: break-all;
+    }
+
+    .cert-actions {
+        display: flex;
+        gap: .6rem;
+        flex-wrap: wrap;
+    }
+
+    .cert-btn-download {
+        flex: 1;
+        background: #c9a84c;
+        color: #1b2d42;
+        border: none;
+        border-radius: 8px;
+        padding: .5rem 1rem;
+        font-weight: 700;
+        font-size: .85rem;
+        text-decoration: none;
+        text-align: center;
+        transition: background .2s;
+    }
+
+        .cert-btn-download:hover {
+            background: #e8d08a;
+            color: #1b2d42;
+        }
+
+    .cert-btn-verify {
+        flex: 1;
+        background: transparent;
+        color: #8090a0;
+        border: 1px solid rgba(128,144,160,0.3);
+        border-radius: 8px;
+        padding: .5rem 1rem;
+        font-size: .85rem;
+        text-decoration: none;
+        text-align: center;
+        transition: color .2s, border-color .2s;
+    }
+
+        .cert-btn-verify:hover {
+            color: #c9a84c;
+            border-color: rgba(201,168,76,0.5);
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #8090a0;
+    }
+
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+</style>
+
+<div class="sa-page-header">
+    <div>
+        <h1 class="sa-page-title">
+            <i class="bi bi-patch-check-fill" style="color:#c9a84c"></i>
+            Chứng chỉ của tôi
+        </h1>
+        <p class="sa-page-subtitle">Các chứng chỉ bạn đã đạt được sau khi hoàn thành khóa học</p>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-state">
+        <div class="empty-icon">🎓</div>
+        <h4 style="color:#fff;">Chưa có chứng chỉ nào</h4>
+        <p>Hoàn thành khóa học để nhận chứng chỉ của bạn.</p>
+        <a asp-controller="Course" asp-action="Index" class="sa-btn sa-btn-primary">Khám phá khóa học</a>
+    </div>
+}
+else
+{
+    <p style="color:#8090a0;">Bạn có <strong style="color:#c9a84c;">@Model.Count</strong> chứng chỉ</p>
+    <div class="cert-grid">
+        @foreach (var cert in Model)
+        {
+            <div class="cert-card">
+                <div class="cert-icon">🏆</div>
+                <div class="cert-course-name">@cert.Course?.CourseName</div>
+                <div class="cert-meta">
+                    <i class="bi bi-calendar3"></i>
+                    Cấp ngày @cert.IssuedDate.ToString("dd/MM/yyyy")
+                </div>
+                <div class="cert-code">
+                    <i class="bi bi-shield-check"></i> @cert.CertificateCode
+                </div>
+                <div class="cert-actions">
+                    <a href="@Url.Action("Download", "Certificate", new { id = cert.CertificateId })"
+                       class="cert-btn-download" target="_blank">
+                        <i class="bi bi-download"></i> Tải PDF
+                    </a>
+                    <a href="@Url.Action("Verify", "Certificate", new { code = cert.CertificateCode })"
+                       class="cert-btn-verify" target="_blank">
+                        <i class="bi bi-box-arrow-up-right"></i> Verify
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}

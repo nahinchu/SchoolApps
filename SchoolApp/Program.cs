@@ -10,13 +10,18 @@ using SchoolApp.Services.MinioService;
 using SchoolApp.Services.PayosService;
 using SchoolApp.Services.ExcelExportService;
 using SchoolApp.Services.CompletionService;
+using SchoolApp.Services.CertificateService;
+using SchoolApp.Services.NotificationService;
 using SchoolApp.UnitOfWork;
+using QuestPDF.Infrastructure;
 namespace SchoolApp
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Cho phép upload file lớn tối đa 500MB
@@ -32,6 +37,8 @@ namespace SchoolApp
             builder.Services.AddSession();
 
             builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<ICertificateService, CertificateService>();
+            builder.Services.AddScoped<INotificationService, NotificationService>();
             builder.Services.AddScoped<ICourseCompletionService, CourseCompletionService>();
             builder.Services.AddSingleton<IExcelExportService, ExcelExportService>();
             builder.Services.AddSingleton<IExcelImportService, ExcelImportService>();

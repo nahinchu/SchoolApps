@@ -1,0 +1,67 @@
+@model List<SchoolApp.Models.Notification>
+@{
+    ViewData["Title"] = "Thông báo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="max-width:720px; margin:2rem auto;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+        <h2 style="color:var(--gold-light); margin:0;">
+            <i class="bi bi-bell-fill"></i> Thông báo
+        </h2>
+        @if (Model.Any())
+        {
+            <span style="font-size:.85rem; color:rgba(255,255,255,.45);">@Model.Count thông báo</span>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div style="text-align:center; padding:4rem 2rem; background:var(--navy-light); border-radius:16px; border:1px solid rgba(255,255,255,.08);">
+            <i class="bi bi-bell-slash" style="font-size:3rem; color:rgba(255,255,255,.2); display:block; margin-bottom:1rem;"></i>
+            <p style="color:rgba(255,255,255,.4); margin:0;">Bạn chưa có thông báo nào</p>
+        </div>
+    }
+    else
+    {
+        <div style="display:flex; flex-direction:column; gap:.75rem;">
+            @foreach (var n in Model)
+            {
+                <div style="background:var(--navy-light); border-radius:12px; padding:1rem 1.25rem;
+                            border:1px solid @(n.IsRead ? "rgba(255,255,255,.08)" : "rgba(201,168,76,.35)");
+                            @(n.IsRead ? "" : "box-shadow:0 0 0 1px rgba(201,168,76,.15);")">
+                    <div style="display:flex; align-items:flex-start; gap:.75rem;">
+                        <div style="width:36px; height:36px; flex-shrink:0; border-radius:50%;
+                                    background:@(n.IsRead ? "rgba(255,255,255,.07)" : "rgba(201,168,76,.15)");
+                                    display:flex; align-items:center; justify-content:center;">
+                            <i class="bi @(n.IsRead ? "bi-bell" : "bi-bell-fill")"
+                               style="color:@(n.IsRead ? "rgba(255,255,255,.35)" : "var(--gold-light)"); font-size:.9rem;"></i>
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                            <div style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin-bottom:.3rem;">
+                                <strong style="color:@(n.IsRead ? "rgba(255,255,255,.7)" : "#fff"); font-size:.9rem;">@n.Title</strong>
+                                @if (!n.IsRead)
+                                {
+                                    <span style="width:7px; height:7px; border-radius:50%; background:var(--gold-light); flex-shrink:0;"></span>
+                                }
+                            </div>
+                            <p style="color:rgba(255,255,255,.55); font-size:.84rem; margin:0 0 .4rem;">@n.Message</p>
+                            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.5rem;">
+                                <span style="font-size:.75rem; color:rgba(255,255,255,.3);">
+                                    <i class="bi bi-clock"></i>
+                                    @n.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                                </span>
+                                @if (!string.IsNullOrEmpty(n.Link))
+                                {
+                                    <a href="@n.Link" style="font-size:.8rem; color:var(--gold-light); text-decoration:none;">
+                                        Xem chi tiết <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
