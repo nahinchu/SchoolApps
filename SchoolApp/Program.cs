@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 using SchoolApp.Data;
@@ -35,6 +36,7 @@ namespace SchoolApp
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStringDB")));
             builder.Services.AddScoped<IUnitOfWork, SchoolApp.UnitOfWork.UnitOfWork>();
             builder.Services.AddSession();
+            builder.Services.AddMemoryCache();
 
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ICertificateService, CertificateService>();
@@ -56,6 +58,26 @@ namespace SchoolApp
             });
             builder.Services.AddScoped<IFileStorageService, MinioFileStorageService>();
 
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddGoogle(options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+                options.CallbackPath = "/signin-google";
+
+                // Fix "Correlation failed": cookie phải được gửi lại khi Google redirect về
+                // SameAsRequest: không ép HTTPS trong dev (HTTP vẫn hoạt động)
+                // Lax: cho phép gửi cookie trên top-level cross-site redirect (OAuth flow)
+                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.CorrelationCookie.HttpOnly = true;
+            });
+
             var app = builder.Build();
 
 
@@ -70,12 +92,21 @@ namespace SchoolApp
                 context.Request.EnableBuffering();
                 await next();
             });
-            app.UseSession();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
+            // Phải đứng trước UseAuthentication để SameSite policy áp dụng
+            // cho correlation cookie trước khi middleware OAuth xử lý
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Lax,
+                Secure = CookieSecurePolicy.SameAsRequest
+            });
+
+            app.UseSession();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

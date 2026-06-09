@@ -12,7 +12,7 @@ namespace SchoolApp.Models
 
         [Required(ErrorMessage = "Vui lòng chọn học viên")]
         [Display(Name = "Học viên")]
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
         [Required(ErrorMessage = "Vui lòng chọn khóa học")]
         [Display(Name = "Khóa học")]
@@ -34,8 +34,8 @@ namespace SchoolApp.Models
         public DateTime? CompletedAt { get; set; }
 
         // Navigation properties — EF tự động JOIN
-        [ForeignKey("StudentId")]
-        public virtual Student Student { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
 
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; }

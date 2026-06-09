@@ -1,12 +1,12 @@
-﻿using SchoolApp.Models;
+using SchoolApp.Models;
 
-namespace SchoolApp.Repositories.StudentRepository 
-{ 
-    public interface IStudentRepository : IRepository<Student>
+namespace SchoolApp.Repositories.StudentRepository
+{
+    public interface IUserRepository : IRepository<User>
     {
-        IQueryable<Student> Search(string keyword);
-        Student GetWithEnrollments(int id);
-        Student GetByEmailAndPassword(string email, string password);
-        Student? GetByEmail(string email);
+        IQueryable<User> Search(string keyword);
+        User GetWithEnrollments(int id);
+        User? GetByEmail(string email);
+        User? GetByGoogleId(string googleId);
     }
 }

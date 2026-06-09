@@ -5,6 +5,7 @@ using SchoolApp.Models;
 using SchoolApp.Models.Enums;
 using SchoolApp.Services;
 using SchoolApp.Services.CompletionService;
+using SchoolApp.Services.NotificationService;
 using SchoolApp.UnitOfWork;
 
 namespace SchoolApp.Controllers
@@ -13,11 +14,13 @@ namespace SchoolApp.Controllers
     {
         private readonly IUnitOfWork _uow;
         private readonly ICourseCompletionService _completionService;
+        private readonly INotificationService _notifService;
 
-        public QuizController(IUnitOfWork uow, ICourseCompletionService completionService)
+        public QuizController(IUnitOfWork uow, ICourseCompletionService completionService, INotificationService notifService)
         {
             _uow = uow;
             _completionService = completionService;
+            _notifService = notifService;
         }
        
         public class ReorderDto
@@ -409,7 +412,7 @@ namespace SchoolApp.Controllers
         [AuthorizeUser]
         public IActionResult Take(int id) // id = QuizId
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null) return RedirectToAction("Login", "Account");
 
             var quiz = _uow.Quizzes.GetQuizWithQuestions(id);
@@ -458,7 +461,7 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult SubmitQuiz([FromBody] SubmitQuizDto dto)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId") ?? 0;
+            var studentId = HttpContext.Session.GetInt32("UserId") ?? 0;
             if (studentId == 0)
                 return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
@@ -542,7 +545,7 @@ namespace SchoolApp.Controllers
             var attempt = new QuizAttempt
             {
                 QuizId = dto.QuizId,
-                StudentId = studentId,
+                UserId = studentId,
                 StartedAt = startedAt,
                 FinishedAt = DateTime.UtcNow,
                 Score = score,
@@ -567,7 +570,7 @@ namespace SchoolApp.Controllers
                 {
                     _uow.LessonProgresses.Add(new LessonProgress
                     {
-                        StudentId = studentId,
+                        UserId = studentId,
                         LessonId = quiz.LessonId,
                         Status = ProgressStatus.Completed,
                         ProgressPercent = 100,
@@ -588,6 +591,14 @@ namespace SchoolApp.Controllers
                 var lessonWithModule = _uow.Lessons.GetWithModule(quiz.LessonId);
                 if (lessonWithModule?.Module != null)
                     justCompletedCourse = _completionService.TryComplete(studentId, lessonWithModule.Module.CourseId);
+
+                if (!justCompletedCourse)
+                {
+                    _notifService.Create(studentId,
+                        "Vượt qua bài kiểm tra",
+                        $"Bạn đã đạt {percent}% trong bài kiểm tra \"{quiz.Title}\".",
+                        $"/Quiz/Result/{attempt.QuizAttemptId}");
+                }
             }
 
             return Json(new
@@ -611,11 +622,11 @@ namespace SchoolApp.Controllers
         [AuthorizeUser]
         public IActionResult Result(int id) // id = QuizAttemptId
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId") ?? 0;
+            var studentId = HttpContext.Session.GetInt32("UserId") ?? 0;
             if (studentId == 0) return RedirectToAction("Login", "Account");
 
             var attempt = _uow.QuizAttempts.GetAttemptWithDetails(id);
-            if (attempt == null || attempt.StudentId != studentId) return NotFound();
+            if (attempt == null || attempt.UserId != studentId) return NotFound();
 
             // Kiểm tra khoá học đã hoàn thành chưa
             var lessonWithModule = _uow.Lessons.GetWithModule(attempt.Quiz.LessonId);
@@ -623,7 +634,7 @@ namespace SchoolApp.Controllers
             {
                 int courseId = lessonWithModule.Module.CourseId;
                 var enrollment = _uow.Enrollments
-                    .Find(e => e.StudentId == studentId && e.CourseId == courseId)
+                    .Find(e => e.UserId == studentId && e.CourseId == courseId)
                     .FirstOrDefault();
                 ViewData["CourseCompleted"] = enrollment?.IsCompleted ?? false;
                 ViewData["CourseId"] = courseId;
@@ -636,7 +647,7 @@ namespace SchoolApp.Controllers
         [AuthorizeUser]
         public IActionResult MyAttempts(int quizId)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId") ?? 0;
+            var studentId = HttpContext.Session.GetInt32("UserId") ?? 0;
             if (studentId == 0) return RedirectToAction("Login", "Account");
 
             var quiz = _uow.Quizzes.GetById(quizId);

@@ -4,9 +4,10 @@ using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Models.Enums;
 using SchoolApp.Services.EmailService;
+using SchoolApp.Services.NotificationService;
 using SchoolApp.Services.PayosService;
 using SchoolApp.UnitOfWork;
-using SchoolApp.Services;   
+using SchoolApp.Services;
 
 namespace SchoolApp.Controllers
 {
@@ -15,20 +16,22 @@ namespace SchoolApp.Controllers
         private readonly PayOSService _payOS;
         private readonly IUnitOfWork _uow;
         private readonly IEmailService _emailService;
+        private readonly INotificationService _notifService;
         private readonly ILogger<PaymentController> _logger;
 
-        public PaymentController(IUnitOfWork uow, PayOSService payOS, IEmailService emailService, ILogger<PaymentController> logger)
+        public PaymentController(IUnitOfWork uow, PayOSService payOS, IEmailService emailService, INotificationService notifService, ILogger<PaymentController> logger)
         {
             _uow = uow;
             _payOS = payOS;
             _emailService = emailService;
+            _notifService = notifService;
             _logger = logger;
         }
 
         [AuthorizeUser]
         public IActionResult Checkout(int courseID)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             var role = HttpContext.Session.GetString("Role");
 
             if (role == "Admin")
@@ -41,7 +44,7 @@ namespace SchoolApp.Controllers
                 return RedirectToAction("Index", "Course");
             }
             bool alreadyEnrolled = _uow.Enrollments.GetAll()
-                .Any(e => e.StudentId == studentId && e.CourseId == courseID);
+                .Any(e => e.UserId == studentId && e.CourseId == courseID);
             if (alreadyEnrolled)
             {
                 TempData["Error"] = "Bạn đã đăng ký khóa học này.";
@@ -51,12 +54,18 @@ namespace SchoolApp.Controllers
             {
                 _uow.Enrollments.Add(new Enrollment
                 {
-                    StudentId = studentId!.Value,
+                    UserId = studentId!.Value,
                     CourseId = courseID,
                     EnrollDate = DateTime.Now,
                     Notes = ""
                 });
                 _uow.SaveChanges();
+
+                _notifService.Create(studentId.Value,
+                    "Đăng ký khóa học thành công",
+                    $"Bạn đã đăng ký khóa học \"{course.CourseName}\" thành công. Bắt đầu học ngay!",
+                    $"/Enrollment/MyEnrollments");
+
                 TempData["Success"] = $"Đăng ký khóa học \"{course.CourseName}\" thành công!";
                 return RedirectToAction("MyEnrollments", "Enrollment");
             }
@@ -68,7 +77,7 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreatePaymentLink(int courseId)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             var role = HttpContext.Session.GetString("Role");
 
             if (role == "Admin")
@@ -79,7 +88,7 @@ namespace SchoolApp.Controllers
                 return Json(new { success = false, message = "Khóa học không tồn tại" });
 
             bool alreadyEnrolled = _uow.Enrollments.Any(e =>
-                e.StudentId == studentId && e.CourseId == courseId);
+                e.UserId == studentId && e.CourseId == courseId);
             if (alreadyEnrolled)
                 return Json(new { success = false, message = "Bạn đã đăng ký khóa học này rồi" });
 
@@ -87,7 +96,7 @@ namespace SchoolApp.Controllers
 
             var payment = new Payment
             {
-                StudentId = studentId!.Value,
+                UserId = studentId!.Value,
                 CourseId = courseId,
                 OrderCode = orderCode,
                 Amount = course.Fee,
@@ -158,13 +167,13 @@ namespace SchoolApp.Controllers
                     _uow.Payments.Update(payment);
 
                     bool alreadyEnrolled = _uow.Enrollments.Any(e =>
-                        e.StudentId == payment.StudentId && e.CourseId == payment.CourseId);
+                        e.UserId == payment.UserId && e.CourseId == payment.CourseId);
 
                     if (!alreadyEnrolled)
                     {
                         _uow.Enrollments.Add(new Enrollment
                         {
-                            StudentId = payment.StudentId,
+                            UserId = payment.UserId,
                             CourseId = payment.CourseId,
                             EnrollDate = DateTime.Now,
                             Notes = $"Thanh toán PayOS #{orderCode}"
@@ -174,6 +183,11 @@ namespace SchoolApp.Controllers
                     _uow.SaveChanges();
 
                     _ = SendPaymentEmailAsync(payment);
+
+                    _notifService.Create(payment.UserId,
+                        "Thanh toán thành công",
+                        $"Thanh toán {payment.Amount:N0}₫ cho khóa học \"{payment.Course.CourseName}\" đã được xác nhận. Bắt đầu học ngay!",
+                        $"/Learn/Course/{payment.CourseId}");
 
                     return View("Success", payment);
                 }
@@ -188,8 +202,8 @@ namespace SchoolApp.Controllers
             try
             {
                 await _emailService.SendPaymentSuccessEmailAsync(
-                    payment.Student.Email,
-                    payment.Student.FullName,
+                    payment.User.Email,
+                    payment.User.FullName ?? payment.User.Email,
                     payment.Course.CourseName,
                     payment.Amount,
                     payment.OrderCode,

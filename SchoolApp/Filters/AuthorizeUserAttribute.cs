@@ -8,7 +8,7 @@ namespace SchoolApp.Filters
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var session = context.HttpContext.Session;
-            var studentId = session.GetInt32("StudentId");
+            var studentId = session.GetInt32("UserId");
             var isAjax = context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
 
             if (studentId == null)

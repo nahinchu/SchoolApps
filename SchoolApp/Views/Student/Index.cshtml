@@ -1,6 +1,6 @@
 ﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
-@model IPagedList<SchoolApp.Models.Student>
+@model IPagedList<SchoolApp.Models.User>
 @{
     ViewData["Title"] = "Danh sách học viên";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -80,7 +80,7 @@
                 <div id="modalResult" style="margin-bottom:1rem;"></div>
                 <form id="studentForm">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" id="StudentId" name="StudentId" value="0" />
+                    <input type="hidden" id="userId" name="UserId" value="0" />
 
                     <div class="row">
                         <div class="col-md-6">
@@ -311,7 +311,7 @@
             $('#studentModalLabel').text('➕ Thêm học viên mới');
             $('#btnSaveStudent .btn-text').text('Lưu');
             $('#studentForm')[0].reset();
-            $('#StudentId').val(0);
+            $('#userId').val(0);
             clearErrors();
             $('#passwordRow').show();
             $('#Email').closest('.col-md-6').show();
@@ -327,7 +327,7 @@
             clearErrors();
 
             $.get('@Url.Action("GetStudent", "Student")/' + id, function (data) {
-                $('#StudentId').val(data.studentId);
+                $('#userId').val(data.UserId);
                 $('#FullName').val(data.fullName);
                 $('#Email').val(data.email);
                 $('#Phone').val(data.phone);

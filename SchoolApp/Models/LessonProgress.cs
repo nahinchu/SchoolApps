@@ -6,7 +6,7 @@ using SchoolApp.Models.Enums;
 namespace SchoolApp.Models
 {
     [Table("LessonProgresses")]
-    [Index(nameof(StudentId), nameof(LessonId), IsUnique = true, Name = "IX_LessonProgress_Student_Lesson")]
+    [Index(nameof(UserId), nameof(LessonId), IsUnique = true, Name = "IX_LessonProgress_User_Lesson")]
     public class LessonProgress
     {
         [Key]
@@ -31,13 +31,13 @@ namespace SchoolApp.Models
         [DataType(DataType.DateTime)]
         public DateTime LastAccessedAt { get; set; } = DateTime.UtcNow;
 
-        // ── FK: Student ──
+        // ── FK: User ──
         [Required]
         [Display(Name = "Học viên")]
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
-        [ForeignKey(nameof(StudentId))]
-        public virtual Student Student { get; set; } = null!;
+        [ForeignKey(nameof(UserId))]
+        public virtual User User { get; set; } = null!;
 
         // ── FK: Lesson ──
         [Required]

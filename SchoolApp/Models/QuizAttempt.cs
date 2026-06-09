@@ -41,13 +41,13 @@ namespace SchoolApp.Models
         [Display(Name = "Lần thứ")]
         public int AttemptNumber { get; set; } = 1;
 
-        // ── FK: Student ──
+        // ── FK: User ──
         [Required]
         [Display(Name = "Học viên")]
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
-        [ForeignKey(nameof(StudentId))]
-        public virtual Student Student { get; set; } = null!;
+        [ForeignKey(nameof(UserId))]
+        public virtual User User { get; set; } = null!;
 
         // ── FK: Quiz ──
         [Required]

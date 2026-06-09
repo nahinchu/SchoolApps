@@ -22,7 +22,7 @@ namespace SchoolApp.Services.CompletionService
         public bool TryComplete(int studentId, int courseId)
         {
             var enrollment = _uow.Enrollments
-                .Find(e => e.StudentId == studentId && e.CourseId == courseId)
+                .Find(e => e.UserId == studentId && e.CourseId == courseId)
                 .FirstOrDefault();
 
             if (enrollment == null || enrollment.IsCompleted)

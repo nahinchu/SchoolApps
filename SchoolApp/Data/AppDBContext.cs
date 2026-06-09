@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SchoolApp.Models;
 
 namespace SchoolApp.Data
@@ -11,7 +11,7 @@ namespace SchoolApp.Data
         }
 
         public DbSet<Course> Courses { get; set; }
-        public DbSet<Student> Students { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
@@ -32,9 +32,9 @@ namespace SchoolApp.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Enrollment>()
-                .HasOne(e => e.Student)
-                .WithMany(s => s.Enrollments)
-                .HasForeignKey(e => e.StudentId)
+                .HasOne(e => e.User)
+                .WithMany(u => u.Enrollments)
+                .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Enrollment>()
@@ -52,11 +52,9 @@ namespace SchoolApp.Data
 
             modelBuilder.Entity<Module>(entity =>
             {
-                // Sắp xếp Module theo Course + thứ tự
                 entity.HasIndex(m => new { m.CourseId, m.OrderIndex })
                       .HasDatabaseName("IX_Module_Course_Order");
 
-                // Quan hệ: Course 1-N Module (xóa Course → xóa hết Module)
                 entity.HasOne(m => m.Course)
                       .WithMany(c => c.Modules)
                       .HasForeignKey(m => m.CourseId)
@@ -69,7 +67,6 @@ namespace SchoolApp.Data
                 entity.HasIndex(l => new { l.ModuleId, l.OrderIndex })
                       .HasDatabaseName("IX_Lesson_Module_Order");
 
-                // Quan hệ: Module 1-N Lesson
                 entity.HasOne(l => l.Module)
                       .WithMany(m => m.Lessons)
                       .HasForeignKey(l => l.ModuleId)
@@ -79,7 +76,6 @@ namespace SchoolApp.Data
 
             modelBuilder.Entity<Quiz>(entity =>
             {
-                // Mỗi Lesson chỉ có tối đa 1 Quiz
                 entity.HasIndex(q => q.LessonId)
                       .IsUnique()
                       .HasDatabaseName("IX_Quiz_Lesson_Unique");
@@ -117,44 +113,41 @@ namespace SchoolApp.Data
 
             modelBuilder.Entity<LessonProgress>(entity =>
             {
-                // Đã có [Index] attribute trên class, nhưng thêm Fluent API cho chắc
-                entity.HasIndex(p => new { p.StudentId, p.LessonId })
+                entity.HasIndex(p => new { p.UserId, p.LessonId })
                       .IsUnique()
-                      .HasDatabaseName("IX_LessonProgress_Student_Lesson");
+                      .HasDatabaseName("IX_LessonProgress_User_Lesson");
 
-                entity.HasOne(p => p.Student)
-                      .WithMany(s => s.LessonProgresses)
-                      .HasForeignKey(p => p.StudentId)
+                entity.HasOne(p => p.User)
+                      .WithMany(u => u.LessonProgresses)
+                      .HasForeignKey(p => p.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(p => p.Lesson)
                       .WithMany(l => l.Progresses)
                       .HasForeignKey(p => p.LessonId)
-                      .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
 
             modelBuilder.Entity<QuizAttempt>(entity =>
             {
-                // Index để query nhanh: lấy tất cả attempt của 1 student trong 1 quiz
-                entity.HasIndex(a => new { a.StudentId, a.QuizId })
-                      .HasDatabaseName("IX_QuizAttempt_Student_Quiz");
+                entity.HasIndex(a => new { a.UserId, a.QuizId })
+                      .HasDatabaseName("IX_QuizAttempt_User_Quiz");
 
-                entity.HasOne(a => a.Student)
-                      .WithMany(s => s.QuizAttempts)
-                      .HasForeignKey(a => a.StudentId)
+                entity.HasOne(a => a.User)
+                      .WithMany(u => u.QuizAttempts)
+                      .HasForeignKey(a => a.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(a => a.Quiz)
                       .WithMany(q => q.Attempts)
                       .HasForeignKey(a => a.QuizId)
-                      .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
 
             modelBuilder.Entity<QuizAnswer>(entity =>
             {
-                // 1 attempt + 1 question = 1 answer (tránh trùng)
                 entity.HasIndex(qa => new { qa.QuizAttemptId, qa.QuestionId })
                       .HasDatabaseName("IX_QuizAnswer_Attempt_Question");
 
@@ -166,12 +159,12 @@ namespace SchoolApp.Data
                 entity.HasOne(qa => qa.Question)
                       .WithMany()
                       .HasForeignKey(qa => qa.QuestionId)
-                      .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
+                      .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(qa => qa.SelectedOption)
                       .WithMany()
                       .HasForeignKey(qa => qa.SelectedOptionId)
-                      .OnDelete(DeleteBehavior.NoAction); // tránh cascade cycle
+                      .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<Payment>(entity =>
@@ -180,9 +173,9 @@ namespace SchoolApp.Data
                       .IsUnique()
                       .HasDatabaseName("IX_Payment_OrderCode");
 
-                entity.HasOne(p => p.Student)
+                entity.HasOne(p => p.User)
                       .WithMany()
-                      .HasForeignKey(p => p.StudentId)
+                      .HasForeignKey(p => p.UserId)
                       .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(p => p.Course)
@@ -206,9 +199,9 @@ namespace SchoolApp.Data
                       .HasForeignKey(c => c.EnrollmentId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(c => c.Student)
+                entity.HasOne(c => c.User)
                       .WithMany()
-                      .HasForeignKey(c => c.StudentId)
+                      .HasForeignKey(c => c.UserId)
                       .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(c => c.Course)
@@ -219,13 +212,13 @@ namespace SchoolApp.Data
 
             modelBuilder.Entity<CourseReview>(entity =>
             {
-                entity.HasIndex(r => new { r.CourseId, r.StudentId })
+                entity.HasIndex(r => new { r.CourseId, r.UserId })
                       .IsUnique()
-                      .HasDatabaseName("IX_CourseReview_Course_Student");
+                      .HasDatabaseName("IX_CourseReview_Course_User");
 
-                entity.HasOne(r => r.Student)
+                entity.HasOne(r => r.User)
                       .WithMany()
-                      .HasForeignKey(r => r.StudentId)
+                      .HasForeignKey(r => r.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(r => r.Course)
@@ -236,12 +229,12 @@ namespace SchoolApp.Data
 
             modelBuilder.Entity<Notification>(entity =>
             {
-                entity.HasIndex(n => new { n.StudentId, n.IsRead })
-                      .HasDatabaseName("IX_Notification_Student_Read");
+                entity.HasIndex(n => new { n.UserId, n.IsRead })
+                      .HasDatabaseName("IX_Notification_User_Read");
 
-                entity.HasOne(n => n.Student)
+                entity.HasOne(n => n.User)
                       .WithMany()
-                      .HasForeignKey(n => n.StudentId)
+                      .HasForeignKey(n => n.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
         }

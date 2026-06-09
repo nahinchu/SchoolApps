@@ -13,7 +13,7 @@ namespace SchoolApp.Models
         public int CourseId { get; set; }
 
         [Required]
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [Range(1, 5, ErrorMessage = "Đánh giá từ 1 đến 5 sao")]
@@ -29,7 +29,7 @@ namespace SchoolApp.Models
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; } = null!;
 
-        [ForeignKey("StudentId")]
-        public virtual Student Student { get; set; } = null!;
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; } = null!;
     }
 }

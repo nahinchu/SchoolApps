@@ -1,11 +1,11 @@
-@using SchoolApp.Models
+﻿@using SchoolApp.Models
 @using SchoolApp.Models.Enums
 @model Course
 
 @{
     var role         = ViewBag.Role as string;
     var isEnrolled   = (bool)(ViewBag.IsEnrolled ?? false);
-    var studentId    = ViewBag.StudentId as int?;
+    var userId    = ViewBag.UserId as int?;
     var enrollCount  = (int)(ViewBag.EnrollmentCount ?? 0);
     var isAdminOrMgr = role == "Admin" || role == "Manager";
     var isStudent    = role == "Student";
@@ -411,12 +411,12 @@
                                                     background:linear-gradient(135deg,#c9a84c,#e8c96e);
                                                     display:flex; align-items:center; justify-content:center;
                                                     font-weight:700; font-size:.95rem; color:#0d1b2a;">
-                                            @(rv.Student?.FullName?.Length > 0 ? rv.Student.FullName[0].ToString().ToUpper() : "?")
+                                            @(rv.User?.FullName?.Length > 0 ? rv.User.FullName[0].ToString().ToUpper() : "?")
                                         </div>
                                         <div style="flex:1; min-width:0;">
                                             <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; margin-bottom:.35rem;">
                                                 <div>
-                                                    <strong style="font-size:.9rem; color:var(--text-dark);">@(rv.Student?.FullName ?? "Ẩn danh")</strong>
+                                                    <strong style="font-size:.9rem; color:var(--text-dark);">@(rv.User?.FullName ?? "Ẩn danh")</strong>
                                                     <div style="display:flex; gap:.12rem; margin-top:.2rem;">
                                                         @for (int s = 1; s <= 5; s++)
                                                         {
@@ -426,7 +426,7 @@
                                                 </div>
                                                 <div style="display:flex; align-items:center; gap:.6rem; flex-shrink:0;">
                                                     <span style="font-size:.75rem; color:var(--text-light);">@rv.CreatedAt.ToString("dd/MM/yyyy")</span>
-                                                    @if (isAdminOrMgr || (studentId.HasValue && rv.StudentId == studentId.Value))
+                                                    @if (isAdminOrMgr || (userId.HasValue && rv.UserId == userId.Value))
                                                     {
                                                         <button class="btn-delete-review" data-id="@rv.ReviewId"
                                                                 style="background:none; border:none; color:#ef4444; cursor:pointer;

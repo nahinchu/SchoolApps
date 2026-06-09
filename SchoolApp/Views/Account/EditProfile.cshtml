@@ -16,6 +16,7 @@
     var initials = string.IsNullOrEmpty(Model.FullName) ? "?" :
         string.Concat(Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                                     .TakeLast(2).Select(w => w[0])).ToUpper();
+    var avatarUrl = Model.AvatarUrl;
 }
 
 @section Styles {
@@ -81,6 +82,40 @@
             font-family: var(--font-display);
             box-shadow: 0 4px 16px rgba(201,168,76,0.30);
             flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .sidebar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .sidebar-avatar-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-avatar:hover .sidebar-avatar-overlay {
+            opacity: 1;
+        }
+
+        .avatar-upload-hint {
+            font-size: 0.7rem;
+            color: rgba(13,27,42,0.4);
+            text-align: center;
         }
 
         .sidebar-name {
@@ -509,17 +544,36 @@
 
         <!-- Avatar + User info -->
         <div class="sidebar-avatar-block">
-            <div class="sidebar-avatar">@initials</div>
+            <div class="sidebar-avatar" id="avatarBtn" title="Nhấn để thay đổi ảnh đại diện" onclick="document.getElementById('avatarInput').click()">
+                @if (!string.IsNullOrEmpty(avatarUrl))
+                {
+                    <img src="@avatarUrl" id="avatarImg" alt="Avatar" />
+                }
+                else
+                {
+                    <span id="avatarInitials">@initials</span>
+                }
+                <div class="sidebar-avatar-overlay">
+                    <i class="bi bi-camera-fill"></i>
+                </div>
+            </div>
             <div>
-                <div class="sidebar-name">@Model.FullName</div>
+                <div class="sidebar-name">@(Model.FullName ?? "Chưa cập nhật")</div>
                 <div style="margin-top:4px;">
                     <span class="sidebar-role-badge">
                         <i class="bi bi-patch-check-fill" style="font-size:0.65rem;"></i>
                         @roleLabel
                     </span>
                 </div>
+                <div class="avatar-upload-hint" style="margin-top:5px;">Nhấn ảnh để thay đổi</div>
             </div>
         </div>
+
+        <!-- Hidden file input for avatar -->
+        <form id="avatarForm" style="display:none;">
+            @Html.AntiForgeryToken()
+            <input type="file" id="avatarInput" name="avatar" accept="image/png,image/jpeg,image/gif,image/webp" />
+        </form>
 
         <!-- Navigation -->
         <nav class="sidebar-nav">
@@ -542,23 +596,23 @@
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-title">Học tập</div>
 
-            <div class="sidebar-item disabled">
+            <a class="sidebar-item" asp-controller="Enrollment" asp-action="MyEnrollments">
                 <i class="bi bi-book-half"></i>
                 <span>Khoá học của tôi</span>
-                <span class="sidebar-item-badge">Sắp ra</span>
-            </div>
+                <i class="bi bi-chevron-right item-chevron"></i>
+            </a>
 
-            <div class="sidebar-item disabled">
+            <a class="sidebar-item" asp-controller="Certificate" asp-action="My">
                 <i class="bi bi-trophy-fill"></i>
                 <span>Chứng chỉ</span>
-                <span class="sidebar-item-badge">Sắp ra</span>
-            </div>
+                <i class="bi bi-chevron-right item-chevron"></i>
+            </a>
 
-            <div class="sidebar-item disabled">
+            <a class="sidebar-item" asp-controller="Enrollment" asp-action="MyEnrollments">
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Tiến trình học</span>
-                <span class="sidebar-item-badge">Sắp ra</span>
-            </div>
+                <i class="bi bi-chevron-right item-chevron"></i>
+            </a>
         </nav>
 
         <!-- Logout -->
@@ -790,5 +844,54 @@
                 ico.classList.replace('bi-eye-slash', 'bi-eye');
             }
         }
+
+        // ── Avatar upload ──────────────────────────────────────────
+        document.getElementById('avatarInput').addEventListener('change', async function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const btn = document.getElementById('avatarBtn');
+            const overlay = btn.querySelector('.sidebar-avatar-overlay');
+            overlay.innerHTML = '<div class="spinner-border spinner-border-sm text-light" role="status"></div>';
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+            formData.append('__RequestVerificationToken',
+                document.querySelector('#avatarForm input[name="__RequestVerificationToken"]').value);
+
+            try {
+                const res = await fetch('@Url.Action("UploadAvatar", "Account")', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    // Cập nhật ảnh hiển thị ngay
+                    let img = document.getElementById('avatarImg');
+                    if (!img) {
+                        // Tạo mới nếu chưa có
+                        const initials = document.getElementById('avatarInitials');
+                        if (initials) initials.remove();
+                        img = document.createElement('img');
+                        img.id = 'avatarImg';
+                        img.alt = 'Avatar';
+                        btn.insertBefore(img, overlay);
+                    }
+                    img.src = data.avatarUrl + '&t=' + Date.now();
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '50%';
+                } else {
+                    alert(data.message);
+                }
+            } catch (e) {
+                alert('Lỗi tải ảnh, vui lòng thử lại.');
+            } finally {
+                overlay.innerHTML = '<i class="bi bi-camera-fill"></i>';
+                this.value = '';
+            }
+        });
     </script>
 }

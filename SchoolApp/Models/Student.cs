@@ -5,17 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SchoolApp.Models
 {
-    [Table("Students")]
-    public class Student
+    [Table("Users")]
+    public class User
     {
         [Key]
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
-        [Required(ErrorMessage = "Họ tên là bắt buộc")]
         [StringLength(100, MinimumLength = 2,
             ErrorMessage = "Họ tên phải từ 2 đến 100 ký tự")]
         [Display(Name = "Họ và tên")]
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
 
         [Required]
         [Display(Name = "Vai trò")]
@@ -27,21 +26,20 @@ namespace SchoolApp.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-
-        [Required(ErrorMessage = "Mật khẩu là bắt buộc")]
         [StringLength(100, MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Mật khẩu")]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
-        [Required(ErrorMessage = "Số điện thoại là bắt buộc")]
+        [StringLength(100)]
+        public string? GoogleId { get; set; }
+
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
         [StringLength(15, MinimumLength = 9,
             ErrorMessage = "Số điện thoại phải từ 9 đến 15 ký tự")]
         [Display(Name = "Số điện thoại")]
         public string? Phone { get; set; }
 
-        [Required(ErrorMessage = "Ngày sinh là bắt buộc")]
         [DataType(DataType.Date)]
         [Display(Name = "Ngày sinh")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}",
@@ -55,10 +53,14 @@ namespace SchoolApp.Models
         [Display(Name = "Ngày đăng ký")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime RegisteredDate { get; set; } = DateTime.Now;
+
+        public bool IsEmailVerified { get; set; } = false;
+
+        [StringLength(500)]
+        public string? AvatarUrl { get; set; }
+
         public virtual ICollection<LessonProgress> LessonProgresses { get; set; } = new List<LessonProgress>();
         public virtual ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
-        // Navigation property
-        public virtual ICollection<Enrollment> Enrollments { get; set; }
-            = new HashSet<Enrollment>();
+        public virtual ICollection<Enrollment> Enrollments { get; set; } = new HashSet<Enrollment>();
     }
 }

@@ -14,7 +14,7 @@ namespace SchoolApp.Controllers
 
         public IActionResult Index()
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null)
             {
                 TempData["Error"] = "Vui lòng đăng nhập";
@@ -35,12 +35,12 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult MarkRead(int id)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null)
                 return Json(new { success = false });
 
             var notif = _uow.Notifications.GetById(id);
-            if (notif == null || notif.StudentId != studentId)
+            if (notif == null || notif.UserId != studentId)
                 return Json(new { success = false });
 
             notif.IsRead = true;
@@ -51,7 +51,7 @@ namespace SchoolApp.Controllers
         [HttpGet]
         public IActionResult UnreadCount()
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null)
                 return Json(new { count = 0 });
 
@@ -62,7 +62,7 @@ namespace SchoolApp.Controllers
         [HttpGet]
         public IActionResult GetDropdown()
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null)
                 return Json(new { items = Array.Empty<object>(), unread = 0 });
 
@@ -88,11 +88,11 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult MarkAllRead()
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null)
                 return Json(new { success = false });
 
-            var unread = _uow.Notifications.Find(n => n.StudentId == studentId && !n.IsRead).ToList();
+            var unread = _uow.Notifications.Find(n => n.UserId == studentId && !n.IsRead).ToList();
             foreach (var n in unread) n.IsRead = true;
             _uow.SaveChanges();
             return Json(new { success = true });

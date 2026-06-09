@@ -11,7 +11,7 @@ namespace SchoolApp.Repositories.CertificateRepository
         public Certificate? GetByEnrollment(int enrollmentId)
         {
             return _dbSet
-                .Include(c => c.Student)
+                .Include(c => c.User)
                 .Include(c => c.Course)
                 .FirstOrDefault(c => c.EnrollmentId == enrollmentId);
         }
@@ -19,16 +19,16 @@ namespace SchoolApp.Repositories.CertificateRepository
         public Certificate? GetByCode(string code)
         {
             return _dbSet
-                .Include(c => c.Student)
+                .Include(c => c.User)
                 .Include(c => c.Course)
                 .FirstOrDefault(c => c.CertificateCode == code);
         }
 
-        public IQueryable<Certificate> GetByStudentWithDetails(int studentId)
+        public IQueryable<Certificate> GetByStudentWithDetails(int userId)
         {
             return _dbSet
                 .Include(c => c.Course)
-                .Where(c => c.StudentId == studentId)
+                .Where(c => c.UserId == userId)
                 .OrderByDescending(c => c.IssuedDate);
         }
     }

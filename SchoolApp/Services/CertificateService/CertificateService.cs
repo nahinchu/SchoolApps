@@ -24,7 +24,7 @@ namespace SchoolApp.Services.CertificateService
             var cert = new Certificate
             {
                 EnrollmentId = enrollmentId,
-                StudentId = enrollment.StudentId,
+                UserId = enrollment.UserId,
                 CourseId = enrollment.CourseId,
                 CertificateCode = Guid.NewGuid().ToString(),
                 IssuedDate = enrollment.CompletedAt ?? DateTime.UtcNow
@@ -86,7 +86,7 @@ namespace SchoolApp.Services.CertificateService
                                 .FontSize(14).FontColor("#a0b0c0").AlignCenter().Italic();
 
                             content.Item().PaddingTop(12)
-                                .Text(cert.Student?.FullName ?? "")
+                                .Text(cert.User?.FullName ?? cert.User?.Email ?? "")
                                 .FontFamily(fontFamily)
                                 .FontSize(34).Bold().FontColor(Colors.White).AlignCenter();
 

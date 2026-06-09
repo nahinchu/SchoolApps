@@ -12,11 +12,11 @@ namespace SchoolApp.Services.NotificationService
             _uow = uow;
         }
 
-        public void Create(int studentId, string title, string message, string? link = null)
+        public void Create(int userId, string title, string message, string? link = null)
         {
             var notification = new Notification
             {
-                StudentId = studentId,
+                UserId = userId,
                 Title = title,
                 Message = message,
                 Link = link,

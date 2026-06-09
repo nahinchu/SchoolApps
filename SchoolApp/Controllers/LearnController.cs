@@ -22,7 +22,7 @@ namespace SchoolApp.Controllers
         // GET: /Learn/Course/5?lessonId=12
         public IActionResult Course(int id, int? lessonId)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
 
             //Lấy course với full tree (Modules → Lessons → Quiz)
             var course = _uow.Courses.GetCourseWithFullTree(id);
@@ -137,7 +137,7 @@ namespace SchoolApp.Controllers
                 {
                     var np = new LessonProgress
                     {
-                        StudentId = studentId.Value,
+                        UserId = studentId.Value,
                         LessonId = currentLesson.LessonId,
                         Status = ProgressStatus.InProgress,
                         ProgressPercent = 10,
@@ -184,7 +184,7 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult MarkComplete(int lessonId)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null)
                 return Json(new { success = false, message = "Vui lòng đăng nhập" });
 
@@ -197,7 +197,7 @@ namespace SchoolApp.Controllers
             {
                 progress = new LessonProgress
                 {
-                    StudentId = studentId.Value,
+                    UserId = studentId.Value,
                     LessonId = lessonId,
                     Status = ProgressStatus.Completed,
                     ProgressPercent = 100,

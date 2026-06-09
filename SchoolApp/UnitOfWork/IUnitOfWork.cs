@@ -1,4 +1,4 @@
-﻿using SchoolApp.Repositories;
+using SchoolApp.Repositories;
 using SchoolApp.Repositories.CourseRepository;
 using SchoolApp.Repositories.EnrollmentRepository;
 using SchoolApp.Repositories.LessonRepository;
@@ -15,7 +15,7 @@ namespace SchoolApp.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {
         ICourseRepository Courses { get; }
-        IStudentRepository Students { get; }
+        IUserRepository Users { get; }
         IEnrollmentRepository Enrollments { get; }
         IModuleRepository Modules { get; }
         ILessonRepository Lessons { get; }

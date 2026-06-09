@@ -354,31 +354,22 @@
             <form asp-action="Register" method="post">
                 @Html.AntiForgeryToken()
 
-                <!-- Row 1: Họ và tên | Email -->
-                <div class="auth-form-row">
-                    <div class="auth-form-group">
-                        <label class="auth-label" asp-for="FullName">Họ và tên</label>
-                        <input class="auth-input" asp-for="FullName"
-                               placeholder="Nguyễn Văn A ..."
-                               autocomplete="name" />
-                        <span asp-validation-for="FullName" class="auth-field-error"></span>
-                    </div>
-                    <div class="auth-form-group">
-                        <label class="auth-label" asp-for="Email">Địa chỉ Email</label>
-                        <input class="auth-input" asp-for="Email"
-                               type="email" placeholder="example@email.com ..."
-                               autocomplete="email" />
-                        <span asp-validation-for="Email" class="auth-field-error"></span>
-                    </div>
+                <!-- Email -->
+                <div class="auth-form-group">
+                    <label class="auth-label" asp-for="Email">Địa chỉ Email</label>
+                    <input class="auth-input" asp-for="Email"
+                           type="email" placeholder="example@email.com"
+                           autocomplete="email" />
+                    <span asp-validation-for="Email" class="auth-field-error"></span>
                 </div>
 
-                <!-- Row 2: Mật khẩu | Xác nhận mật khẩu -->
+                <!-- Mật khẩu | Xác nhận mật khẩu -->
                 <div class="auth-form-row">
                     <div class="auth-form-group">
                         <label class="auth-label" asp-for="Password">Mật khẩu</label>
                         <div class="auth-pw-wrap">
                             <input class="auth-input" asp-for="Password" id="regPwd"
-                                   type="password" placeholder="Ít nhất 6 ký tự ..."
+                                   type="password" placeholder="Ít nhất 6 ký tự"
                                    autocomplete="new-password"
                                    style="padding-right:42px;" />
                             <button type="button" class="auth-pw-toggle"
@@ -392,7 +383,7 @@
                         <label class="auth-label" asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
                         <div class="auth-pw-wrap">
                             <input class="auth-input" asp-for="ConfirmPassword" id="regCfm"
-                                   type="password" placeholder="Nhập lại mật khẩu ..."
+                                   type="password" placeholder="Nhập lại mật khẩu"
                                    autocomplete="new-password"
                                    style="padding-right:42px;" />
                             <button type="button" class="auth-pw-toggle"
@@ -401,24 +392,6 @@
                             </button>
                         </div>
                         <span asp-validation-for="ConfirmPassword" class="auth-field-error"></span>
-                    </div>
-                </div>
-
-                <!-- Row 3: Số điện thoại | Ngày sinh -->
-                <div class="auth-form-row">
-                    <div class="auth-form-group">
-                        <label class="auth-label" asp-for="Phone">Số điện thoại</label>
-                        <input class="auth-input" asp-for="Phone"
-                               type="tel" placeholder="0901234567 ..."
-                               autocomplete="tel" />
-                        <span asp-validation-for="Phone" class="auth-field-error"></span>
-                    </div>
-                    <div class="auth-form-group">
-                        <label class="auth-label" asp-for="DateOfBirth">Ngày sinh</label>
-                        <input class="auth-input" asp-for="DateOfBirth"
-                               type="date"
-                               autocomplete="bday" />
-                        <span asp-validation-for="DateOfBirth" class="auth-field-error"></span>
                     </div>
                 </div>
 
