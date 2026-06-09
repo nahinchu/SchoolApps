@@ -1,4 +1,4 @@
-﻿using SchoolApp.Data;
+using SchoolApp.Data;
 using SchoolApp.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,12 +8,12 @@ namespace SchoolApp.Repositories
     {
         public QuizAttemptRepository(AppDbContext context) : base(context) { }
 
-        public int GetAttemptCount(int quizId, int studentId)
+        public int GetAttemptCount(int quizId, int userId)
         {
             return _dbSet.Count(a =>
                 a.QuizId == quizId &&
-                a.StudentId == studentId &&
-                a.FinishedAt != null);  // chỉ đếm các lần đã nộp
+                a.UserId == userId &&
+                a.FinishedAt != null);
         }
 
         public QuizAttempt? GetAttemptWithDetails(int attemptId)
@@ -29,17 +29,17 @@ namespace SchoolApp.Repositories
                 .FirstOrDefault(a => a.QuizAttemptId == attemptId);
         }
 
-        public IQueryable<QuizAttempt> GetByStudentAndQuiz(int studentId, int quizId)
+        public IQueryable<QuizAttempt> GetByStudentAndQuiz(int userId, int quizId)
         {
             return _dbSet
-                .Where(a => a.StudentId == studentId && a.QuizId == quizId)
+                .Where(a => a.UserId == userId && a.QuizId == quizId)
                 .OrderByDescending(a => a.StartedAt);
         }
 
-        public QuizAttempt? GetBestAttempt(int studentId, int quizId)
+        public QuizAttempt? GetBestAttempt(int userId, int quizId)
         {
             return _dbSet
-                .Where(a => a.StudentId == studentId
+                .Where(a => a.UserId == userId
                             && a.QuizId == quizId
                             && a.FinishedAt != null)
                 .OrderByDescending(a => a.Score)

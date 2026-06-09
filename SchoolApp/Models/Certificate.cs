@@ -13,7 +13,7 @@ namespace SchoolApp.Models
         public int EnrollmentId { get; set; }
 
         [Required]
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         public int CourseId { get; set; }
@@ -28,8 +28,8 @@ namespace SchoolApp.Models
         [ForeignKey("EnrollmentId")]
         public virtual Enrollment Enrollment { get; set; }
 
-        [ForeignKey("StudentId")]
-        public virtual Student Student { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
 
         [ForeignKey("CourseId")]
         public virtual Course Course { get; set; }

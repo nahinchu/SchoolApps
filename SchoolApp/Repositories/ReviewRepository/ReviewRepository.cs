@@ -11,15 +11,15 @@ namespace SchoolApp.Repositories.ReviewRepository
         public IQueryable<CourseReview> GetByCourse(int courseId)
         {
             return _context.CourseReviews
-                .Include(r => r.Student)
+                .Include(r => r.User)
                 .Where(r => r.CourseId == courseId)
                 .OrderByDescending(r => r.CreatedAt);
         }
 
-        public CourseReview? GetByStudentAndCourse(int studentId, int courseId)
+        public CourseReview? GetByStudentAndCourse(int userId, int courseId)
         {
             return _context.CourseReviews
-                .FirstOrDefault(r => r.StudentId == studentId && r.CourseId == courseId);
+                .FirstOrDefault(r => r.UserId == userId && r.CourseId == courseId);
         }
 
         public double GetAverageRating(int courseId)

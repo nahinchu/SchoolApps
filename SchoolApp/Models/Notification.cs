@@ -10,7 +10,7 @@ namespace SchoolApp.Models
         public int NotificationId { get; set; }
 
         [Required]
-        public int StudentId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -27,7 +27,7 @@ namespace SchoolApp.Models
         [StringLength(300)]
         public string? Link { get; set; }
 
-        [ForeignKey("StudentId")]
-        public virtual Student Student { get; set; } = null!;
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; } = null!;
     }
 }

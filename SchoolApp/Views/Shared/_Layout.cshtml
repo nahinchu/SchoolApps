@@ -110,11 +110,12 @@
                 </ul>
 
                 <ul class="sa-user-section" aria-label="Tài khoản">
-                    @if (Context.Session.GetString("StudentName") != null)
+                    @if (Context.Session.GetString("UserName") != null)
                     {
-                        var studentName = Context.Session.GetString("StudentName");
+                        var studentName = Context.Session.GetString("UserName");
                         var role = Context.Session.GetString("Role");
                         var initials = studentName?.Length > 0 ? studentName[0].ToString().ToUpper() : "U";
+                        var headerAvatar = Context.Session.GetString("AvatarUrl");
 
                         <!-- Notification Bell -->
                         <li class="dropdown" style="position:relative;">
@@ -136,12 +137,8 @@
                                  style="min-width:320px; background:#1b2d42; border:1px solid rgba(201,168,76,.25);
                                         border-radius:14px; padding:0; overflow:hidden;
                                         box-shadow:0 16px 40px rgba(0,0,0,.5);">
-                                <div style="padding:.75rem 1rem; display:flex; align-items:center; justify-content:space-between;
-                                            border-bottom:1px solid rgba(255,255,255,.08);">
+                                <div style="padding:.75rem 1rem; border-bottom:1px solid rgba(255,255,255,.08);">
                                     <strong style="font-size:.875rem; color:#fff;">Thông báo</strong>
-                                    <a href="@Url.Action("MarkAllRead","Notification")" id="markAllReadBtn"
-                                       style="font-size:.75rem; color:rgba(201,168,76,.8); text-decoration:none; cursor:pointer;"
-                                       onclick="markAllRead(event)">Đọc tất cả</a>
                                 </div>
                                 <div id="notifList" style="max-height:320px; overflow-y:auto;">
                                     <div style="padding:2rem; text-align:center; color:rgba(255,255,255,.35); font-size:.84rem;">
@@ -161,7 +158,16 @@
                             <button type="button" class="sa-greeting dropdown-toggle"
                                     data-bs-toggle="dropdown" data-bs-offset="0,10"
                                     aria-expanded="false">
-                                <div class="sa-greeting-avatar">@initials</div>
+                                <div class="sa-greeting-avatar" style="@(!string.IsNullOrEmpty(headerAvatar) ? "background:transparent;padding:0;overflow:hidden;" : "")">
+                                    @if (!string.IsNullOrEmpty(headerAvatar))
+                                    {
+                                        <img src="@headerAvatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="avatar" />
+                                    }
+                                    else
+                                    {
+                                        @initials
+                                    }
+                                </div>
                                 <span class="sa-greeting-name">@studentName</span>
                                 @if (role == "Admin")
                                 {
@@ -201,8 +207,16 @@
                                                 display:flex; align-items:center; justify-content:center;
                                                 font-size:16px; font-weight:700; color:#0d1b2a;
                                                 box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+                                                overflow:hidden;
                                             ">
-                                        @initials
+                                        @if (!string.IsNullOrEmpty(headerAvatar))
+                                        {
+                                            <img src="@headerAvatar" style="width:100%;height:100%;object-fit:cover;" alt="avatar" />
+                                        }
+                                        else
+                                        {
+                                            @initials
+                                        }
                                     </div>
                                     <div>
                                         <div style="font-weight:600; font-size:.9rem; color:#ffffff; line-height:1.3;">@studentName</div>
@@ -471,22 +485,21 @@
 
     @RenderSection("Scripts", required: false)
 
-    @if (Context.Session.GetString("StudentName") != null)
+    @if (Context.Session.GetString("UserName") != null)
     {
+        <!-- Hidden form chỉ để cung cấp CSRF token cho JS notification -->
+        <form id="notifCsrfForm" style="display:none;">@Html.AntiForgeryToken()</form>
+
         <script>
+        function getCsrfToken() {
+            return document.querySelector('#notifCsrfForm input[name="__RequestVerificationToken"]')?.value ?? '';
+        }
+
         function loadNotifications() {
             fetch('@Url.Action("GetDropdown","Notification")')
             .then(r => r.json())
             .then(function(data) {
-                var badge = document.getElementById('notifBadge');
-                if (badge) {
-                    if (data.unread > 0) {
-                        badge.textContent = data.unread > 9 ? '9+' : data.unread;
-                        badge.style.display = 'flex';
-                    } else {
-                        badge.style.display = 'none';
-                    }
-                }
+                updateBadge(data.unread);
 
                 var list = document.getElementById('notifList');
                 if (!list) return;
@@ -495,33 +508,56 @@
                     return;
                 }
                 list.innerHTML = data.items.map(function(n) {
-                    return '<a href="' + (n.link || '#') + '" style="display:block; padding:.65rem 1rem; text-decoration:none; border-bottom:1px solid rgba(255,255,255,.05); background:' + (n.isRead ? 'transparent' : 'rgba(201,168,76,.05)') + '; transition:background .15s;" onmouseenter="this.style.background=\'rgba(255,255,255,.05)\'" onmouseleave="this.style.background=\'' + (n.isRead ? 'transparent' : 'rgba(201,168,76,.05)') + '\'">'
-                        + '<div style="display:flex; align-items:flex-start; gap:.6rem;">'
-                        + '<i class="bi ' + (n.isRead ? 'bi-bell' : 'bi-bell-fill') + '" style="color:' + (n.isRead ? 'rgba(255,255,255,.3)' : '#c9a84c') + '; font-size:.85rem; margin-top:2px; flex-shrink:0;"></i>'
-                        + '<div style="flex:1; min-width:0;">'
-                        + '<div style="font-size:.82rem; font-weight:' + (n.isRead ? '400' : '600') + '; color:' + (n.isRead ? 'rgba(255,255,255,.6)' : '#fff') + '; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">' + n.title + '</div>'
-                        + '<div style="font-size:.76rem; color:rgba(255,255,255,.4); margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + n.message + '</div>'
-                        + '<div style="font-size:.7rem; color:rgba(255,255,255,.25); margin-top:3px;">' + n.createdAt + '</div>'
+                    var bg       = n.isRead ? 'transparent' : 'rgba(201,168,76,.05)';
+                    var iconCls  = n.isRead ? 'bi-bell'      : 'bi-bell-fill';
+                    var iconClr  = n.isRead ? 'rgba(255,255,255,.3)' : '#c9a84c';
+                    var fw       = n.isRead ? '400' : '600';
+                    var titleClr = n.isRead ? 'rgba(255,255,255,.6)' : '#fff';
+                    return '<a href="' + (n.link || '#') + '" style="display:block;padding:.65rem 1rem;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);background:' + bg + ';transition:background .15s;" onmouseenter="this.style.background=\'rgba(255,255,255,.05)\'" onmouseleave="this.style.background=\'' + bg + '\'">'
+                        + '<div style="display:flex;align-items:flex-start;gap:.6rem;">'
+                        + '<i class="bi ' + iconCls + '" style="color:' + iconClr + ';font-size:.85rem;margin-top:2px;flex-shrink:0;"></i>'
+                        + '<div style="flex:1;min-width:0;">'
+                        + '<div style="font-size:.82rem;font-weight:' + fw + ';color:' + titleClr + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + n.title + '</div>'
+                        + '<div style="font-size:.76rem;color:rgba(255,255,255,.4);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + n.message + '</div>'
+                        + '<div style="font-size:.7rem;color:rgba(255,255,255,.25);margin-top:3px;">' + n.createdAt + '</div>'
                         + '</div></div></a>';
                 }).join('');
             })
             .catch(function() {});
         }
 
-        function markAllRead(e) {
-            e.preventDefault();
-            var token = document.querySelector('input[name="__RequestVerificationToken"]');
-            if (!token) return;
+        function updateBadge(count) {
+            var badge = document.getElementById('notifBadge');
+            if (!badge) return;
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function sendMarkAllRead() {
             fetch('@Url.Action("MarkAllRead","Notification")', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: '__RequestVerificationToken=' + encodeURIComponent(token.value)
-            })
-            .then(r => r.json())
-            .then(function(res) { if (res.success) loadNotifications(); });
+                body: '__RequestVerificationToken=' + encodeURIComponent(getCsrfToken())
+            }).catch(function() {});
         }
 
-        document.getElementById('notifBell')?.addEventListener('show.bs.dropdown', loadNotifications);
+        var notifBell = document.getElementById('notifBell');
+
+        // Mở dropdown → tải danh sách mới nhất
+        notifBell?.addEventListener('show.bs.dropdown', loadNotifications);
+
+        // Đóng dropdown → mark all read tự động + ẩn badge ngay
+        notifBell?.addEventListener('hidden.bs.dropdown', function() {
+            var badge = document.getElementById('notifBadge');
+            if (badge && badge.style.display !== 'none') {
+                updateBadge(0);
+                sendMarkAllRead();
+            }
+        });
 
         loadNotifications();
         setInterval(loadNotifications, 60000);

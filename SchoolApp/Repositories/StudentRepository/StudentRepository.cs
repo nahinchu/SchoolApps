@@ -1,46 +1,46 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SchoolApp.Data;
 using SchoolApp.Models;
 
 namespace SchoolApp.Repositories.StudentRepository
 {
-    public class StudentRepository : Repository<Student>, IStudentRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
-        public StudentRepository(AppDbContext context) : base(context) { }
+        public UserRepository(AppDbContext context) : base(context) { }
 
-        public IQueryable<Student> Search(string keyword)
+        public IQueryable<User> Search(string keyword)
         {
             var query = _dbSet.AsQueryable();
             if (!string.IsNullOrEmpty(keyword))
             {
-                query = query.Where(s =>
-                    s.FullName.Contains(keyword) ||
-                    s.Email.Contains(keyword) ||
-                    s.Phone.Contains(keyword));
+                query = query.Where(u =>
+                    (u.FullName != null && u.FullName.Contains(keyword)) ||
+                    u.Email.Contains(keyword) ||
+                    (u.Phone != null && u.Phone.Contains(keyword)));
             }
-            return query.OrderByDescending(s => s.RegisteredDate);
+            return query.OrderByDescending(u => u.RegisteredDate);
         }
 
-        public Student GetWithEnrollments(int id)
+        public User GetWithEnrollments(int id)
         {
             return _dbSet
-                .Include(s => s.Enrollments)
+                .Include(u => u.Enrollments)
                     .ThenInclude(e => e.Course)
-                .FirstOrDefault(s => s.StudentId == id);
+                .FirstOrDefault(u => u.UserId == id);
         }
 
-        public Student GetByEmailAndPassword(string email, string password)
-        {
-            return _dbSet.FirstOrDefault(s => s.Email == email && s.Password == password);
-        }
-
-        public Student? GetByEmail(string email)
+        public User? GetByEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
                 return null;
 
-            return _context.Students
-                .FirstOrDefault(s => s.Email.ToLower() == email.ToLower());
+            return _context.Users
+                .FirstOrDefault(u => u.Email.ToLower() == email.ToLower());
+        }
+
+        public User? GetByGoogleId(string googleId)
+        {
+            return _dbSet.FirstOrDefault(u => u.GoogleId == googleId);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using SchoolApp.Filters;
 using SchoolApp.Models;
 using SchoolApp.Services.ExcelExportService;
@@ -17,7 +17,6 @@ namespace SchoolApp.Controllers
         private readonly IExcelExportService _excel;
         private readonly IExcelImportService _excelImport;
 
-        // ====== DI: inject thêm IPasswordService ======
         public StudentController(IUnitOfWork uow, IPasswordService passwordService, IExcelExportService excel, IExcelImportService excelImport)
         {
             _uow = uow;
@@ -30,7 +29,7 @@ namespace SchoolApp.Controllers
         {
             int pageSize = 5;
 
-            var result = _uow.Students.Search(searchTerm)
+            var result = _uow.Users.Search(searchTerm)
                 .ToPagedList(page, pageSize);
 
             ViewData["SearchTerm"] = searchTerm;
@@ -46,28 +45,30 @@ namespace SchoolApp.Controllers
         [AuthorizeManager]
         public IActionResult Create()
         {
-            return View(new Student());
+            return View(new User());
         }
 
         [HttpPost]
         [AuthorizeAdmin]
         [AuthorizeManager]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Student student)
+        public IActionResult Create(User user)
         {
             if (!ModelState.IsValid)
-                return View(student);
+                return View(user);
 
-            if (_uow.Students.Any(s => s.Email == student.Email))
+            if (_uow.Users.Any(u => u.Email == user.Email))
             {
                 ModelState.AddModelError("Email", "Email này đã được sử dụng");
-                return View(student);
+                return View(user);
             }
 
-            student.Password = _passwordService.Hash(student.Password);
-            student.Role = "student";  
-            student.RegisteredDate = DateTime.Now;
-            _uow.Students.Add(student);
+            user.Password = _passwordService.Hash(
+                string.IsNullOrWhiteSpace(user.Password) ? "SchoolApp@123" : user.Password);
+            user.Role = "student";
+            user.RegisteredDate = DateTime.Now;
+            user.IsEmailVerified = true;
+            _uow.Users.Add(user);
             _uow.SaveChanges();
 
             TempData["Success"] = "Thêm học viên thành công!";
@@ -78,31 +79,31 @@ namespace SchoolApp.Controllers
         [AuthorizeManager]
         public IActionResult Edit(int id)
         {
-            var student = _uow.Students.GetById(id);
-            if (student == null) return NotFound();
-            return View(student);
+            var user = _uow.Users.GetById(id);
+            if (user == null) return NotFound();
+            return View(user);
         }
 
         [HttpPost]
         [AuthorizeAdmin]
         [AuthorizeManager]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Student student)
+        public IActionResult Edit(User user)
         {
             if (!ModelState.IsValid)
-                return View(student);
+                return View(user);
 
-            var existing = _uow.Students.GetById(student.StudentId);
+            var existing = _uow.Users.GetById(user.UserId);
             if (existing == null)
             {
                 TempData["Error"] = "Không tìm thấy học viên";
                 return RedirectToAction("Index");
             }
 
-            existing.FullName = student.FullName;
-            existing.Phone = student.Phone;
-            existing.DateOfBirth = student.DateOfBirth;
-            existing.Address = student.Address;
+            existing.FullName = user.FullName;
+            existing.Phone = user.Phone;
+            existing.DateOfBirth = user.DateOfBirth;
+            existing.Address = user.Address;
 
             _uow.SaveChanges();
 
@@ -116,20 +117,20 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            var student = _uow.Students.GetById(id);
-            if (student == null)
+            var user = _uow.Users.GetById(id);
+            if (user == null)
             {
                 TempData["Error"] = "Không tìm thấy học viên";
                 return RedirectToAction("Index");
             }
 
-            if (_uow.Enrollments.Any(e => e.StudentId == id))
+            if (_uow.Enrollments.Any(e => e.UserId == id))
             {
                 TempData["Error"] = "Không thể xóa: học viên đã đăng ký khóa học.";
                 return RedirectToAction("Index");
             }
 
-            _uow.Students.Delete(student);
+            _uow.Users.Delete(user);
             _uow.SaveChanges();
 
             TempData["Success"] = "Đã xóa học viên!";
@@ -138,9 +139,9 @@ namespace SchoolApp.Controllers
 
         public IActionResult Details(int id)
         {
-            var student = _uow.Students.GetWithEnrollments(id);
-            if (student == null) return NotFound();
-            return View(student);
+            var user = _uow.Users.GetWithEnrollments(id);
+            if (user == null) return NotFound();
+            return View(user);
         }
 
         [HttpPost]
@@ -149,14 +150,14 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteAjax(int id)
         {
-            var student = _uow.Students.GetById(id);
-            if (student == null)
+            var user = _uow.Users.GetById(id);
+            if (user == null)
                 return Json(new { success = false, message = "Không tìm thấy học viên" });
 
-            if (_uow.Enrollments.Any(e => e.StudentId == id))
+            if (_uow.Enrollments.Any(e => e.UserId == id))
                 return Json(new { success = false, message = "Không thể xóa: học viên đã đăng ký khóa học." });
 
-            _uow.Students.Delete(student);
+            _uow.Users.Delete(user);
             _uow.SaveChanges();
             return Json(new { success = true, message = "Đã xóa học viên!" });
         }
@@ -165,7 +166,7 @@ namespace SchoolApp.Controllers
         [AuthorizeAdmin]
         [AuthorizeManager]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateAjax(Student student)
+        public IActionResult CreateAjax(User user)
         {
             if (!ModelState.IsValid)
             {
@@ -174,7 +175,7 @@ namespace SchoolApp.Controllers
                 return Json(new { success = false, errors });
             }
 
-            if (_uow.Students.Any(s => s.Email == student.Email))
+            if (_uow.Users.Any(u => u.Email == user.Email))
                 return Json(new
                 {
                     success = false,
@@ -183,12 +184,12 @@ namespace SchoolApp.Controllers
                     }
                 });
 
-            student.Password = _passwordService.Hash(student.Password);
-
-            student.Role = "student";
-
-            student.RegisteredDate = DateTime.Now;
-            _uow.Students.Add(student);
+            user.Password = _passwordService.Hash(
+                string.IsNullOrWhiteSpace(user.Password) ? "SchoolApp@123" : user.Password);
+            user.Role = "student";
+            user.RegisteredDate = DateTime.Now;
+            user.IsEmailVerified = true;
+            _uow.Users.Add(user);
             _uow.SaveChanges();
             return Json(new { success = true, message = "Thêm học viên thành công!" });
         }
@@ -197,7 +198,7 @@ namespace SchoolApp.Controllers
         [AuthorizeAdmin]
         [AuthorizeManager]
         [ValidateAntiForgeryToken]
-        public IActionResult EditAjax(Student student)
+        public IActionResult EditAjax(User user)
         {
             ModelState.Remove("Password");
             ModelState.Remove("Email");
@@ -209,14 +210,14 @@ namespace SchoolApp.Controllers
                 return Json(new { success = false, errors });
             }
 
-            var existing = _uow.Students.GetById(student.StudentId);
+            var existing = _uow.Users.GetById(user.UserId);
             if (existing == null)
                 return Json(new { success = false, message = "Không tìm thấy học viên" });
 
-            existing.FullName = student.FullName;
-            existing.Phone = student.Phone;
-            existing.DateOfBirth = student.DateOfBirth;
-            existing.Address = student.Address;
+            existing.FullName = user.FullName;
+            existing.Phone = user.Phone;
+            existing.DateOfBirth = user.DateOfBirth;
+            existing.Address = user.Address;
 
             _uow.SaveChanges();
             return Json(new { success = true, message = "Cập nhật học viên thành công!" });
@@ -227,35 +228,36 @@ namespace SchoolApp.Controllers
         [AuthorizeManager]
         public IActionResult GetStudent(int id)
         {
-            var student = _uow.Students.GetById(id);
-            if (student == null) return NotFound();
+            var user = _uow.Users.GetById(id);
+            if (user == null) return NotFound();
             return Json(new
             {
-                studentId = student.StudentId,
-                fullName = student.FullName,
-                email = student.Email,
-                phone = student.Phone,
-                dateOfBirth = student.DateOfBirth?.ToString("yyyy-MM-dd"),
-                address = student.Address
+                userId = user.UserId,
+                fullName = user.FullName,
+                email = user.Email,
+                phone = user.Phone,
+                dateOfBirth = user.DateOfBirth?.ToString("yyyy-MM-dd"),
+                address = user.Address
             });
         }
+
         [HttpGet]
         [AuthorizeAdmin]
         [AuthorizeManager]
         public IActionResult GetStudentDetails(int id)
         {
-            var student = _uow.Students.GetWithEnrollments(id);
-            if (student == null) return NotFound();
+            var user = _uow.Users.GetWithEnrollments(id);
+            if (user == null) return NotFound();
             return Json(new
             {
-                studentId = student.StudentId,
-                fullName = student.FullName,
-                email = student.Email,
-                phone = student.Phone,
-                dateOfBirth = student.DateOfBirth?.ToString("dd/MM/yyyy"),
-                address = student.Address ?? "Chưa cập nhật",
-                registeredDate = student.RegisteredDate.ToString("dd/MM/yyyy HH:mm"),
-                enrollments = student.Enrollments.Select(e => new
+                userId = user.UserId,
+                fullName = user.FullName,
+                email = user.Email,
+                phone = user.Phone,
+                dateOfBirth = user.DateOfBirth?.ToString("dd/MM/yyyy"),
+                address = user.Address ?? "Chưa cập nhật",
+                registeredDate = user.RegisteredDate.ToString("dd/MM/yyyy HH:mm"),
+                enrollments = user.Enrollments.Select(e => new
                 {
                     courseName = e.Course != null ? e.Course.CourseName : "N/A",
                     enrollDate = e.EnrollDate.ToString("dd/MM/yyyy")
@@ -267,43 +269,41 @@ namespace SchoolApp.Controllers
         [AuthorizeUser]
         public IActionResult MyProfile()
         {
-            var myId = HttpContext.Session.GetInt32("StudentId");
+            var myId = HttpContext.Session.GetInt32("UserId");
             if (myId == null) return Unauthorized();
 
-            var student = _uow.Students.GetById(myId.Value);
-            if (student == null) return NotFound();
+            var user = _uow.Users.GetById(myId.Value);
+            if (user == null) return NotFound();
 
             return Json(new
             {
-                studentId = student.StudentId,
-                fullName = student.FullName,
-                email = student.Email,
-                phone = student.Phone,
-                dateOfBirth = student.DateOfBirth?.ToString("yyyy-MM-dd"),
-                address = student.Address ?? "Chưa cập nhật"
+                userId = user.UserId,
+                fullName = user.FullName,
+                email = user.Email,
+                phone = user.Phone,
+                dateOfBirth = user.DateOfBirth?.ToString("yyyy-MM-dd"),
+                address = user.Address ?? "Chưa cập nhật"
             });
         }
-
-
 
         [AuthorizeAdmin]
         [AuthorizeManager]
         public IActionResult ExportExcel(string? searchTerm)
         {
-            var students = _uow.Students.Search(searchTerm).ToList();
+            var users = _uow.Users.Search(searchTerm).ToList();
 
-            var columns = new List<ExcelColumnDef<Student>>
+            var columns = new List<ExcelColumnDef<User>>
             {
-                new() { Header = "ID",           ValueSelector = s => s.StudentId,    Width = 8  },
-                new() { Header = "Họ và tên",    ValueSelector = s => s.FullName,    Width = 35 },
-                new() { Header = "Email",        ValueSelector = s => s.Email,       Width = 45 },
-                new() { Header = "Số điện thoại",ValueSelector = s => s.Phone,       Width = 12 },
-                new() { Header = "Ngày sinh",    ValueSelector = s => s.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật", Width = 18 },
-                new() { Header = "Trạng thái",   ValueSelector = s => s.Address,  Width = 14 },
-                new() { Header = "Ngày tạo",     ValueSelector = s => s.RegisteredDate, Width = 16, Format = "dd/MM/yyyy" },
+                new() { Header = "ID",           ValueSelector = u => u.UserId,    Width = 8  },
+                new() { Header = "Họ và tên",    ValueSelector = u => u.FullName,    Width = 35 },
+                new() { Header = "Email",        ValueSelector = u => u.Email,       Width = 45 },
+                new() { Header = "Số điện thoại",ValueSelector = u => u.Phone,       Width = 12 },
+                new() { Header = "Ngày sinh",    ValueSelector = u => u.DateOfBirth?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật", Width = 18 },
+                new() { Header = "Địa chỉ",      ValueSelector = u => u.Address,  Width = 14 },
+                new() { Header = "Ngày tạo",     ValueSelector = u => u.RegisteredDate, Width = 16, Format = "dd/MM/yyyy" },
             };
 
-            var bytes = _excel.Export(students, columns, "Học viên", "DANH SÁCH HỌC VIÊN");
+            var bytes = _excel.Export(users, columns, "Học viên", "DANH SÁCH HỌC VIÊN");
             var fileName = $"DanhSachHocVien_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
             return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
@@ -321,54 +321,53 @@ namespace SchoolApp.Controllers
             if (ext != ".xlsx")
                 return Json(new { success = false, message = "Chỉ chấp nhận file .xlsx." });
 
-            // Định nghĩa ánh xạ cột — tên Header phải khớp với file Excel
             var defaultPassword = _passwordService.Hash("SchoolApp@123");
 
-            var columns = new List<ExcelColumnMap<Student>>
+            var columns = new List<ExcelColumnMap<User>>
             {
                 new() {
-                    Header = "Họ và tên", Required = true,
-                    Setter = (s, v) => s.FullName = v
+                    Header = "Họ và tên", Required = false,
+                    Setter = (u, v) => u.FullName = v
                 },
                 new() {
                     Header = "Email", Required = true,
-                    Setter = (s, v) => {
+                    Setter = (u, v) => {
                         if (!v.Contains('@')) throw new Exception("Không đúng định dạng email");
-                        s.Email = v;
+                        u.Email = v;
                     }
                 },
                 new() {
-                    Header = "Số điện thoại", Required = true,
-                    Setter = (s, v) => {
+                    Header = "Số điện thoại", Required = false,
+                    Setter = (u, v) => {
                         if (v.Length < 9 || v.Length > 15)
                             throw new Exception("Phải từ 9 đến 15 ký tự");
-                        s.Phone = v;
+                        u.Phone = v;
                     }
                 },
                 new() {
                     Header = "Ngày sinh", Required = false,
-                    Setter = (s, v) => {
+                    Setter = (u, v) => {
                         if (!DateTime.TryParseExact(v, new[]{ "dd/MM/yyyy", "d/M/yyyy", "yyyy-MM-dd" },
                                 CultureInfo.InvariantCulture, DateTimeStyles.None, out var dob))
                             throw new Exception("Định dạng phải là dd/MM/yyyy");
-                        s.DateOfBirth = dob;
+                        u.DateOfBirth = dob;
                     }
                 },
                 new() {
                     Header = "Địa chỉ", Required = false,
-                    Setter = (s, v) => s.Address = v
+                    Setter = (u, v) => u.Address = v
                 },
             };
 
             using var stream = file.OpenReadStream();
-            var importResult = _excelImport.Import(stream, columns, () => new Student
+            var importResult = _excelImport.Import(stream, columns, () => new User
             {
                 Role = "student",
                 Password = defaultPassword,
-                RegisteredDate = DateTime.Now
+                RegisteredDate = DateTime.Now,
+                IsEmailVerified = true
             });
 
-            // Lỗi cấp file (cột bắt buộc thiếu) → trả về ngay
             var fileErrors = importResult.Errors.Where(e => e.RowNumber == 0).ToList();
             if (fileErrors.Any())
                 return Json(new { success = false, message = fileErrors.First().Message });
@@ -376,20 +375,18 @@ namespace SchoolApp.Controllers
             int added = 0;
             var skipped = new List<object>();
 
-            // Lỗi từng dòng trong Excel
             foreach (var err in importResult.Errors.Where(e => e.RowNumber > 0))
                 skipped.Add(new { row = err.RowNumber, reason = err.Message });
 
-            // Kiểm tra nghiệp vụ & lưu các dòng hợp lệ
-            foreach (var student in importResult.ValidRows)
+            foreach (var user in importResult.ValidRows)
             {
-                if (_uow.Students.Any(s => s.Email == student.Email))
+                if (_uow.Users.Any(u => u.Email == user.Email))
                 {
-                    skipped.Add(new { row = -1, reason = $"Email \"{student.Email}\" đã tồn tại" });
+                    skipped.Add(new { row = -1, reason = $"Email \"{user.Email}\" đã tồn tại" });
                     continue;
                 }
 
-                _uow.Students.Add(student);
+                _uow.Users.Add(user);
                 added++;
             }
 
@@ -398,7 +395,6 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, added, skipped });
         }
 
-        // ── TẢI FILE MẪU ──────────────────────────────────────────────────
         [AuthorizeAdmin]
         [AuthorizeManager]
         public IActionResult DownloadImportTemplate()
@@ -414,7 +410,6 @@ namespace SchoolApp.Controllers
                 }
             };
 
-            // Dùng lại ExcelExportService với anonymous type để tạo template
             var columns = new List<ExcelColumnDef<dynamic>>
             {
                 new() { Header = "Họ và tên",     ValueSelector = r => r.HoVaTen,     Width = 30 },

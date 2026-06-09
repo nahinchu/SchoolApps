@@ -1,4 +1,4 @@
-@using X.PagedList
+﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @using SchoolApp.Models
 @model IPagedList<SchoolApp.Models.Course>
@@ -26,7 +26,7 @@
     var isManager = role == "Manager";
     var isAdminOrManager = isAdmin || isManager;
     var isStudent = role == "Student";
-    var studentId = Context.Session.GetInt32("StudentId");
+    var userId = Context.Session.GetInt32("userId");
     var enrolledIds = ViewBag.EnrolledCourseIds as HashSet<int> ?? new HashSet<int>();
     var antiForgery = Html.AntiForgeryToken();
 }

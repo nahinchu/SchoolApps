@@ -4,10 +4,16 @@
     {
         Task SendPaymentSuccessEmailAsync(
             string toEmail,
-            string studentName,
+            string userName,
             string courseName,
             decimal amount,
             long orderCode,
             DateTime paidAt);
+
+        Task SendOtpEmailAsync(
+            string toEmail,
+            string userName,
+            string otp,
+            string purpose);
     }
 }

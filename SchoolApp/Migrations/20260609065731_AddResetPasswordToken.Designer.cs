@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolApp.Data;
 
@@ -11,9 +12,11 @@ using SchoolApp.Data;
 namespace SchoolApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260609065731_AddResetPasswordToken")]
+    partial class AddResetPasswordToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -74,7 +77,7 @@ namespace SchoolApp.Migrations
                     b.Property<DateTime>("IssuedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int");
 
                     b.HasKey("CertificateId");
@@ -89,7 +92,7 @@ namespace SchoolApp.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_Certificate_Enrollment_Unique");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Certificates");
                 });
@@ -163,16 +166,16 @@ namespace SchoolApp.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int");
 
                     b.HasKey("ReviewId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("StudentId");
 
-                    b.HasIndex("CourseId", "UserId")
+                    b.HasIndex("CourseId", "StudentId")
                         .IsUnique()
-                        .HasDatabaseName("IX_CourseReview_Course_User");
+                        .HasDatabaseName("IX_CourseReview_Course_Student");
 
                     b.ToTable("CourseReviews");
                 });
@@ -201,14 +204,14 @@ namespace SchoolApp.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int");
 
                     b.HasKey("EnrollmentId");
 
                     b.HasIndex("CourseId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Enrollments");
                 });
@@ -286,18 +289,18 @@ namespace SchoolApp.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int");
 
                     b.HasKey("LessonProgressId");
 
                     b.HasIndex("LessonId");
 
-                    b.HasIndex("UserId", "LessonId")
+                    b.HasIndex("StudentId", "LessonId")
                         .IsUnique()
-                        .HasDatabaseName("IX_LessonProgress_User_Lesson");
+                        .HasDatabaseName("IX_LessonProgress_Student_Lesson");
 
-                    b.HasIndex(new[] { "UserId", "LessonId" }, "IX_LessonProgress_User_Lesson")
+                    b.HasIndex(new[] { "StudentId", "LessonId" }, "IX_LessonProgress_Student_Lesson")
                         .IsUnique();
 
                     b.ToTable("LessonProgresses");
@@ -360,18 +363,18 @@ namespace SchoolApp.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("NotificationId");
 
-                    b.HasIndex("UserId", "IsRead")
-                        .HasDatabaseName("IX_Notification_User_Read");
+                    b.HasIndex("StudentId", "IsRead")
+                        .HasDatabaseName("IX_Notification_Student_Read");
 
                     b.ToTable("Notifications");
                 });
@@ -402,7 +405,7 @@ namespace SchoolApp.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int");
 
                     b.HasKey("PaymentId");
@@ -413,7 +416,7 @@ namespace SchoolApp.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_Payment_OrderCode");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Payments");
                 });
@@ -567,36 +570,33 @@ namespace SchoolApp.Migrations
                     b.Property<DateTime>("StartedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int");
 
                     b.HasKey("QuizAttemptId");
 
                     b.HasIndex("QuizId");
 
-                    b.HasIndex("UserId", "QuizId")
-                        .HasDatabaseName("IX_QuizAttempt_User_Quiz");
+                    b.HasIndex("StudentId", "QuizId")
+                        .HasDatabaseName("IX_QuizAttempt_Student_Quiz");
 
                     b.ToTable("QuizAttempts");
                 });
 
-            modelBuilder.Entity("SchoolApp.Models.User", b =>
+            modelBuilder.Entity("SchoolApp.Models.Student", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("StudentId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentId"));
 
                     b.Property<string>("Address")
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<string>("AvatarUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<DateTime?>("DateOfBirth")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
@@ -605,6 +605,7 @@ namespace SchoolApp.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("FullName")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -612,27 +613,32 @@ namespace SchoolApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("IsEmailVerified")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Password")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
                     b.Property<DateTime>("RegisteredDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("ResetPasswordExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResetPasswordToken")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("StudentId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.AnswerOption", b =>
@@ -660,9 +666,9 @@ namespace SchoolApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolApp.Models.User", "User")
+                    b.HasOne("SchoolApp.Models.Student", "Student")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -670,7 +676,7 @@ namespace SchoolApp.Migrations
 
                     b.Navigation("Enrollment");
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.CourseReview", b =>
@@ -681,15 +687,15 @@ namespace SchoolApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SchoolApp.Models.User", "User")
+                    b.HasOne("SchoolApp.Models.Student", "Student")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Course");
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Enrollment", b =>
@@ -700,15 +706,15 @@ namespace SchoolApp.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SchoolApp.Models.User", "User")
+                    b.HasOne("SchoolApp.Models.Student", "Student")
                         .WithMany("Enrollments")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Course");
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Lesson", b =>
@@ -730,15 +736,15 @@ namespace SchoolApp.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SchoolApp.Models.User", "User")
+                    b.HasOne("SchoolApp.Models.Student", "Student")
                         .WithMany("LessonProgresses")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Lesson");
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Module", b =>
@@ -754,13 +760,13 @@ namespace SchoolApp.Migrations
 
             modelBuilder.Entity("SchoolApp.Models.Notification", b =>
                 {
-                    b.HasOne("SchoolApp.Models.User", "User")
+                    b.HasOne("SchoolApp.Models.Student", "Student")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Payment", b =>
@@ -771,15 +777,15 @@ namespace SchoolApp.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SchoolApp.Models.User", "User")
+                    b.HasOne("SchoolApp.Models.Student", "Student")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Course");
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Question", b =>
@@ -838,15 +844,15 @@ namespace SchoolApp.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("SchoolApp.Models.User", "User")
+                    b.HasOne("SchoolApp.Models.Student", "Student")
                         .WithMany("QuizAttempts")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Quiz");
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("SchoolApp.Models.Course", b =>
@@ -885,7 +891,7 @@ namespace SchoolApp.Migrations
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("SchoolApp.Models.User", b =>
+            modelBuilder.Entity("SchoolApp.Models.Student", b =>
                 {
                     b.Navigation("Enrollments");
 

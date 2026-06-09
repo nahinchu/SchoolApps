@@ -1,0 +1,113 @@
+@model SchoolApp.DTOs.VerifyForgotOtpViewModel
+@{
+    ViewData["Title"] = "Nhập mã OTP";
+}
+
+@section Styles {
+    <style>
+        .sa-header, .sa-admin-bar { display: none !important; }
+        body { background: white !important; overflow: hidden; }
+        .sa-main { padding: 0 !important; }
+        .sa-main > .container { max-width: 100% !important; padding: 0 !important; width: 100% !important; }
+        .auth-page { display: grid; grid-template-columns: 1fr 1fr; height: 100vh; }
+        .auth-left {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+            position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .auth-deco { position: absolute; border-radius: 50%; pointer-events: none; }
+        .auth-right {
+            background: white; display: flex; flex-direction: column;
+            padding: 1.75rem 3.5rem; overflow-y: auto;
+        }
+        .auth-topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; }
+        .auth-logo { display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 1.05rem; color: #1a1a1a; text-decoration: none; }
+        .auth-logo-icon { color: var(--gold); font-size: 1.35rem; }
+        .auth-form-wrapper { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .auth-title { font-size: 2rem; font-weight: 700; color: var(--gold); margin-bottom: 0.3rem; }
+        .auth-subtitle { color: #aaa; font-size: 0.88rem; margin-bottom: 1.5rem; }
+        .auth-label { display: block; color: var(--gold); font-size: 0.78rem; font-weight: 600; margin-bottom: 5px; }
+        .auth-input { width: 100%; border: 1.5px solid #e8e8e8; border-radius: 8px; padding: 10px 13px; font-size: 0.86rem; color: #333; outline: none; transition: border-color 0.2s; background: #fafafa; box-sizing: border-box; }
+        .auth-input:focus { border-color: var(--gold); background: white; }
+        .auth-form-group { margin-bottom: 1.1rem; }
+        .auth-btn { width: 100%; background: var(--gold); color: white; border: none; border-radius: 8px; padding: 12px; font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; cursor: pointer; transition: background .2s; }
+        .auth-btn:hover { background: #d9921f; }
+        .auth-field-error { font-size: 0.72rem; color: #dc3545; margin-top: 3px; display: block; }
+        .otp-input { font-size: 1.6rem; font-weight: 700; letter-spacing: 12px; text-align: center; padding: 12px 16px; }
+        @@media (max-width: 768px) {
+            body { overflow: auto; }
+            .auth-page { grid-template-columns: 1fr; height: auto; }
+            .auth-left { height: 200px; }
+            .auth-right { padding: 1.75rem 1.5rem; }
+        }
+    </style>
+}
+
+<div class="auth-page">
+    <div class="auth-left">
+        <div class="auth-deco" style="width:380px;height:380px;top:-140px;left:-140px;background:rgba(255,255,255,0.10);"></div>
+        <div class="auth-deco" style="width:280px;height:280px;bottom:-90px;right:-90px;background:rgba(255,255,255,0.08);"></div>
+        <img src="~/images/Login.gif" alt="Xác thực OTP"
+             style="width:80%; max-width:320px; object-fit:contain; position:relative; z-index:1;
+                    filter: drop-shadow(0 12px 32px rgba(0,0,0,0.18));" />
+    </div>
+
+    <div class="auth-right">
+        <div class="auth-topbar">
+            <a class="auth-logo" asp-controller="Home" asp-action="Index">
+                <span class="auth-logo-icon"><i class="bi bi-mortarboard-fill"></i></span>
+                SchoolApp
+            </a>
+        </div>
+
+        <div class="auth-form-wrapper">
+            <h1 class="auth-title">Nhập mã OTP.</h1>
+            <p class="auth-subtitle">
+                Mã OTP đã được gửi đến
+                <strong style="color:#333;">@Model.Email</strong>
+            </p>
+
+            <form asp-action="VerifyForgotOtp" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Email" />
+
+                <div class="auth-form-group">
+                    <label class="auth-label" asp-for="Otp">Mã OTP</label>
+                    <input class="auth-input otp-input" asp-for="Otp"
+                           type="text" maxlength="6" placeholder="• • • • • •"
+                           autocomplete="one-time-code" inputmode="numeric"
+                           autofocus />
+                    <span asp-validation-for="Otp" class="auth-field-error"></span>
+                </div>
+
+                <button type="submit" class="auth-btn" style="margin-bottom:.75rem;">XÁC NHẬN</button>
+            </form>
+
+            <form asp-action="ResendOtp" method="post" style="margin-top:.5rem;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="email" value="@Model.Email" />
+                <input type="hidden" name="purpose" value="forgot" />
+                <button type="submit" style="width:100%;background:transparent;border:1.5px solid #e0e0e0;border-radius:8px;padding:11px;font-size:.78rem;font-weight:600;color:#888;cursor:pointer;transition:border-color .2s,color .2s;"
+                        onmouseover="this.style.borderColor='#c9a84c';this.style.color='#c9a84c'"
+                        onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#888'">
+                    <i class="bi bi-arrow-clockwise"></i> Gửi lại mã OTP
+                </button>
+            </form>
+
+            <p style="text-align:center;margin-top:1.25rem;font-size:.8rem;color:#aaa;">
+                <a asp-controller="Account" asp-action="ForgotPassword" style="color:var(--gold);font-weight:600;text-decoration:none;">
+                    ← Quay lại
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('@Html.IdFor(m => m.Otp)').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        });
+    </script>
+}

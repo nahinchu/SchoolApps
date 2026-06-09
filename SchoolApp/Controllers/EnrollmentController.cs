@@ -86,7 +86,7 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(int courseId)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             var role = HttpContext.Session.GetString("Role");
 
             if (studentId == null)
@@ -111,7 +111,7 @@ namespace SchoolApp.Controllers
             }
 
             bool exists = _uow.Enrollments.Any(e =>
-                e.StudentId == studentId && e.CourseId == courseId);
+                e.UserId == studentId && e.CourseId == courseId);
 
             if (exists)
             {
@@ -120,7 +120,7 @@ namespace SchoolApp.Controllers
 
             var enrollment = new Enrollment
             {
-                StudentId = studentId.Value,
+                UserId = studentId.Value,
                 CourseId = courseId,
                 EnrollDate = DateTime.Now,
                 Notes = ""
@@ -139,7 +139,7 @@ namespace SchoolApp.Controllers
 
         public IActionResult MyEnrollments(int page = 1, string filter = "all")
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId == null)
             {
                 TempData["Error"] = "Vui lòng đăng nhập";
@@ -154,7 +154,7 @@ namespace SchoolApp.Controllers
             ViewBag.CompletedCount = all.Count(e => e.IsCompleted);
 
             var reviewedCourseIds = _uow.Reviews
-                .Find(r => r.StudentId == studentId.Value)
+                .Find(r => r.UserId == studentId.Value)
                 .Select(r => r.CourseId)
                 .ToHashSet();
             ViewBag.ReviewedCourseIds = reviewedCourseIds;
@@ -200,7 +200,7 @@ namespace SchoolApp.Controllers
             return Json(new
             {
                 enrollmentId = enrollment.EnrollmentId,
-                studentName = enrollment.Student?.FullName,
+                studentName = enrollment.User?.FullName ?? enrollment.User?.Email,
                 courseName = enrollment.Course?.CourseName,
                 enrollDate = enrollment.EnrollDate.ToString("dd/MM/yyyy"),
                 notes = enrollment.Notes ?? ""
@@ -212,9 +212,9 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult EditAjax(Enrollment enrollment)
         {
-            ModelState.Remove("StudentId");
+            ModelState.Remove("UserId");
             ModelState.Remove("CourseId");
-            ModelState.Remove("Student");
+            ModelState.Remove("User");
             ModelState.Remove("Course");
 
             if (!ModelState.IsValid)

@@ -21,7 +21,7 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(int courseId, int rating, string? comment)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             var role = HttpContext.Session.GetString("Role");
 
             if (studentId == null)
@@ -30,11 +30,11 @@ namespace SchoolApp.Controllers
             if (role != "Student")
                 return Json(new { success = false, message = "Chỉ học viên mới có thể đánh giá" });
 
-            bool enrolled = _uow.Enrollments.Any(e => e.StudentId == studentId && e.CourseId == courseId);
+            bool enrolled = _uow.Enrollments.Any(e => e.UserId == studentId && e.CourseId == courseId);
             if (!enrolled)
                 return Json(new { success = false, message = "Bạn chưa đăng ký khóa học này" });
 
-            bool alreadyReviewed = _uow.Reviews.Any(r => r.StudentId == studentId && r.CourseId == courseId);
+            bool alreadyReviewed = _uow.Reviews.Any(r => r.UserId == studentId && r.CourseId == courseId);
             if (alreadyReviewed)
                 return Json(new { success = false, message = "Bạn đã đánh giá khóa học này rồi" });
 
@@ -44,7 +44,7 @@ namespace SchoolApp.Controllers
             var review = new CourseReview
             {
                 CourseId = courseId,
-                StudentId = studentId.Value,
+                UserId = studentId.Value,
                 Rating = rating,
                 Comment = comment?.Trim(),
                 CreatedAt = DateTime.UtcNow
@@ -53,7 +53,7 @@ namespace SchoolApp.Controllers
             _uow.Reviews.Add(review);
             _uow.SaveChanges();
 
-            var student = _uow.Students.GetById(studentId.Value);
+            var user = _uow.Users.GetById(studentId.Value);
             return Json(new
             {
                 success = true,
@@ -62,7 +62,7 @@ namespace SchoolApp.Controllers
                 {
                     rating,
                     comment = review.Comment,
-                    studentName = student?.FullName ?? "Ẩn danh",
+                    studentName = user?.FullName ?? user?.Email ?? "Ẩn danh",
                     createdAt = review.CreatedAt.ToString("dd/MM/yyyy")
                 }
             });
@@ -72,7 +72,7 @@ namespace SchoolApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int reviewId, int courseId)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             var role = HttpContext.Session.GetString("Role");
 
             if (studentId == null)
@@ -82,7 +82,7 @@ namespace SchoolApp.Controllers
             if (review == null)
                 return Json(new { success = false, message = "Không tìm thấy đánh giá" });
 
-            bool isOwner = review.StudentId == studentId;
+            bool isOwner = review.UserId == studentId;
             bool isAdminOrMgr = role == "Admin" || role == "Manager";
 
             if (!isOwner && !isAdminOrMgr)

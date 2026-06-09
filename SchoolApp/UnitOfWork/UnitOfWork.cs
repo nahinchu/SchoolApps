@@ -1,4 +1,4 @@
-﻿using SchoolApp.Data;
+using SchoolApp.Data;
 using SchoolApp.Models;
 using SchoolApp.Repositories;
 using SchoolApp.Repositories.CourseRepository;
@@ -19,7 +19,7 @@ namespace SchoolApp.UnitOfWork
     {
         private readonly AppDbContext _context;
         public ICourseRepository Courses { get; private set; }
-        public IStudentRepository Students { get; private set; }
+        public IUserRepository Users { get; private set; }
         public IEnrollmentRepository Enrollments { get; private set; }
         public IModuleRepository Modules { get; private set; }
         public ILessonRepository Lessons { get; private set; }
@@ -37,7 +37,7 @@ namespace SchoolApp.UnitOfWork
         {
             _context = context;
             Courses = new CourseRepository(context);
-            Students = new StudentRepository(context);
+            Users = new UserRepository(context);
             Enrollments = new EnrollmentRepository(context);
             Modules = new ModuleRepository(context);
             Lessons = new LessonRepository(context);

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SchoolApp.Data;
 using SchoolApp.Models;
 
@@ -8,16 +8,16 @@ namespace SchoolApp.Repositories.LearnRepository
     {
         public LessonProgressRepository(AppDbContext context) : base(context) { }
 
-        public LessonProgress? GetProgress(int studentId, int lessonId)
+        public LessonProgress? GetProgress(int userId, int lessonId)
         {
-            return _dbSet.FirstOrDefault(p => p.StudentId == studentId && p.LessonId == lessonId);
+            return _dbSet.FirstOrDefault(p => p.UserId == userId && p.LessonId == lessonId);
         }
 
-        public IQueryable<LessonProgress> GetByStudentAndCourse(int studentId, int courseId)
+        public IQueryable<LessonProgress> GetByStudentAndCourse(int userId, int courseId)
         {
             return _dbSet
                 .Include(p => p.Lesson)
-                .Where(p => p.StudentId == studentId
+                .Where(p => p.UserId == userId
                             && p.Lesson.Module.CourseId == courseId);
         }
     }

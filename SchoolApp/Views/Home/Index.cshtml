@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Trang chủ";
     var role = Context.Session.GetString("Role");
-    var studentName = Context.Session.GetString("StudentName");
+    var userName = Context.Session.GetString("UserName");
     var trendingCourses = ViewBag.TrendingCourses as List<Course> ?? new List<Course>();
 
     string LevelLabel(CourseLevel l) => l switch
@@ -26,7 +26,7 @@
     <!-- ===== ADMIN DASHBOARD ===== -->
     <div class="sa-page-hero" style="margin-bottom:2rem;">
         <h1><i class="bi bi-speedometer2" style="color:var(--gold);margin-right:.5rem;"></i>Bảng điều khiển quản trị</h1>
-        <p>Xin chào, <strong style="color:var(--gold-light);">@studentName</strong>! Quản lý toàn bộ hệ thống học tập từ đây.</p>
+        <p>Xin chào, <strong style="color:var(--gold-light);"@userName></strong>! Quản lý toàn bộ hệ thống học tập từ đây.</p>
     </div>
 
     <div class="sa-dash-grid" style="margin-bottom:2.5rem;">
@@ -109,7 +109,7 @@ else if (role == "Student")
                 <i class="bi bi-mortarboard-fill"></i> Chào mừng trở lại
             </p>
             <h1 style="font-family:var(--font-display); font-size:clamp(1.8rem,3.5vw,2.8rem); color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
-                Xin chào, <span style="color:var(--gold);">@studentName</span>!
+                Xin chào, <span style="color:var(--gold);">@userName</span>!
             </h1>
             <p style="color:var(--text-light); font-size:1rem; max-width:420px; margin-bottom:1.75rem; line-height:1.7;">
                 Tiếp tục hành trình học tập của bạn. Kiến thức là nền tảng cho mọi thành công.

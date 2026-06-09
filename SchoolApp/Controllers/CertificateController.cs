@@ -19,7 +19,7 @@ namespace SchoolApp.Controllers
         [AuthorizeUser]
         public IActionResult My()
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId")!.Value;
+            var studentId = HttpContext.Session.GetInt32("UserId")!.Value;
             var certs = _uow.Certificates.GetByStudentWithDetails(studentId).ToList();
             return View(certs);
         }
@@ -27,10 +27,10 @@ namespace SchoolApp.Controllers
         [AuthorizeUser]
         public IActionResult Download(int id)
         {
-            var studentId = HttpContext.Session.GetInt32("StudentId")!.Value;
+            var studentId = HttpContext.Session.GetInt32("UserId")!.Value;
             var cert = _uow.Certificates.GetById(id);
 
-            if (cert == null || cert.StudentId != studentId)
+            if (cert == null || cert.UserId != studentId)
                 return NotFound();
 
             // Reload with navigation props for PDF

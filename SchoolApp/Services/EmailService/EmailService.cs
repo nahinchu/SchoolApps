@@ -1,4 +1,4 @@
-﻿using MailKit.Net.Smtp;
+using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 
@@ -15,21 +15,68 @@ namespace SchoolApp.Services.EmailService
             _logger = logger;
         }
 
-        public async Task SendPaymentSuccessEmailAsync(string toEmail, string studentName, string courseName, decimal amount, long orderCode, DateTime paidAt)
+        public async Task SendPaymentSuccessEmailAsync(string toEmail, string userName, string courseName, decimal amount, long orderCode, DateTime paidAt)
         {
             var smtp = _config.GetSection("Smtp");
 
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(smtp["SenderName"]!, smtp["Username"]!));
-            message.To.Add(new MailboxAddress(studentName, toEmail));
+            message.To.Add(new MailboxAddress(userName, toEmail));
             message.Subject = $"Thanh toán thành công cho khóa học {courseName}";
             message.Body = new BodyBuilder
             {
-                HtmlBody = BuildHtmlBody(studentName, courseName, amount, orderCode, paidAt)
+                HtmlBody = BuildPaymentHtmlBody(userName, courseName, amount, orderCode, paidAt)
             }.ToMessageBody();
 
+            await SendAsync(message);
+        }
+
+        public async Task SendOtpEmailAsync(string toEmail, string userName, string otp, string purpose)
+        {
+            var smtp = _config.GetSection("Smtp");
+
+            bool isRegister = purpose == "register";
+            string subject = isRegister
+                ? "Xác thực email đăng ký SchoolApp"
+                : "Mã OTP đặt lại mật khẩu SchoolApp";
+
+            string title = isRegister ? "Xác thực địa chỉ email" : "Đặt lại mật khẩu";
+            string desc = isRegister
+                ? "Bạn vừa đăng ký tài khoản SchoolApp. Nhập mã OTP bên dưới để xác thực email:"
+                : "Chúng tôi nhận được yêu cầu đặt lại mật khẩu. Nhập mã OTP bên dưới để tiếp tục:";
+
+            var html = $$"""
+                <!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"/>
+                <style>
+                body{font-family:Arial,sans-serif;background:#f4f6f8;margin:0;padding:0;}
+                .card{max-width:520px;margin:40px auto;background:#fff;border-radius:12px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+                .otp{display:inline-block;background:#1b2d42;color:#c9a84c;font-size:32px;font-weight:700;letter-spacing:8px;padding:14px 28px;border-radius:8px;margin:20px 0;}
+                .note{font-size:13px;color:#888;margin-top:16px;}
+                </style></head>
+                <body><div class="card">
+                <h2 style="color:#c9a84c;margin-top:0;">🔐 {{title}}</h2>
+                <p>Xin chào <strong>{{(string.IsNullOrEmpty(userName) ? toEmail : userName)}}</strong>,</p>
+                <p>{{desc}}</p>
+                <div style="text-align:center;"><span class="otp">{{otp}}</span></div>
+                <p class="note">⏱ Mã có hiệu lực trong <strong>10 phút</strong>.</p>
+                <p class="note">Nếu bạn không thực hiện thao tác này, hãy bỏ qua email này.</p>
+                </div></body></html>
+                """;
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(smtp["SenderName"]!, smtp["Username"]!));
+            message.To.Add(new MailboxAddress(userName, toEmail));
+            message.Subject = subject;
+            message.Body = new BodyBuilder { HtmlBody = html }.ToMessageBody();
+
+            await SendAsync(message);
+        }
+
+        private async Task SendAsync(MimeMessage message)
+        {
+            var smtp = _config.GetSection("Smtp");
             using var client = new SmtpClient();
-            try　
+            try
             {
                 await client.ConnectAsync(smtp["Host"]!, int.Parse(smtp["Port"]!), SecureSocketOptions.StartTls);
                 await client.AuthenticateAsync(smtp["Username"]!, smtp["Password"]!);
@@ -37,15 +84,16 @@ namespace SchoolApp.Services.EmailService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to send payment success email to {Email}", toEmail);
+                _logger.LogError(ex, "Failed to send email to {Email}", message.To.ToString());
             }
             finally
             {
                 await client.DisconnectAsync(true);
             }
         }
-        private static string BuildHtmlBody(
-          string studentName,
+
+        private static string BuildPaymentHtmlBody(
+          string userName,
           string courseName,
           decimal amount,
           long orderCode,
@@ -84,9 +132,8 @@ namespace SchoolApp.Services.EmailService
                   <p>Cảm ơn bạn đã đăng ký khóa học tại SchoolApp</p>
                 </div>
                 <div class="body">
-                  <p>Xin chào <strong>{{studentName}}</strong>,</p>
-                  <p>Chúng tôi xác nhận thanh toán của bạn đã được xử lý thành công.
-                     Dưới đây là thông tin chi tiết đơn hàng:</p>
+                  <p>Xin chào <strong>{{userName}}</strong>,</p>
+                  <p>Chúng tôi xác nhận thanh toán của bạn đã được xử lý thành công.</p>
                   <table class="details">
                     <tr>
                       <td class="label">Khóa học</td>
@@ -121,5 +168,4 @@ namespace SchoolApp.Services.EmailService
             """;
         }
     }
-
 }

@@ -1,4 +1,4 @@
-@model IEnumerable<SchoolApp.Models.Student>
+﻿@model IEnumerable<SchoolApp.Models.User>
 @{
     ViewData["Title"] = "Quản lý Manager";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -156,7 +156,7 @@
                                 <form asp-action="DeleteManager" asp-controller="Admin" method="post" style="display:inline;"
                                       onsubmit="return confirm('Xóa tài khoản Manager @m.FullName?')">
                                     @Html.AntiForgeryToken()
-                                    <input type="hidden" name="id" value="@m.StudentId" />
+                                    <input type="hidden" name="id" value="@m.UserId" />
                                     <button type="submit" class="adm-btn-del">
                                         <i class="bi bi-trash"></i> Xóa
                                     </button>

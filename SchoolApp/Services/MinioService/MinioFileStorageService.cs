@@ -74,6 +74,18 @@ public class MinioFileStorageService : IFileStorageService
         return $"/File/Download?path={Uri.EscapeDataString(objectName)}";
     }
 
+    public async Task<string?> UploadAvatarAsync(IFormFile file)
+    {
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!AllowedImageExtensions.Contains(ext))
+            return null;
+        if (file.Length > 5 * 1024 * 1024)
+            return null;
+
+        var objectName = await UploadAsync(file, "avatars");
+        return $"/File/Download?path={Uri.EscapeDataString(objectName)}";
+    }
+
     public async Task<(Stream Stream, string ContentType)> DownloadAsync(
         string objectName, CancellationToken ct = default)
     {

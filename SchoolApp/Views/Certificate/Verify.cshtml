@@ -1,4 +1,4 @@
-@model SchoolApp.Models.Certificate?
+﻿@model SchoolApp.Models.Certificate?
 @{
     ViewData["Title"] = "Xác thực chứng chỉ";
     bool isValid = (bool)(ViewBag.Valid ?? false);
@@ -97,7 +97,7 @@
             <table class="verify-info-table">
                 <tr>
                     <td>Học viên</td>
-                    <td>@Model.Student?.FullName</td>
+                    <td>@Model.User?.FullName</td>
                 </tr>
                 <tr>
                     <td>Khóa học</td>

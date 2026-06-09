@@ -51,7 +51,7 @@ namespace SchoolApp.Controllers
             ViewData["Level"] = level?.ToString() ?? "";
             ViewData["Sort"] = sort ?? "";
 
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId.HasValue)
             {
                 var enrolledIds = _uow.Enrollments.GetByStudent(studentId.Value)
@@ -72,7 +72,7 @@ namespace SchoolApp.Controllers
             var course = _uow.Courses.GetCourseWithFullTree(id);
             if (course == null) return NotFound();
 
-            var studentId = HttpContext.Session.GetInt32("StudentId");
+            var studentId = HttpContext.Session.GetInt32("UserId");
             var role = HttpContext.Session.GetString("Role");
 
             ViewBag.IsEnrolled = false;

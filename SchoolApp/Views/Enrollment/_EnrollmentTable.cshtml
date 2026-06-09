@@ -1,4 +1,4 @@
-@using X.PagedList
+﻿@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Enrollment>
 @{
@@ -35,8 +35,8 @@
                     <tr>
                         <td style="color:rgba(255,255,255,.4); font-size:.8rem;">@i</td>
                         <td>
-                            <div style="font-weight:600; color:rgba(255,255,255,.9);">@e.Student?.FullName</div>
-                            <div style="font-size:.75rem; color:rgba(255,255,255,.4);">@e.Student?.Email</div>
+                            <div style="font-weight:600; color:rgba(255,255,255,.9);">@e.User?.FullName</div>
+                            <div style="font-size:.75rem; color:rgba(255,255,255,.4);">@e.User?.Email</div>
                         </td>
                         <td style="color:rgba(255,255,255,.75);">@e.Course?.CourseName</td>
                         <td style="color:rgba(255,255,255,.5); font-size:.82rem;">@e.EnrollDate.ToString("dd/MM/yyyy")</td>
