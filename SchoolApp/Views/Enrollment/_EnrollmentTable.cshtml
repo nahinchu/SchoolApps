@@ -1,19 +1,20 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Enrollment>
 @{
     var searchTerm = ViewData["SearchTerm"] as string;
+    var status = ViewData["Status"] as string ?? "";
 }
 
-<div class="adm-table-wrap ">
-    <table class="adm-table  adm-table-bordered">
+<div class="adm-table-wrap">
+    <table class="adm-table adm-table-bordered">
         <thead>
             <tr>
                 <th>#</th>
                 <th>Học viên</th>
                 <th>Khóa học</th>
                 <th>Ngày đăng ký</th>
-                <th>Ghi chú</th>
+                <th class="text-center">Trạng thái</th>
                 <th class="text-center">Thao tác</th>
             </tr>
         </thead>
@@ -40,19 +41,31 @@
                         </td>
                         <td style="color:rgba(255,255,255,.75);">@e.Course?.CourseName</td>
                         <td style="color:rgba(255,255,255,.5); font-size:.82rem;">@e.EnrollDate.ToString("dd/MM/yyyy")</td>
-                        <td style="color:rgba(255,255,255,.5); font-size:.82rem; font-style:italic;">
-                            @(string.IsNullOrEmpty(e.Notes) ? "—" : e.Notes)
+                        <td class="text-center">
+                            @if (e.IsCompleted)
+                            {
+                                <span style="display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; background:rgba(76,175,80,.18); color:#4caf50; border:1px solid rgba(76,175,80,.4);">
+                                    <i class="bi bi-check-circle-fill"></i> Hoàn thành
+                                </span>
+                                @if (e.CompletedAt.HasValue)
+                                {
+                                    <div style="font-size:.7rem; color:rgba(255,255,255,.3); margin-top:.2rem;">
+                                        @e.CompletedAt.Value.ToString("dd/MM/yyyy")
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span style="display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; background:rgba(33,150,243,.15); color:#42a5f5; border:1px solid rgba(33,150,243,.35);">
+                                    <i class="bi bi-play-circle"></i> Đang học
+                                </span>
+                            }
                         </td>
-                        <td class="text-center" style="white-space:nowrap;">
-                            <button type="button"
-                                    class="adm-btn adm-btn-warning adm-btn-sm"
-                                    onclick="openEditModal(@e.EnrollmentId)">
-                                <i class="bi bi-pencil"></i> Sửa
-                            </button>
+                        <td class="text-center">
                             <button type="button"
                                     class="adm-btn adm-btn-danger adm-btn-sm btn-delete-enrollment"
                                     data-id="@e.EnrollmentId">
-                                <i class="bi bi-trash"></i>
+                                <i class="bi bi-trash"></i> Xóa
                             </button>
                         </td>
                     </tr>
@@ -69,7 +82,7 @@
         &nbsp;·&nbsp; Tổng <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> đăng ký
     </span>
     @Html.PagedListPager(Model,
-        page => Url.Action("Index", new { page, searchTerm }),
+    page => Url.Action("Index", new { page, searchTerm, status }),
         new PagedListRenderOptions
         {
             LiElementClasses = new[] { "page-item" },

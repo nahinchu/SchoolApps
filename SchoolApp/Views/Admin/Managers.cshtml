@@ -59,6 +59,21 @@
                 background: rgba(248,81,73,0.25);
             }
 
+        .adm-btn-edit {
+            background: rgba(201,168,76,0.12);
+            border: 1px solid rgba(201,168,76,0.35);
+            color: #c9a84c;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: .78rem;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+            .adm-btn-edit:hover {
+                background: rgba(201,168,76,0.25);
+            }
+
         .adm-empty {
             text-align: center;
             padding: 40px;
@@ -152,7 +167,11 @@
                             <td style="color:rgba(201,168,76,0.8);">@m.Email</td>
                             <td>@(m.Phone ?? "—")</td>
                             <td>@m.RegisteredDate.ToString("dd/MM/yyyy")</td>
-                            <td>
+                            <td style="white-space:nowrap;">
+                                <button type="button" class="adm-btn-edit"
+                                        onclick="openEditModal(@m.UserId)">
+                                    <i class="bi bi-pencil"></i> Sửa
+                                </button>
                                 <form asp-action="DeleteManager" asp-controller="Admin" method="post" style="display:inline;"
                                       onsubmit="return confirm('Xóa tài khoản Manager @m.FullName?')">
                                     @Html.AntiForgeryToken()
@@ -170,3 +189,118 @@
         </div>
     }
 </div>
+
+<!-- ── MODAL SỬA MANAGER ───────────────────────────────── -->
+<div class="modal fade" id="editManagerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:480px;">
+        <div class="modal-content" style="background:#0d1b2a; border:1px solid rgba(255,255,255,.1); border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.5);">
+            <div class="modal-header" style="background:linear-gradient(135deg,#14233d,#1e3356); border-bottom:1px solid rgba(255,255,255,.08); padding:1.25rem 1.5rem;">
+                <h5 style="font-size:1.05rem; font-weight:700; color:#c9a84c; margin:0;">
+                    <i class="bi bi-pencil-square me-2"></i>Sửa thông tin Manager
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" style="padding:1.5rem;">
+                <div id="editManagerResult" style="margin-bottom:.75rem;"></div>
+                <form id="editManagerForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="editUserId" name="userId" />
+                    <div class="adm-form-grid">
+                        <div class="adm-form-group full">
+                            <label class="adm-form-label">Email (không thể thay đổi)</label>
+                            <input id="editEmail" class="adm-input" readonly
+                                   style="background:rgba(255,255,255,.04); color:rgba(255,255,255,.4); cursor:default;" />
+                        </div>
+                        <div class="adm-form-group full">
+                            <label class="adm-form-label">Họ và tên *</label>
+                            <input id="editFullName" name="fullName" class="adm-input"
+                                   placeholder="Nguyễn Văn A" maxlength="100" />
+                            <div id="err-fullName" style="color:#f85149; font-size:.75rem; margin-top:.25rem;"></div>
+                        </div>
+                        <div class="adm-form-group full">
+                            <label class="adm-form-label">Số điện thoại</label>
+                            <input id="editPhone" name="phone" class="adm-input"
+                                   placeholder="0901234567" maxlength="15" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid rgba(255,255,255,.08); padding:1rem 1.5rem; background:rgba(255,255,255,.02);">
+                <button type="button" class="adm-btn adm-btn-sm" data-bs-dismiss="modal"
+                        style="background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.12);">
+                    Hủy
+                </button>
+                <button type="button" id="btnSaveManager" class="adm-btn-create" style="margin-top:0;">
+                    <i class="bi bi-check-lg me-1"></i> Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
+    <script>
+        function openEditModal(id) {
+            $('#editManagerResult').html('');
+            $('#err-fullName').text('');
+            $('#editFullName').val('');
+            $('#editEmail').val('Đang tải...');
+            $('#editPhone').val('');
+            $('#editManagerModal').modal('show');
+
+            $.get('@Url.Action("GetManager", "Admin")/' + id, function (data) {
+                $('#editUserId').val(data.userId);
+                $('#editFullName').val(data.fullName);
+                $('#editEmail').val(data.email);
+                $('#editPhone').val(data.phone);
+            }).fail(function () {
+                $('#editManagerModal').modal('hide');
+                alert('Không thể tải thông tin Manager!');
+            });
+        }
+
+        $('#btnSaveManager').on('click', function () {
+            var btn = $(this);
+            $('#editManagerResult').html('');
+            $('#err-fullName').text('');
+
+            var fullName = $('#editFullName').val().trim();
+            if (fullName.length < 2) {
+                $('#err-fullName').text('Họ và tên phải có ít nhất 2 ký tự.');
+                return;
+            }
+
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...');
+
+            var token = $('input[name="__RequestVerificationToken"]').first().val();
+            $.ajax({
+                url: '@Url.Action("EditManagerAjax", "Admin")',
+                type: 'POST',
+                data: {
+                    userId: $('#editUserId').val(),
+                    fullName: fullName,
+                    phone: $('#editPhone').val().trim(),
+                    __RequestVerificationToken: token
+                },
+                success: function (res) {
+                    btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> Lưu');
+                    if (res.success) {
+                        $('#editManagerModal').modal('hide');
+                        // Reload trang để cập nhật bảng
+                        location.reload();
+                    } else {
+                        $('#editManagerResult').html(
+                            '<div style="background:rgba(248,81,73,.12); border:1px solid rgba(248,81,73,.3); color:#f85149; border-radius:6px; padding:.5rem .75rem; font-size:.82rem;">' +
+                            '<i class="bi bi-exclamation-circle me-1"></i>' + $('<span>').text(res.message).html() + '</div>'
+                        );
+                    }
+                },
+                error: function () {
+                    btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> Lưu');
+                    alert('Lỗi server. Vui lòng thử lại.');
+                }
+            });
+        });
+    </script>
+}

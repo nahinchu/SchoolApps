@@ -28,7 +28,7 @@ namespace SchoolApp.Controllers
         }
 
         // GET: /Course
-        public IActionResult Index(string searchTerm, int page = 1, int? level = null, string sort = null)
+        public IActionResult Index(string searchTerm, int page = 1, int? level = null, string sort = null, string status = null)
         {
             int pageSize = 5;
 
@@ -36,6 +36,11 @@ namespace SchoolApp.Controllers
 
             if (level.HasValue)
                 query = query.Where(c => (int)c.Level == level.Value);
+
+            if (status == "active")
+                query = query.Where(c => c.IsActive);
+            else if (status == "inactive")
+                query = query.Where(c => !c.IsActive);
 
             query = sort switch
             {
@@ -50,6 +55,7 @@ namespace SchoolApp.Controllers
             ViewData["SearchTerm"] = searchTerm;
             ViewData["Level"] = level?.ToString() ?? "";
             ViewData["Sort"] = sort ?? "";
+            ViewData["Status"] = status ?? "";
 
             var studentId = HttpContext.Session.GetInt32("UserId");
             if (studentId.HasValue)
@@ -58,6 +64,20 @@ namespace SchoolApp.Controllers
                     .Select(e => e.CourseId)
                     .ToHashSet();
                 ViewBag.EnrolledCourseIds = enrolledIds;
+            }
+
+            // Enrollment counts + average ratings cho admin/manager table
+            var role = HttpContext.Session.GetString("Role");
+            if (role == "Admin" || role == "Manager")
+            {
+                var courseIds = result.Select(c => c.CourseId).ToList();
+                ViewBag.EnrollmentCounts = _uow.Enrollments.GetAll()
+                    .Where(e => courseIds.Contains(e.CourseId))
+                    .GroupBy(e => e.CourseId)
+                    .ToDictionary(g => g.Key, g => g.Count());
+                ViewBag.AverageRatings = courseIds.ToDictionary(
+                    id => id,
+                    id => _uow.Reviews.GetAverageRating(id));
             }
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -539,6 +559,18 @@ namespace SchoolApp.Controllers
 
             ViewData["CourseName"] = course.CourseName;
             return RedirectToAction("Index", "Module", new { courseId = id });
+        }
+
+        [HttpGet]
+        [AuthorizeManager]
+        public IActionResult GetActiveCourses()
+        {
+            var courses = _uow.Courses.GetAll()
+                .Where(c => c.IsActive)
+                .OrderBy(c => c.CourseName)
+                .Select(c => new { c.CourseId, c.CourseName })
+                .ToList();
+            return Json(courses);
         }
     }
 }

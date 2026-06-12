@@ -14,6 +14,24 @@
    (override custom CSS đang style nó màu đỏ trong scope toàn cục)
    ============================================================ *@
 <style>
+    /* Quill editor inside modal */
+    #lessonModal .ql-toolbar.ql-snow {
+        border-radius: 6px 6px 0 0;
+        background: #f8f9fa;
+        border-color: #dee2e6;
+    }
+    #lessonModal .ql-container.ql-snow {
+        border-color: #dee2e6;
+    }
+    #lessonModal .ql-editor {
+        font-size: .9rem;
+        color: #212529;
+    }
+    #lessonModal .ql-editor.ql-blank::before {
+        color: #adb5bd;
+        font-style: normal;
+    }
+
     #lessonModal .form-switch .form-check-input {
         width: 2.5em;
         height: 1.25em;
@@ -48,21 +66,21 @@
     </div>
 </div>
 
-<div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-    <form id="searchForm" method="get" style="flex:1; max-width:400px; display:flex; gap:0;">
+<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <form id="searchForm" method="get" style="flex:1; max-width:440px; display:flex; gap:0;">
         <input type="hidden" name="moduleId" value="@moduleId" />
         <div style="position:relative; flex:1;">
-            <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-light);"></i>
+            <i class="bi bi-search" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="sa-input" placeholder="Tìm bài học..."
-                   style="padding-left:36px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);" />
+                   class="adm-input" placeholder="Tìm bài học..."
+                   style="padding-left:34px; border-radius:8px 0 0 8px;" />
         </div>
-        <button type="submit" class="sa-btn sa-btn-primary" style="border-radius:0 var(--radius-sm) var(--radius-sm) 0;">Tìm</button>
+        <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">Tìm</button>
     </form>
 
-    <button type="button" class="sa-btn sa-btn-gold" data-bs-toggle="modal" data-bs-target="#lessonModal"
+    <button type="button" class="adm-btn adm-btn-primary" data-bs-toggle="modal" data-bs-target="#lessonModal"
             onclick="openCreateModal()">
-        <i class="bi bi-plus-circle"></i> Thêm bài học mới
+        <i class="bi bi-plus-circle me-1"></i> Thêm bài học mới
     </button>
 </div>
 
@@ -147,8 +165,9 @@
                     </div>
 
                     <div class="sa-form-group mt-3">
-                        <label class="sa-label">Nội dung bài viết (HTML)</label>
-                        <textarea id="HtmlContent" name="HtmlContent" class="sa-input" rows="6"></textarea>
+                        <label class="sa-label">Nội dung bài viết</label>
+                        <div id="quillEditor" style="height:260px; background:#fff; border-radius:0 0 6px 6px;"></div>
+                        <textarea id="HtmlContent" name="HtmlContent" style="display:none;"></textarea>
                     </div>
 
                     <div class="sa-form-group mt-3">
@@ -186,10 +205,27 @@
 
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
     <script>
         var isEditMode = false;
         var currentModuleId = @moduleId;
+
+        var quill = new Quill('#quillEditor', {
+            theme: 'snow',
+            placeholder: 'Nhập nội dung bài viết...',
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    ['link', 'image', 'blockquote', 'code-block'],
+                    ['clean']
+                ]
+            }
+        });
 
         function clearErrors() {
             $('#modalResult').html('');
@@ -221,6 +257,7 @@
             $('#currentAttachment').hide();
             $('#currentVideo').hide();
             setVideoMode('url');
+            quill.setContents([]);
             clearErrors();
             $('#lessonModal').modal('show');
         }
@@ -235,7 +272,7 @@
                 $('#LessonId').val(data.lessonId);
                 $('#Title').val(data.title);
                 $('#Type').val(data.type === 'Video' ? 0 : data.type === 'Text' ? 1 : 2);
-                $('#HtmlContent').val(data.htmlContent || '');
+                quill.clipboard.dangerouslyPasteHTML(data.htmlContent || '');
                 $('#DurationMinutes').val(data.durationMinutes || 0);
                 $('#OrderIndex').val(data.orderIndex);
                 $('#IsPublished').prop('checked', data.isPublished);
@@ -276,6 +313,7 @@
         $(function () {
             $('#btnSaveLesson').on('click', function () {
                 clearErrors();
+                $('#HtmlContent').val(quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML);
                 var $btn = $(this);
                 var url = isEditMode ? '@Url.Action("EditAjax", "Lesson")' : '@Url.Action("CreateAjax", "Lesson")';
                 var formData = new FormData($('#lessonForm')[0]);
@@ -350,6 +388,33 @@
                 });
             });
 
+            function initSortable() {
+                var tbody = document.getElementById('lessonTableBody');
+                if (!tbody) return;
+                Sortable.create(tbody, {
+                    handle: '.bi-grip-vertical',
+                    animation: 150,
+                    onEnd: function() {
+                        var ids = Array.from(tbody.querySelectorAll('tr[data-id]'))
+                                       .map(tr => parseInt(tr.dataset.id));
+                        var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+                        $.ajax({
+                            url: '@Url.Action("ReorderAjax", "Lesson")',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            headers: { 'RequestVerificationToken': token },
+                            data: JSON.stringify({ ids: ids }),
+                            success: function(res) {
+                                if (res.success) showToast('Đã cập nhật thứ tự bài học!', 'success');
+                            },
+                            error: function() { showToast('Lỗi khi cập nhật thứ tự!', 'danger'); }
+                        });
+                    }
+                });
+            }
+
+            initSortable();
+
             window.loadLessons = function (page = 1) {
                 var searchTerm = $('#searchForm input[name="searchTerm"]').val();
                 $.ajax({
@@ -358,6 +423,7 @@
                     data: { moduleId: currentModuleId, searchTerm: searchTerm, page: page },
                     success: function (html) {
                         $('#lessonTableContainer').html(html);
+                        initSortable();
                     }
                 });
             };

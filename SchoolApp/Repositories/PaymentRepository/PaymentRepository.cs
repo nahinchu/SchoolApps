@@ -23,5 +23,13 @@ namespace SchoolApp.Repositories.PaymentRepository
                 .Where(p => p.UserId == userId)
                 .OrderByDescending(p => p.CreatedAt);
         }
+
+        public IQueryable<Payment> GetAllWithDetails()
+        {
+            return _context.Payments
+                .Include(p => p.User)
+                .Include(p => p.Course)
+                .OrderByDescending(p => p.CreatedAt);
+        }
     }
 }

@@ -266,6 +266,23 @@ namespace SchoolApp.Controllers
             return Json(new { success = true, message = "Cập nhật bài học thành công!" });
         }
 
+        [HttpPost]
+        [AuthorizeManager]
+        [ValidateAntiForgeryToken]
+        public IActionResult ReorderAjax([FromBody] ReorderDto dto)
+        {
+            if (dto?.Ids == null || dto.Ids.Length == 0)
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+
+            for (int i = 0; i < dto.Ids.Length; i++)
+            {
+                var l = _uow.Lessons.GetById(dto.Ids[i]);
+                if (l != null) { l.OrderIndex = i + 1; _uow.Lessons.Update(l); }
+            }
+            _uow.SaveChanges();
+            return Json(new { success = true });
+        }
+
         [HttpGet]
         public IActionResult GetLesson(int id)
         {

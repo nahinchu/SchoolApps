@@ -144,6 +144,11 @@
                 {
                     <hr class="adm-nav-divider" />
                     <div class="adm-nav-label">Hệ thống</div>
+                    <a class="adm-nav-link @(IsActive("Admin", "Payments") ? "active" : "")"
+                       asp-controller="Admin" asp-action="Payments" title="Lịch sử thanh toán">
+                        <i class="bi bi-credit-card adm-nav-icon"></i>
+                        <span class="adm-nav-text">Lịch sử thanh toán</span>
+                    </a>
                     <a class="adm-nav-link @(IsActive("Admin", "Managers") ? "active" : "")"
                        asp-controller="Admin" asp-action="Managers" title="Quản lý Manager">
                         <i class="bi bi-person-gear adm-nav-icon"></i>

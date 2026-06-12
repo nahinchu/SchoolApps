@@ -205,5 +205,22 @@ namespace SchoolApp.Controllers
                 courseId = module.CourseId
             });
         }
+
+        [HttpPost]
+        [AuthorizeManager]
+        [ValidateAntiForgeryToken]
+        public IActionResult ReorderAjax([FromBody] ReorderDto dto)
+        {
+            if (dto?.Ids == null || dto.Ids.Length == 0)
+                return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+
+            for (int i = 0; i < dto.Ids.Length; i++)
+            {
+                var m = _uow.Modules.GetById(dto.Ids[i]);
+                if (m != null) { m.OrderIndex = i + 1; _uow.Modules.Update(m); }
+            }
+            _uow.SaveChanges();
+            return Json(new { success = true });
+        }
     }
 }

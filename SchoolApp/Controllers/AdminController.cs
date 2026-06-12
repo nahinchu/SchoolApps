@@ -5,6 +5,7 @@ using SchoolApp.Services.HashPassService;
 using SchoolApp.UnitOfWork;
 using SchoolApp.DTOs;
 using SchoolApp.Models;
+using X.PagedList.Extensions;
 namespace SchoolApp.Controllers
 {
     [AuthorizeManager]
@@ -134,6 +135,61 @@ namespace SchoolApp.Controllers
 
             TempData["Success"] = $"Đăng ký quản lý {model.FullName ?? model.Email} thành công!";
             return RedirectToAction("Managers");
+        }
+
+        [HttpGet]
+        [AuthorizeAdmin]
+        public IActionResult GetManager(int id)
+        {
+            var manager = _uow.Users.GetById(id);
+            if (manager == null || !manager.Role.Equals("manager", StringComparison.OrdinalIgnoreCase))
+                return NotFound();
+            return Json(new {
+                userId  = manager.UserId,
+                fullName = manager.FullName ?? "",
+                email   = manager.Email,
+                phone   = manager.Phone ?? ""
+            });
+        }
+
+        [HttpPost]
+        [AuthorizeAdmin]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditManagerAjax(int userId, string fullName, string phone)
+        {
+            var manager = _uow.Users.GetById(userId);
+            if (manager == null || !manager.Role.Equals("manager", StringComparison.OrdinalIgnoreCase))
+                return Json(new { success = false, message = "Không tìm thấy Manager." });
+
+            if (string.IsNullOrWhiteSpace(fullName) || fullName.Trim().Length < 2)
+                return Json(new { success = false, message = "Họ và tên phải có ít nhất 2 ký tự." });
+
+            manager.FullName = fullName.Trim();
+            manager.Phone    = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
+            _uow.SaveChanges();
+
+            return Json(new { success = true, message = $"Cập nhật thông tin Manager {manager.FullName} thành công!" });
+        }
+
+        [AuthorizeAdmin]
+        public IActionResult Payments(string searchTerm, string status, int page = 1)
+        {
+            int pageSize = 15;
+            var query = _uow.Payments.GetAllWithDetails();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+                query = query.Where(p =>
+                    (p.User != null && (p.User.FullName!.Contains(searchTerm) || p.User.Email.Contains(searchTerm))) ||
+                    (p.Course != null && p.Course.CourseName.Contains(searchTerm)));
+
+            if (status == "paid")       query = query.Where(p => p.Status == PaymentStatus.PAID);
+            else if (status == "pending")   query = query.Where(p => p.Status == PaymentStatus.PENDING);
+            else if (status == "cancelled") query = query.Where(p => p.Status == PaymentStatus.CANCELLED);
+
+            var result = query.ToPagedList(page, pageSize);
+            ViewData["SearchTerm"] = searchTerm ?? "";
+            ViewData["Status"] = status ?? "";
+            return View(result);
         }
 
         [HttpPost]

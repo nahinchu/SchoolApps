@@ -17,28 +17,28 @@
 </div>
 
 <!-- TOOLBAR -->
-<div style="display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
-    <a asp-controller="Course" asp-action="Index" class="btn btn-outline-secondary">
-        ← Danh sách khóa học
+<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <a asp-controller="Course" asp-action="Index"
+       class="adm-btn" style="background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.12);">
+        <i class="bi bi-arrow-left me-1"></i> Khóa học
     </a>
 
-    <form id="searchForm" method="get" style="flex:1; max-width:420px; display:flex; gap:0;">
+    <form id="searchForm" method="get" style="flex:1; max-width:440px; display:flex; gap:0;">
         <input type="hidden" name="courseId" value="@courseId" />
         <div style="position:relative; flex:1;">
-            <i class="bi bi-search" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-light);"></i>
+            <i class="bi bi-search" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="sa-input" placeholder="Tìm chương..."
-                   style="padding-left:42px; border-radius:var(--radius-sm) 0 0 var(--radius-sm);" />
+                   class="adm-input" placeholder="Tìm chương..."
+                   style="padding-left:34px; border-radius:8px 0 0 8px;" />
         </div>
-        <button type="submit" class="sa-btn sa-btn-primary"
-                style="border-radius:0 var(--radius-sm) var(--radius-sm) 0; padding:10px 20px;">
-            <i class="bi bi-search"></i>
+        <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">
+            Tìm
         </button>
     </form>
 
-    <button type="button" class="sa-btn sa-btn-gold" data-bs-toggle="modal" data-bs-target="#moduleModal"
+    <button type="button" class="adm-btn adm-btn-primary" data-bs-toggle="modal" data-bs-target="#moduleModal"
             onclick="openCreateModal()">
-        <i class="bi bi-plus-circle me-2"></i> Thêm chương mới
+        <i class="bi bi-plus-circle me-1"></i> Thêm chương mới
     </button>
 </div>
 
@@ -110,6 +110,7 @@
 
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 
     <script>
         var isEditMode = false;
@@ -152,6 +153,8 @@
         }
 
         $(function () {
+            initSortable();
+
             // Lưu Module (Create & Edit)
             $('#btnSaveModule').on('click', function () {
                 clearErrors();
@@ -224,6 +227,32 @@
                 });
             });
 
+            // Drag-drop reorder
+            function initSortable() {
+                var tbody = document.getElementById('moduleTableBody');
+                if (!tbody) return;
+                Sortable.create(tbody, {
+                    handle: '.bi-grip-vertical',
+                    animation: 150,
+                    onEnd: function() {
+                        var ids = Array.from(tbody.querySelectorAll('tr[data-id]'))
+                                       .map(tr => parseInt(tr.dataset.id));
+                        var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+                        $.ajax({
+                            url: '@Url.Action("ReorderAjax", "Module")',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            headers: { 'RequestVerificationToken': token },
+                            data: JSON.stringify({ ids: ids }),
+                            success: function(res) {
+                                if (res.success) showToast('Đã cập nhật thứ tự chương!', 'success');
+                            },
+                            error: function() { showToast('Lỗi khi cập nhật thứ tự!', 'danger'); }
+                        });
+                    }
+                });
+            }
+
             // Hàm load bảng
             window.loadModules = function(page) {
                 var searchTerm = $('#searchForm input[name="searchTerm"]').val();
@@ -238,6 +267,7 @@
                     },
                     success: function (html) {
                         $('#moduleTableContainer').html(html);
+                        initSortable();
                     }
                 });
             };
