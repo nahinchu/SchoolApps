@@ -1,0 +1,146 @@
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using SchoolApp.Models.Enums
+@model IPagedList<SchoolApp.Models.Payment>
+@{
+    ViewData["Title"] = "Lịch sử thanh toán";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var searchTerm = ViewData["SearchTerm"]?.ToString() ?? "";
+    var statusVal  = ViewData["Status"]?.ToString() ?? "";
+    var statusLabel = statusVal switch {
+        "paid"      => "✅ Đã thanh toán",
+        "pending"   => "⏳ Chờ xử lý",
+        "cancelled" => "❌ Đã hủy",
+        _           => "☰ Trạng thái"
+    };
+}
+
+<div class="adm-page-header">
+    <div>
+        <div class="adm-page-title">💳 Lịch sử <span>Thanh toán</span></div>
+        <div class="adm-page-sub">Theo dõi tất cả giao dịch thanh toán trong hệ thống</div>
+    </div>
+</div>
+
+<!-- TOOLBAR -->
+<form method="get" id="filterForm"
+      style="display:flex; align-items:center; gap:8px; margin-bottom:1.5rem; flex-wrap:wrap;">
+    <div style="position:relative; flex:1; min-width:220px; max-width:420px; display:flex;">
+        <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem; z-index:1;"></i>
+        <input type="text" name="searchTerm" value="@searchTerm"
+               class="adm-input" placeholder="Tìm theo tên học viên hoặc khóa học..."
+               style="padding-left:36px; border-radius:8px 0 0 8px; flex:1;" />
+        <button type="submit" class="adm-btn adm-btn-primary"
+                style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">Tìm</button>
+    </div>
+
+    <input type="hidden" id="statusInput" name="status" value="@statusVal" />
+    <div class="dropdown">
+        <button class="adm-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                style="@(!string.IsNullOrEmpty(statusVal) ? "border-color:#c9a84c; color:#c9a84c;" : "background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.15);")">
+            @statusLabel
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark"
+            style="background:#14233d; border:1px solid rgba(255,255,255,.1); min-width:180px;">
+            <li><a class="dropdown-item @(statusVal == "" ? "active" : "")" href="javascript:void(0)" onclick="setStatus('')"><i class="bi bi-list-ul me-2"></i>Tất cả</a></li>
+            <li><a class="dropdown-item @(statusVal == "paid" ? "active" : "")" href="javascript:void(0)" onclick="setStatus('paid')"><i class="bi bi-check-circle-fill me-2" style="color:#4caf50;"></i>Đã thanh toán</a></li>
+            <li><a class="dropdown-item @(statusVal == "pending" ? "active" : "")" href="javascript:void(0)" onclick="setStatus('pending')"><i class="bi bi-hourglass-split me-2" style="color:#ff9800;"></i>Chờ xử lý</a></li>
+            <li><a class="dropdown-item @(statusVal == "cancelled" ? "active" : "")" href="javascript:void(0)" onclick="setStatus('cancelled')"><i class="bi bi-x-circle-fill me-2" style="color:#e53935;"></i>Đã hủy</a></li>
+        </ul>
+    </div>
+</form>
+
+<!-- TABLE -->
+<div class="adm-card" style="padding:0; overflow:hidden;">
+    <div class="adm-table-wrap">
+        <table class="adm-table adm-table-bordered">
+            <thead>
+                <tr>
+                    <th style="width:50px" class="text-center">#</th>
+                    <th>Học viên</th>
+                    <th>Khóa học</th>
+                    <th style="width:140px" class="text-end">Số tiền</th>
+                    <th style="width:130px" class="text-center">Trạng thái</th>
+                    <th style="width:150px">Ngày tạo</th>
+                    <th style="width:150px">Ngày thanh toán</th>
+                    <th style="width:130px">Mã đơn</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding:3rem; color:rgba(255,255,255,.3);">
+                            <i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
+                            Không có giao dịch nào
+                        </td>
+                    </tr>
+                }
+                @{ int stt = (Model.PageNumber - 1) * Model.PageSize + 1; }
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <td class="text-center" style="color:rgba(255,255,255,.35);">@(stt++)</td>
+                        <td>
+                            <div style="font-weight:500;">@(p.User?.FullName ?? p.User?.Email ?? "—")</div>
+                            <small style="color:var(--adm-text-dim);">@p.User?.Email</small>
+                        </td>
+                        <td>@(p.Course?.CourseName ?? "—")</td>
+                        <td class="text-end" style="font-weight:600; color:var(--adm-gold);">
+                            @p.Amount.ToString("N0")₫
+                        </td>
+                        <td class="text-center">
+                            @switch (p.Status)
+                            {
+                                case PaymentStatus.PAID:
+                                    <span class="adm-badge adm-badge-success">✅ Đã TT</span>
+                                    break;
+                                case PaymentStatus.PENDING:
+                                    <span class="adm-badge adm-badge-warning">⏳ Chờ</span>
+                                    break;
+                                case PaymentStatus.CANCELLED:
+                                    <span class="adm-badge adm-badge-danger">❌ Hủy</span>
+                                    break;
+                            }
+                        </td>
+                        <td style="color:var(--adm-text-dim); font-size:.83rem;">
+                            @p.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                        </td>
+                        <td style="color:var(--adm-text-dim); font-size:.83rem;">
+                            @(p.PaidAt.HasValue ? p.PaidAt.Value.ToString("dd/MM/yyyy HH:mm") : "—")
+                        </td>
+                        <td style="font-family:monospace; font-size:.8rem; color:rgba(255,255,255,.5);">
+                            #@p.OrderCode
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.PageCount > 1)
+    {
+        <div style="padding:.75rem 1rem; border-top:1px solid rgba(201,168,76,.12); display:flex; justify-content:center;">
+            @Html.PagedListPager(Model, page => Url.Action("Payments", "Admin", new { page, searchTerm, status = statusVal })!,
+                new PagedListRenderOptions {
+                    LiElementClasses = new[] { "page-item" },
+                    PageClasses = new[] { "page-link" },
+                    UlElementClasses = new[] { "pagination pagination-sm mb-0" }
+                })
+        </div>
+    }
+
+    <div style="padding:.5rem 1rem; border-top:1px solid rgba(201,168,76,.08); color:rgba(255,255,255,.35); font-size:.78rem;">
+        Tổng <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> giao dịch
+        | Trang @Model.PageNumber / @Model.PageCount
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function setStatus(val) {
+            document.getElementById('statusInput').value = val;
+            document.getElementById('filterForm').submit();
+        }
+    </script>
+}

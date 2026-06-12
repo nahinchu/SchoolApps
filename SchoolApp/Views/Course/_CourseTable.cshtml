@@ -29,6 +29,8 @@
     var userId = Context.Session.GetInt32("userId");
     var enrolledIds = ViewBag.EnrolledCourseIds as HashSet<int> ?? new HashSet<int>();
     var antiForgery = Html.AntiForgeryToken();
+    var enrollmentCounts = ViewBag.EnrollmentCounts as Dictionary<int, int> ?? new Dictionary<int, int>();
+    var averageRatings = ViewBag.AverageRatings as Dictionary<int, double> ?? new Dictionary<int, double>();
 }
 
 @if (isAdminOrManager)
@@ -41,8 +43,9 @@
                     <th>#</th>
                     <th>Tên khóa học</th>
                     <th class="text-center">Cấp độ</th>
-                    <th class="text-center">Tín chỉ</th>
                     <th class="text-end">Học phí</th>
+                    <th class="text-center">Đăng ký</th>
+                    <th class="text-center">Đánh giá</th>
                     <th class="text-center">Trạng thái</th>
                     <th class="text-center">Thao tác</th>
                 </tr>
@@ -51,7 +54,7 @@
                 @if (!Model.Any())
                 {
                     <tr>
-                        <td colspan="7" style="text-align:center; color:rgba(255,255,255,0.3); padding:2rem;">
+                        <td colspan="8" style="text-align:center; color:rgba(255,255,255,0.3); padding:2rem;">
                             <i class="bi bi-inbox" style="font-size:1.5rem; display:block; margin-bottom:.4rem;"></i>
                             Không có khóa học nào
                         </td>
@@ -97,9 +100,30 @@
                                     @LevelLabel(item.Level)
                                 </span>
                             </td>
-                            <td class="text-center" style="color:rgba(255,255,255,.7);">@item.Credits</td>
                             <td class="text-end" style="font-weight:600; color:var(--adm-gold); white-space:nowrap;">
                                 @item.Fee.ToString("N0") <small style="font-weight:400; opacity:.6;">₫</small>
+                            </td>
+                            <td class="text-center">
+                                @{
+                                    var cnt = enrollmentCounts.GetValueOrDefault(item.CourseId, 0);
+                                }
+                                <span style="font-weight:600; color:rgba(255,255,255,.8);">@cnt</span>
+                                <small style="color:rgba(255,255,255,.3); font-size:.7rem; display:block;">học viên</small>
+                            </td>
+                            <td class="text-center">
+                                @{
+                                    var avg = averageRatings.GetValueOrDefault(item.CourseId, 0);
+                                }
+                                @if (avg > 0)
+                                {
+                                    <span style="color:#ffc107; font-weight:600; font-size:.85rem;">
+                                        <i class="bi bi-star-fill" style="font-size:.7rem;"></i> @avg.ToString("0.0")
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="color:rgba(255,255,255,.25); font-size:.8rem;">—</span>
+                                }
                             </td>
                             <td class="text-center">
                                 <button type="button" class="adm-btn adm-btn-sm btn-toggle-active"

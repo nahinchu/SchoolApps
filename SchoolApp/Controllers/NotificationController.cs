@@ -22,12 +22,6 @@ namespace SchoolApp.Controllers
             }
 
             var notifications = _uow.Notifications.GetByStudent(studentId.Value).ToList();
-
-            // mark all as read on visit
-            foreach (var n in notifications.Where(n => !n.IsRead))
-                n.IsRead = true;
-            _uow.SaveChanges();
-
             return View(notifications);
         }
 

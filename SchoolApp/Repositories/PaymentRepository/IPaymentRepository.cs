@@ -6,6 +6,6 @@ namespace SchoolApp.Repositories.PaymentRepository
     {
         Payment? GetByOrderCode(long orderCode);
         IQueryable<Payment> GetByStudent(int studentId);
-
+        IQueryable<Payment> GetAllWithDetails();
     }
 }

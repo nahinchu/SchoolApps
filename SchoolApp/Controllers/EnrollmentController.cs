@@ -20,14 +20,21 @@ namespace SchoolApp.Controllers
         }
 
         [AuthorizeManager]
-        public IActionResult Index(string searchTerm, int page = 1)
+        public IActionResult Index(string searchTerm, int page = 1, string status = null)
         {
             int pageSize = 5;
 
-            var result = _uow.Enrollments.SearchWithDetails(searchTerm)
-                .ToPagedList(page, pageSize);
+            var query = _uow.Enrollments.SearchWithDetails(searchTerm);
+
+            if (status == "completed")
+                query = query.Where(e => e.IsCompleted);
+            else if (status == "inprogress")
+                query = query.Where(e => !e.IsCompleted);
+
+            var result = query.ToPagedList(page, pageSize);
 
             ViewData["SearchTerm"] = searchTerm;
+            ViewData["Status"] = status ?? "";
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
                 return PartialView("_EnrollmentTable", result);
@@ -169,14 +176,59 @@ namespace SchoolApp.Controllers
 
             IEnumerable<Enrollment> source = filter switch
             {
-                "completed"  => all.Where(e => e.IsCompleted),
+                "completed" => all.Where(e => e.IsCompleted),
                 "inprogress" => all.Where(e => !e.IsCompleted),
-                _            => all
+                _ => all
             };
 
             var model = source.ToPagedList(page, pageSize);
             return View(model);
         }
+        [HttpPost]
+        [AuthorizeManager]
+        [ValidateAntiForgeryToken]
+        public IActionResult EnrollManual(int userId, int courseId)
+        {
+            var user = _uow.Users.GetById(userId);
+            if (user == null || user.Role.ToLower() != "student")
+                return Json(new { success = false, message = "Không tìm thấy học viên." });
+
+            var course = _uow.Courses.GetById(courseId);
+            if (course == null)
+                return Json(new { success = false, message = "Không tìm thấy khóa học." });
+
+            if (_uow.Enrollments.Any(e => e.UserId == userId && e.CourseId == courseId))
+                return Json(new { success = false, message = "Học viên đã đăng ký khóa học này rồi." });
+
+            _uow.Enrollments.Add(new Enrollment
+            {
+                UserId = userId,
+                CourseId = courseId,
+                EnrollDate = DateTime.Now,
+                Notes = "Ghi danh thủ công bởi Manager"
+            });
+            _uow.SaveChanges();
+
+            _notifService.Create(userId,
+                "Đăng ký khóa học",
+                $"Bạn đã được ghi danh vào khóa học \"{course.CourseName}\".",
+                "/Enrollment/MyEnrollments");
+
+            return Json(new { success = true, message = $"Ghi danh \"{user.FullName ?? user.Email}\" vào \"{course.CourseName}\" thành công!" });
+        }
+
+        [HttpGet]
+        [AuthorizeManager]
+        public IActionResult SearchStudents(string q)
+        {
+            var users = _uow.Users.Search(q)
+                .Where(u => u.Role.ToLower() == "student")
+                .Take(10)
+                .Select(u => new { u.UserId, label = (u.FullName ?? u.Email) + " — " + u.Email })
+                .ToList();
+            return Json(users);
+        }
+
         [HttpPost]
         [AuthorizeManager]
         [ValidateAntiForgeryToken]

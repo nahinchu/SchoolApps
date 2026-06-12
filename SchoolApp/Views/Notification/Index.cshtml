@@ -2,18 +2,35 @@
 @{
     ViewData["Title"] = "Thông báo";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var unreadCount = Model.Count(n => !n.IsRead);
 }
 
 <div style="max-width:720px; margin:2rem auto;">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:.75rem;">
         <h2 style="color:var(--gold-light); margin:0;">
             <i class="bi bi-bell-fill"></i> Thông báo
+            @if (unreadCount > 0)
+            {
+                <span style="display:inline-block; margin-left:.4rem; padding:.1rem .5rem; background:var(--gold); color:#0d1b2a; border-radius:20px; font-size:.65rem; font-weight:800; vertical-align:middle;">
+                    @unreadCount mới
+                </span>
+            }
         </h2>
-        @if (Model.Any())
-        {
+        <div style="display:flex; align-items:center; gap:.5rem;">
             <span style="font-size:.85rem; color:rgba(255,255,255,.45);">@Model.Count thông báo</span>
-        }
+            @if (unreadCount > 0)
+            {
+                <button id="btnMarkAllRead" style="
+                    padding:.35rem .85rem; border-radius:var(--radius-sm); border:1px solid rgba(201,168,76,.4);
+                    background:rgba(201,168,76,.1); color:var(--gold-light); font-size:.8rem; font-weight:600;
+                    cursor:pointer; transition:all .2s;">
+                    <i class="bi bi-check2-all me-1"></i> Đánh dấu tất cả đã đọc
+                </button>
+            }
+        </div>
     </div>
+
+    <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
 
     @if (!Model.Any())
     {
@@ -24,7 +41,7 @@
     }
     else
     {
-        <div style="display:flex; flex-direction:column; gap:.75rem;">
+        <div id="notifList" style="display:flex; flex-direction:column; gap:.75rem;">
             @foreach (var n in Model)
             {
                 <div style="background:var(--navy-light); border-radius:12px; padding:1rem 1.25rem;
@@ -65,3 +82,37 @@
         </div>
     }
 </div>
+
+@section Scripts {
+    <script>
+        $('#btnMarkAllRead').on('click', function () {
+            var btn = $(this);
+            var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...');
+            $.ajax({
+                url: '@Url.Action("MarkAllRead", "Notification")',
+                type: 'POST',
+                data: { __RequestVerificationToken: token },
+                success: function (res) {
+                    if (res.success) {
+                        // Xoá badge "mới" và ẩn button
+                        btn.closest('div').find('span[style*="font-size:.65rem"]').remove();
+                        btn.remove();
+                        // Cập nhật visual: xoá gold border + dot indicator
+                        $('#notifList > div').each(function () {
+                            $(this).css({ 'border': '1px solid rgba(255,255,255,.08)', 'box-shadow': 'none' });
+                            $(this).find('span[style*="border-radius:50%"]').remove();
+                            $(this).find('strong').css('color', 'rgba(255,255,255,.7)');
+                            $(this).find('.bi-bell-fill').removeClass('bi-bell-fill').addClass('bi-bell');
+                            $(this).find('div[style*="rgba(201,168,76,.15)"]')
+                                .css('background', 'rgba(255,255,255,.07)');
+                        });
+                    }
+                },
+                error: function () {
+                    btn.prop('disabled', false).html('<i class="bi bi-check2-all me-1"></i> Đánh dấu tất cả đã đọc');
+                }
+            });
+        });
+    </script>
+}
