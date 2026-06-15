@@ -54,16 +54,16 @@ services:
     ports:
       - "1433:1433"
     volumes:
-      - sql_data:/var/opt/mssql/data
-      - sql_log:/var/opt/mssql/log
-      - sql_backup:/var/opt/mssql/backup
+      - /opt/schoolapp/data/mssql/data:/var/opt/mssql/data
+      - /opt/schoolapp/data/mssql/log:/var/opt/mssql/log
+      - /opt/schoolapp/data/mssql/backup:/var/opt/mssql/backup
     restart: always
     networks:
       - schoolapp
     healthcheck:
       test: [
         "CMD",
-        "/opt/mssql-tools18/bin/sqlcmd",
+        "/opt/mssql-tools/bin/sqlcmd",
         "-S",
         "localhost",
         "-U",
