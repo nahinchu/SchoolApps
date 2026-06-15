@@ -104,6 +104,12 @@ namespace SchoolApp
                 MinimumSameSitePolicy = SameSiteMode.Lax,
                 Secure = CookieSecurePolicy.SameAsRequest
             });
+            // Auto-migrate database on startup
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<SchoolApp.Data.AppDbContext>();
+                context.Database.Migrate();
+            }
 
             app.UseSession();
             app.UseAuthentication();

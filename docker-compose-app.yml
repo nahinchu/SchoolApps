@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    image: schoolapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: schoolapp
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnectionStringDB=Server=${DB_SERVER},1433;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True
+      - MinIO__Endpoint=${MINIO_ENDPOINT}
+      - MinIO__AccessKey=${MINIO_ACCESS_KEY}
+      - MinIO__SecretKey=${MINIO_SECRET_KEY}
+      - MinIO__UseSSL=${MINIO_USE_SSL}
+      - MinIO__BucketName=${MINIO_BUCKET}
+      - Authentication__Google__ClientId=${GOOGLE_CLIENT_ID}
+      - Authentication__Google__ClientSecret=${GOOGLE_CLIENT_SECRET}
+      - Smtp__Host=${SMTP_HOST}
+      - Smtp__Port=${SMTP_PORT}
+      - Smtp__Username=${SMTP_USERNAME}
+      - Smtp__Password=${SMTP_PASSWORD}
+      - Smtp__SenderName=${SENDER_NAME}
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+      - minio
+    restart: always
+    networks:
+      - schoolapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  schoolapp-network:
+    driver: bridge
