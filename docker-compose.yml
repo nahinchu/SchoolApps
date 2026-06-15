@@ -11,7 +11,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnectionStringDB=Server=localhost,1433;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True
+      - ConnectionStrings__DefaultConnectionStringDB=Server=sql-server,1433;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};TrustServerCertificate=True
       - MinIO__Endpoint=${MINIO_ENDPOINT}
       - MinIO__AccessKey=${MINIO_ACCESS_KEY}
       - MinIO__SecretKey=${MINIO_SECRET_KEY}
