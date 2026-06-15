@@ -45,7 +45,7 @@ services:
 
   # SQL Server Database
   sql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: sql-server
     environment:
       - ACCEPT_EULA=Y
