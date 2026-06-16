@@ -64,6 +64,8 @@ namespace SchoolApp.Controllers
 
         public IActionResult Login()
         {
+            if (HttpContext.Session.GetString("Role") != null)
+                return RedirectToAction("Index", "Course");
             return View(new LoginViewModel());
         }
 
