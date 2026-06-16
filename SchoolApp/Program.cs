@@ -81,6 +81,13 @@ namespace SchoolApp
                 options.CorrelationCookie.SameSite = SameSiteMode.Lax;
                 options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 options.CorrelationCookie.HttpOnly = true;
+
+                options.Events.OnRemoteFailure = ctx =>
+                {
+                    ctx.Response.Redirect("/Account/Login");
+                    ctx.HandleResponse();
+                    return Task.CompletedTask;
+                };
             });
 
             var app = builder.Build();
