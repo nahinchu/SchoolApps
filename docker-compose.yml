@@ -48,6 +48,7 @@ services:
       start_period: 40s
     volumes:
       - ./logs:/app/logs
+      - dp_keys:/app/keys
 
   # SQL Server Database
   sql:
@@ -112,6 +113,7 @@ volumes:
   sql_log:
   sql_backup:
   minio_data:
+  dp_keys:
 
 networks:
   schoolapp:
