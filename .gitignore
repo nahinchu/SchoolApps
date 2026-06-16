@@ -55,8 +55,11 @@ wwwroot/dist/
 # Secrets
 ######################################
 appsettings.Development.json
+appsettings.Development.json.*
 secrets.json
 .env
+*.bak
+*.bal
 
 ######################################
 # NuGet
