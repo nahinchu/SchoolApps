@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Minio;
 using SchoolApp.Data;
@@ -32,7 +33,10 @@ namespace SchoolApp
             builder.Services.Configure<FormOptions>(o => o.MultipartBodyLengthLimit = 500 * 1024 * 1024);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddLocalization(options => options.ResourcesPath = "");
+            builder.Services.AddControllersWithViews()
+                .AddViewLocalization()
+                .AddDataAnnotationsLocalization();
 
             builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionStringDB")));
@@ -112,6 +116,12 @@ namespace SchoolApp
                 context.Request.EnableBuffering();
                 await next();
             });
+
+            var supportedCultures = new[] { "vi-VN", "en-GB" };
+            app.UseRequestLocalization(new RequestLocalizationOptions()
+                .SetDefaultCulture("vi-VN")
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures));
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

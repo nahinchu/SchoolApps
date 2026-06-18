@@ -10,8 +10,8 @@
         : "~/Views/Shared/_Layout.cshtml";
     var curLevel  = ViewData["Level"]?.ToString() ?? "";
     var curStatus = ViewData["Status"]?.ToString() ?? "";
-    var levelLabel  = curLevel  switch { "0" => "Cơ bản", "1" => "Trung cấp", "2" => "Nâng cao", _ => "Cấp độ" };
-    var statusLabel = curStatus switch { "active" => "Đang mở", "inactive" => "Đã đóng", _ => "Trạng thái" };
+    var levelLabel  = curLevel  switch { "0" => L["Level_Basic"].Value, "1" => L["Level_Intermediate"].Value, "2" => L["Level_Advanced"].Value, _ => L["Course_AllLevels"].Value };
+    var statusLabel = curStatus switch { "active" => L["Course_Active"].Value, "inactive" => L["Course_Inactive"].Value, _ => L["Course_AllStatus"].Value };
 }
 
 <!-- ==================== PAGE HEADER ==================== -->
@@ -19,16 +19,16 @@
 {
     <div class="adm-page-header">
         <div>
-            <div class="adm-page-title">📚 Danh sách <span>Khóa học</span></div>
-            <div class="adm-page-sub">Quản lý và khám phá các khóa học hiện có</div>
+            <div class="adm-page-title">📚 @L["Course_Title"]</div>
+            <div class="adm-page-sub">@L["Course_Subtitle"]</div>
         </div>
     </div>
 }
 else
 {
     <div class="sa-page-hero">
-        <h1>📚 Danh sách khóa học</h1>
-        <p>Quản lý và khám phá các khóa học hiện có</p>
+        <h1>📚 @L["Course_Title"]</h1>
+        <p>@L["Course_Subtitle"]</p>
     </div>
 }
 
@@ -55,10 +55,10 @@ else
                     <i class="bi bi-bar-chart-steps me-1"></i> @levelLabel
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark" style="background:#14233d; border:1px solid rgba(255,255,255,.1); min-width:160px;">
-                    <li><a class="dropdown-item @(curLevel == "" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','')"><i class="bi bi-list-ul me-2"></i>Tất cả</a></li>
-                    <li><a class="dropdown-item @(curLevel == "0" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','0')"><i class="bi bi-circle me-2" style="color:#4caf50;"></i>Cơ bản</a></li>
-                    <li><a class="dropdown-item @(curLevel == "1" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','1')"><i class="bi bi-circle me-2" style="color:#ff9800;"></i>Trung cấp</a></li>
-                    <li><a class="dropdown-item @(curLevel == "2" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','2')"><i class="bi bi-circle me-2" style="color:#e53935;"></i>Nâng cao</a></li>
+                    <li><a class="dropdown-item @(curLevel == "" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','')"><i class="bi bi-list-ul me-2"></i>@L["Course_AllLevels"]</a></li>
+                    <li><a class="dropdown-item @(curLevel == "0" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','0')"><i class="bi bi-circle me-2" style="color:#4caf50;"></i>@L["Level_Basic"]</a></li>
+                    <li><a class="dropdown-item @(curLevel == "1" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','1')"><i class="bi bi-circle me-2" style="color:#ff9800;"></i>@L["Level_Intermediate"]</a></li>
+                    <li><a class="dropdown-item @(curLevel == "2" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('level','2')"><i class="bi bi-circle me-2" style="color:#e53935;"></i>@L["Level_Advanced"]</a></li>
                 </ul>
             </div>
 
@@ -69,24 +69,24 @@ else
                     <i class="bi bi-toggle-on me-1"></i> @statusLabel
                 </button>
                 <ul class="dropdown-menu dropdown-menu-dark" style="background:#14233d; border:1px solid rgba(255,255,255,.1); min-width:160px;">
-                    <li><a class="dropdown-item @(curStatus == "" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('status','')"><i class="bi bi-list-ul me-2"></i>Tất cả</a></li>
-                    <li><a class="dropdown-item @(curStatus == "active" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('status','active')"><i class="bi bi-toggle-on me-2" style="color:#4caf50;"></i>Đang mở</a></li>
-                    <li><a class="dropdown-item @(curStatus == "inactive" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('status','inactive')"><i class="bi bi-toggle-off me-2" style="color:#e53935;"></i>Đã đóng</a></li>
+                    <li><a class="dropdown-item @(curStatus == "" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('status','')"><i class="bi bi-list-ul me-2"></i>@L["Course_AllStatus"]</a></li>
+                    <li><a class="dropdown-item @(curStatus == "active" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('status','active')"><i class="bi bi-toggle-on me-2" style="color:#4caf50;"></i>@L["Course_Active"]</a></li>
+                    <li><a class="dropdown-item @(curStatus == "inactive" ? "active" : "")" href="javascript:void(0)" onclick="setCourseFilter('status','inactive')"><i class="bi bi-toggle-off me-2" style="color:#e53935;"></i>@L["Course_Inactive"]</a></li>
                 </ul>
             </div>
         </form>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <a id="btnExport" href="@Url.Action("ExportExcel", "Course", new { searchTerm = ViewData["SearchTerm"] })"
                class="adm-btn adm-btn-success">
-                <i class="bi bi-file-earmark-excel me-1"></i> Xuất Excel
+                <i class="bi bi-file-earmark-excel me-1"></i> @L["Btn_Export"]
             </a>
             <button type="button" class="adm-btn adm-btn-info"
                     data-bs-toggle="modal" data-bs-target="#importModal">
-                <i class="bi bi-upload me-1"></i> Nhập Excel
+                <i class="bi bi-upload me-1"></i> @L["Btn_Import"]
             </button>
             <button type="button" class="adm-btn adm-btn-primary" data-bs-toggle="modal" data-bs-target="#courseModal"
                     onclick="openCreateModal()">
-                <i class="bi bi-plus-circle me-1"></i> Thêm khóa học mới
+                <i class="bi bi-plus-circle me-1"></i> @L["Course_AddNew"]
             </button>
         </div>
     </div>
@@ -100,40 +100,44 @@ else
             <div style="position:relative; flex:1; min-width:200px; max-width:360px;">
                 <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-light); pointer-events:none;"></i>
                 <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                       class="sa-input" placeholder="Tìm khóa học..."
+                       class="sa-input" placeholder="@L["Course_SearchPlaceholder"]"
                        style="padding-left:38px;" />
             </div>
 
             <!-- Bộ lọc: Cấp độ -->
-            <div style="display:flex; align-items:center; gap:.4rem;">
-                <i class="bi bi-funnel" style="color:var(--text-light); font-size:.9rem;"></i>
-                <select name="level" onchange="this.form.submit()" class="sa-input" style="min-width:130px;">
-                    <option value="" selected="@(ViewData["Level"]?.ToString() == "" ? "selected" : null)">Tất cả cấp độ</option>
-                    <option value="0" selected="@(ViewData["Level"]?.ToString() == "0" ? "selected" : null)">Cơ bản</option>
-                    <option value="1" selected="@(ViewData["Level"]?.ToString() == "1" ? "selected" : null)">Trung cấp</option>
-                    <option value="2" selected="@(ViewData["Level"]?.ToString() == "2" ? "selected" : null)">Nâng cao</option>
+            <div style="position:relative; display:inline-flex; align-items:center;">
+                <i class="bi bi-funnel" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);
+                   color:var(--text-light); font-size:.82rem; pointer-events:none; z-index:1;"></i>
+                <select name="level" onchange="this.form.submit()" class="sa-input"
+                        style="padding-left:30px; padding-right:12px; min-width:130px; appearance:none; -webkit-appearance:none;">
+                    <option value="" selected="@(ViewData["Level"]?.ToString() == "" ? "selected" : null)">@L["Course_AllLevels"]</option>
+                    <option value="0" selected="@(ViewData["Level"]?.ToString() == "0" ? "selected" : null)">@L["Level_Basic"]</option>
+                    <option value="1" selected="@(ViewData["Level"]?.ToString() == "1" ? "selected" : null)">@L["Level_Intermediate"]</option>
+                    <option value="2" selected="@(ViewData["Level"]?.ToString() == "2" ? "selected" : null)">@L["Level_Advanced"]</option>
                 </select>
             </div>
 
             <!-- Sắp xếp theo -->
-            <div style="display:flex; align-items:center; gap:.4rem;">
-                <span style="font-size:.875rem; color:var(--text-mid); white-space:nowrap;">Sắp xếp</span>
-                <select name="sort" onchange="this.form.submit()" class="sa-input" style="min-width:160px;">
-                    <option value="" selected="@(ViewData["Sort"]?.ToString() == "" ? "selected" : null)">Mới nhất</option>
-                    <option value="name_az" selected="@(ViewData["Sort"]?.ToString() == "name_az" ? "selected" : null)">Tên A → Z</option>
-                    <option value="price_asc" selected="@(ViewData["Sort"]?.ToString() == "price_asc" ? "selected" : null)">Học phí tăng dần</option>
-                    <option value="price_desc" selected="@(ViewData["Sort"]?.ToString() == "price_desc" ? "selected" : null)">Học phí giảm dần</option>
+            <div style="position:relative; display:inline-flex; align-items:center;">
+                <i class="bi bi-arrow-down-up" style="position:absolute; left:10px; top:50%; transform:translateY(-50%);
+                   color:var(--text-light); font-size:.82rem; pointer-events:none; z-index:1;"></i>
+                <select name="sort" onchange="this.form.submit()" class="sa-input"
+                        style="padding-left:30px; padding-right:12px; min-width:160px; appearance:none; -webkit-appearance:none;">
+                    <option value="" selected="@(ViewData["Sort"]?.ToString() == "" ? "selected" : null)">@L["Course_Newest"]</option>
+                    <option value="name_az" selected="@(ViewData["Sort"]?.ToString() == "name_az" ? "selected" : null)">@L["Course_NameAZ"]</option>
+                    <option value="price_asc" selected="@(ViewData["Sort"]?.ToString() == "price_asc" ? "selected" : null)">@L["Course_PriceAsc"]</option>
+                    <option value="price_desc" selected="@(ViewData["Sort"]?.ToString() == "price_desc" ? "selected" : null)">@L["Course_PriceDesc"]</option>
                 </select>
             </div>
 
             <!-- Nút tìm -->
             <button type="submit" class="sa-btn sa-btn-primary" style="white-space:nowrap;">
-                <i class="bi bi-search me-1"></i> Tìm kiếm
+                <i class="bi bi-search me-1"></i> @L["Course_SearchBtn"]
             </button>
 
             <!-- Số kết quả -->
             <span style="margin-left:auto; font-size:.875rem; color:var(--text-mid); white-space:nowrap; font-weight:600;">
-                <i class="bi bi-collection me-1" style="color:var(--gold);"></i>@Model.TotalItemCount kết quả
+                <i class="bi bi-collection me-1" style="color:var(--gold);"></i>@Model.TotalItemCount @L["Course_Results"]
             </span>
         </div>
     </form>

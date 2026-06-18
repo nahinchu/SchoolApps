@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavCourses" xml:space="preserve">
+    <value>Courses</value>
+  </data>
+  <data name="NavMyEnrollments" xml:space="preserve">
+    <value>My Courses</value>
+  </data>
+  <data name="NavCertificates" xml:space="preserve">
+    <value>Certificates</value>
+  </data>
+  <data name="NavStudents" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="NavEnrollments" xml:space="preserve">
+    <value>Enrollments</value>
+  </data>
+  <data name="NavQuestionBank" xml:space="preserve">
+    <value>Question Bank</value>
+  </data>
+  <data name="WelcomeTitle" xml:space="preserve">
+    <value>Welcome to</value>
+  </data>
+  <data name="WelcomeDesc" xml:space="preserve">
+    <value>A modern learning management platform connecting students and instructors in a professional space.</value>
+  </data>
+  <data name="RegisterFree" xml:space="preserve">
+    <value>Register for Free</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="ViewCourses" xml:space="preserve">
+    <value>Browse Courses</value>
+  </data>
+  <data name="FeatureRichContent" xml:space="preserve">
+    <value>Rich Content</value>
+  </data>
+  <data name="FeatureRichContentDesc" xml:space="preserve">
+    <value>Video lessons, text materials and attachments.</value>
+  </data>
+  <data name="FeatureQuiz" xml:space="preserve">
+    <value>Tests &amp; Assessments</value>
+  </data>
+  <data name="FeatureQuizDesc" xml:space="preserve">
+    <value>Interactive quizzes with multiple question types, auto-graded.</value>
+  </data>
+  <data name="FeatureProgress" xml:space="preserve">
+    <value>Progress Tracking</value>
+  </data>
+  <data name="FeatureProgressDesc" xml:space="preserve">
+    <value>System records detailed learning progress for each lesson.</value>
+  </data>
+  <data name="FeatureSecurity" xml:space="preserve">
+    <value>Security &amp; Safety</value>
+  </data>
+  <data name="FeatureSecurityDesc" xml:space="preserve">
+    <value>BCrypt encrypted passwords, clear roles for Admin / Student.</value>
+  </data>
+  <data name="StudentWelcomeBack" xml:space="preserve">
+    <value>Welcome back</value>
+  </data>
+  <data name="StudentGreeting" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="StudentMotivation" xml:space="preserve">
+    <value>Continue your learning journey. Knowledge is the foundation of every success.</value>
+  </data>
+  <data name="StudentLearnAtPace" xml:space="preserve">
+    <value>Learn at Your Own Pace</value>
+  </data>
+  <data name="StudentLearnAtPaceDesc" xml:space="preserve">
+    <value>System automatically tracks lessons viewed and completed.</value>
+  </data>
+  <data name="StudentTestKnowledge" xml:space="preserve">
+    <value>Test Your Knowledge</value>
+  </data>
+  <data name="StudentTestKnowledgeDesc" xml:space="preserve">
+    <value>Take quizzes at the end of each lesson, view score and answers right after submitting.</value>
+  </data>
+  <data name="StudentTrackResults" xml:space="preserve">
+    <value>Track Your Results</value>
+  </data>
+  <data name="StudentTrackResultsDesc" xml:space="preserve">
+    <value>Review past attempts, compare scores and improve each day.</value>
+  </data>
+  <data name="AdminDashboardTitle" xml:space="preserve">
+    <value>Administration Dashboard</value>
+  </data>
+  <data name="AdminGreeting" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="AdminGreetingSuffix" xml:space="preserve">
+    <value>Manage the entire learning system from here.</value>
+  </data>
+  <data name="AdminCourses" xml:space="preserve">
+    <value>Courses</value>
+  </data>
+  <data name="AdminCoursesDesc" xml:space="preserve">
+    <value>Create, edit and manage all courses, modules, and lessons.</value>
+  </data>
+  <data name="AdminStudents" xml:space="preserve">
+    <value>Students</value>
+  </data>
+  <data name="AdminStudentsDesc" xml:space="preserve">
+    <value>View list, add new and manage student information.</value>
+  </data>
+  <data name="AdminEnrollments" xml:space="preserve">
+    <value>Enrollments</value>
+  </data>
+  <data name="AdminEnrollmentsDesc" xml:space="preserve">
+    <value>Manage course enrollment, grant access permissions.</value>
+  </data>
+  <data name="AdminQuestionBank" xml:space="preserve">
+    <value>Question Bank</value>
+  </data>
+  <data name="AdminQuestionBankDesc" xml:space="preserve">
+    <value>Manage the shared question library for assessments.</value>
+  </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Nav_ManageManagers" xml:space="preserve"><value>Manage Managers</value></data>
+  <data name="Nav_Notifications" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Nav_AllNotifications" xml:space="preserve"><value>View all notifications</value></data>
+  <data name="Nav_Loading" xml:space="preserve"><value>Loading...</value></data>
+  <data name="Nav_EditProfile" xml:space="preserve"><value>Edit Profile</value></data>
+  <data name="Nav_Logout" xml:space="preserve"><value>Sign Out</value></data>
+  <data name="Nav_LoginBtn" xml:space="preserve"><value>Login</value></data>
+  <data name="Nav_RegisterBtn" xml:space="preserve"><value>Register</value></data>
+  <data name="Nav_StudentBadge" xml:space="preserve"><value>Student</value></data>
+  <data name="Nav_AdminRole" xml:space="preserve"><value>System Admin</value></data>
+  <data name="Nav_ManagerRole" xml:space="preserve"><value>Content Manager</value></data>
+  <data name="Login_Title" xml:space="preserve"><value>Sign In.</value></data>
+  <data name="Login_Subtitle" xml:space="preserve"><value>Welcome back to SchoolApp.</value></data>
+  <data name="Login_NoAccount" xml:space="preserve"><value>Don&apos;t have an account?</value></data>
+  <data name="Login_RegisterLink" xml:space="preserve"><value>Register.</value></data>
+  <data name="Login_Email" xml:space="preserve"><value>Email Address</value></data>
+  <data name="Login_Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Login_ForgotPassword" xml:space="preserve"><value>Forgot password?</value></data>
+  <data name="Login_Button" xml:space="preserve"><value>SIGN IN</value></data>
+  <data name="Login_OrWith" xml:space="preserve"><value>OR SIGN IN WITH</value></data>
+  <data name="Login_Error" xml:space="preserve"><value>Incorrect email or password. Please try again.</value></data>
+  <data name="Register_Title" xml:space="preserve"><value>Register for Free.</value></data>
+  <data name="Register_Subtitle" xml:space="preserve"><value>Explore unlimited knowledge.</value></data>
+  <data name="Register_HasAccount" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="Register_LoginLink" xml:space="preserve"><value>Sign in.</value></data>
+  <data name="Register_PasswordPlaceholder" xml:space="preserve"><value>At least 6 characters</value></data>
+  <data name="Register_ConfirmPassword" xml:space="preserve"><value>Confirm Password</value></data>
+  <data name="Register_ConfirmPlaceholder" xml:space="preserve"><value>Re-enter password</value></data>
+  <data name="Register_Terms" xml:space="preserve"><value>I agree to the</value></data>
+  <data name="Register_TermsService" xml:space="preserve"><value>Terms of Service</value></data>
+  <data name="Register_TermsPrivacy" xml:space="preserve"><value>Privacy Policy</value></data>
+  <data name="Register_Button" xml:space="preserve"><value>REGISTER NOW</value></data>
+  <data name="Register_OrWith" xml:space="preserve"><value>OR REGISTER WITH</value></data>
+  <data name="Course_Title" xml:space="preserve"><value>Courses</value></data>
+  <data name="Course_Subtitle" xml:space="preserve"><value>Manage and explore available courses</value></data>
+  <data name="Course_SearchPlaceholder" xml:space="preserve"><value>Search courses...</value></data>
+  <data name="Course_SortLabel" xml:space="preserve"><value>Sort</value></data>
+  <data name="Course_Newest" xml:space="preserve"><value>Newest</value></data>
+  <data name="Course_NameAZ" xml:space="preserve"><value>Name A-Z</value></data>
+  <data name="Course_PriceAsc" xml:space="preserve"><value>Price: Low to High</value></data>
+  <data name="Course_PriceDesc" xml:space="preserve"><value>Price: High to Low</value></data>
+  <data name="Course_SearchBtn" xml:space="preserve"><value>Search</value></data>
+  <data name="Course_Results" xml:space="preserve"><value>results</value></data>
+  <data name="Course_AllLevels" xml:space="preserve"><value>All Levels</value></data>
+  <data name="Course_AllStatus" xml:space="preserve"><value>All</value></data>
+  <data name="Course_Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Course_Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="Level_Basic" xml:space="preserve"><value>Basic</value></data>
+  <data name="Level_Intermediate" xml:space="preserve"><value>Intermediate</value></data>
+  <data name="Level_Advanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="Btn_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Btn_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Btn_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Btn_Update" xml:space="preserve"><value>Update</value></data>
+  <data name="Btn_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Btn_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Btn_Add" xml:space="preserve"><value>Add</value></data>
+  <data name="Btn_Export" xml:space="preserve"><value>Export Excel</value></data>
+  <data name="Btn_Import" xml:space="preserve"><value>Import Excel</value></data>
+  <data name="Course_AddNew" xml:space="preserve"><value>Add New Course</value></data>
+  <data name="Course_NoResults" xml:space="preserve"><value>No courses found.</value></data>
+  <data name="Course_EnrollNow" xml:space="preserve"><value>Enroll Now</value></data>
+  <data name="Course_ViewDetail" xml:space="preserve"><value>View Detail</value></data>
+  <data name="Course_Free" xml:space="preserve"><value>Free</value></data>
+  <data name="Course_Students" xml:space="preserve"><value>students</value></data>
+  <data name="Course_Lessons" xml:space="preserve"><value>lessons</value></data>
+  <data name="Footer_Desc" xml:space="preserve"><value>A modern learning management platform connecting students and instructors in a professional academic space.</value></data>
+  <data name="Footer_Explore" xml:space="preserve"><value>Explore</value></data>
+  <data name="Footer_System" xml:space="preserve"><value>System</value></data>
+  <data name="Footer_Manage" xml:space="preserve"><value>Manage</value></data>
+  <data name="Footer_Home" xml:space="preserve"><value>Home</value></data>
+  <data name="Footer_ManageStudents" xml:space="preserve"><value>Manage Students</value></data>
+  <data name="Footer_ManageEnrollments" xml:space="preserve"><value>Manage Enrollments</value></data>
+  <data name="Footer_Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Footer_Login" xml:space="preserve"><value>Login</value></data>
+  <data name="Footer_Register" xml:space="preserve"><value>Register Account</value></data>
+  <data name="Footer_SystemDashboard" xml:space="preserve"><value>System Dashboard</value></data>
+  <data name="Footer_ManageCourses" xml:space="preserve"><value>Manage Courses</value></data>
+  <data name="Footer_Contact" xml:space="preserve"><value>Contact</value></data>
+  <data name="Footer_Rights" xml:space="preserve"><value>All rights reserved.</value></data>
+  <data name="Footer_Tagline" xml:space="preserve"><value>Knowledge is a journey, not a destination.</value></data>
+  <data name="Btn_CloseAlert" xml:space="preserve"><value>Close</value></data>
+</root>

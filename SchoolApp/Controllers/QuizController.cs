@@ -418,6 +418,12 @@ namespace SchoolApp.Controllers
             var quiz = _uow.Quizzes.GetQuizWithQuestions(id);
             if (quiz == null || !quiz.IsPublished) return NotFound();
 
+            if (quiz.Questions.Count == 0)
+            {
+                TempData["Error"] = "Bài kiểm tra này chưa có câu hỏi nào.";
+                return RedirectToAction("Index", "Course");
+            }
+
             var lesson = _uow.Lessons.GetWithModule(quiz.LessonId);
             if (lesson?.Module == null) return NotFound();
             var enrolled = _uow.Enrollments.IsEnrolled(studentId.Value, lesson.Module.CourseId);
