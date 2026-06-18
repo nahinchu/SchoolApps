@@ -1,4 +1,5 @@
 @using SchoolApp.Models
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 @{
     ViewData["Title"] = "Trang chủ";
     var role = Context.Session.GetString("Role");
@@ -25,8 +26,8 @@
 {
     <!-- ===== ADMIN DASHBOARD ===== -->
     <div class="sa-page-hero" style="margin-bottom:2rem;">
-        <h1><i class="bi bi-speedometer2" style="color:var(--gold);margin-right:.5rem;"></i>Bảng điều khiển quản trị</h1>
-        <p>Xin chào, <strong style="color:var(--gold-light);"@userName></strong>! Quản lý toàn bộ hệ thống học tập từ đây.</p>
+        <h1><i class="bi bi-speedometer2" style="color:var(--gold);margin-right:.5rem;"></i>@L["AdminDashboardTitle"]</h1>
+        <p>@L["AdminGreeting"], <strong style="color:var(--gold-light);">@userName</strong>! @L["AdminGreetingSuffix"]</p>
     </div>
 
     <div class="sa-dash-grid" style="margin-bottom:2.5rem;">
@@ -36,8 +37,8 @@
                 <i class="bi bi-book-fill"></i>
             </div>
             <div class="sa-dash-card-body">
-                <div class="sa-dash-card-title">Khóa học</div>
-                <div class="sa-dash-card-desc">Tạo, chỉnh sửa và quản lý toàn bộ khóa học, chương học, bài học.</div>
+                <div class="sa-dash-card-title">@L["AdminCourses"]</div>
+                <div class="sa-dash-card-desc">@L["AdminCoursesDesc"]</div>
             </div>
             <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
         </a>
@@ -47,8 +48,8 @@
                 <i class="bi bi-people-fill"></i>
             </div>
             <div class="sa-dash-card-body">
-                <div class="sa-dash-card-title">Học viên</div>
-                <div class="sa-dash-card-desc">Xem danh sách, thêm mới và quản lý thông tin học viên.</div>
+                <div class="sa-dash-card-title">@L["AdminStudents"]</div>
+                <div class="sa-dash-card-desc">@L["AdminStudentsDesc"]</div>
             </div>
             <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
         </a>
@@ -58,8 +59,8 @@
                 <i class="bi bi-journal-check"></i>
             </div>
             <div class="sa-dash-card-body">
-                <div class="sa-dash-card-title">Đăng ký học</div>
-                <div class="sa-dash-card-desc">Quản lý việc đăng ký khóa học của học viên, cấp quyền truy cập.</div>
+                <div class="sa-dash-card-title">@L["AdminEnrollments"]</div>
+                <div class="sa-dash-card-desc">@L["AdminEnrollmentsDesc"]</div>
             </div>
             <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
         </a>
@@ -69,8 +70,8 @@
                 <i class="bi bi-bank2"></i>
             </div>
             <div class="sa-dash-card-body">
-                <div class="sa-dash-card-title">Ngân hàng câu hỏi</div>
-                <div class="sa-dash-card-desc">Quản lý thư viện câu hỏi dùng chung cho các bài kiểm tra.</div>
+                <div class="sa-dash-card-title">@L["AdminQuestionBank"]</div>
+                <div class="sa-dash-card-desc">@L["AdminQuestionBankDesc"]</div>
             </div>
             <div class="sa-dash-card-arrow"><i class="bi bi-arrow-right-circle-fill"></i></div>
         </a>
@@ -79,12 +80,12 @@
 
     <div class="sa-dash-stats">
         <div class="sa-dash-stat-item">
-            <div class="sa-dash-stat-num">Khóa học</div>
+            <div class="sa-dash-stat-num">@L["AdminCourses"]</div>
             <div class="sa-dash-stat-label">Quản lý nội dung</div>
         </div>
         <div class="sa-dash-stat-divider"></div>
         <div class="sa-dash-stat-item">
-            <div class="sa-dash-stat-num">Học viên</div>
+            <div class="sa-dash-stat-num">@L["AdminStudents"]</div>
             <div class="sa-dash-stat-label">Quản lý tài khoản</div>
         </div>
         <div class="sa-dash-stat-divider"></div>
@@ -94,7 +95,7 @@
         </div>
         <div class="sa-dash-stat-divider"></div>
         <div class="sa-dash-stat-item">
-            <div class="sa-dash-stat-num">Đăng ký học</div>
+            <div class="sa-dash-stat-num">@L["AdminEnrollments"]</div>
             <div class="sa-dash-stat-label">Phân quyền truy cập</div>
         </div>
     </div>
@@ -106,20 +107,20 @@ else if (role == "Student")
 
         <div style="flex:1; min-width:280px;">
             <p style="color:var(--gold); font-size:.85rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.5rem;">
-                <i class="bi bi-mortarboard-fill"></i> Chào mừng trở lại
+                <i class="bi bi-mortarboard-fill"></i> @L["StudentWelcomeBack"]
             </p>
             <h1 style="font-family:var(--font-display); font-size:clamp(1.8rem,3.5vw,2.8rem); color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
-                Xin chào, <span style="color:var(--gold);">@userName</span>!
+                @L["StudentGreeting"], <span style="color:var(--gold);">@userName</span>!
             </h1>
             <p style="color:var(--text-light); font-size:1rem; max-width:420px; margin-bottom:1.75rem; line-height:1.7;">
-                Tiếp tục hành trình học tập của bạn. Kiến thức là nền tảng cho mọi thành công.
+                @L["StudentMotivation"]
             </p>
             <div style="display:flex; flex-wrap:wrap; gap:.75rem;">
                 <a asp-controller="Enrollment" asp-action="MyEnrollments" class="home-nav-btn home-nav-btn-primary">
-                    <i class="bi bi-mortarboard-fill"></i> Khóa học của tôi
+                    <i class="bi bi-mortarboard-fill"></i> @L["NavMyEnrollments"]
                 </a>
                 <a asp-controller="Course" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
-                    <i class="bi bi-search"></i> Tìm khóa học
+                    <i class="bi bi-search"></i> @L["ViewCourses"]
                 </a>
             </div>
         </div>
@@ -135,27 +136,25 @@ else if (role == "Student")
         <div class="sa-student-feature-item">
             <div class="sa-student-feature-icon"><i class="bi bi-play-circle-fill"></i></div>
             <div>
-                <div class="sa-student-feature-title">Học theo tiến độ</div>
-                <div class="sa-student-feature-desc">Hệ thống tự động theo dõi bài học đã xem và hoàn thành.</div>
+                <div class="sa-student-feature-title">@L["StudentLearnAtPace"]</div>
+                <div class="sa-student-feature-desc">@L["StudentLearnAtPaceDesc"]</div>
             </div>
         </div>
         <div class="sa-student-feature-item">
             <div class="sa-student-feature-icon" style="background:linear-gradient(135deg,var(--gold),var(--gold-light));"><i class="bi bi-patch-question-fill" style="color:var(--navy);"></i></div>
             <div>
-                <div class="sa-student-feature-title">Kiểm tra kiến thức</div>
-                <div class="sa-student-feature-desc">Làm quiz cuối mỗi bài, xem điểm và đáp án ngay sau khi nộp.</div>
+                <div class="sa-student-feature-title">@L["StudentTestKnowledge"]</div>
+                <div class="sa-student-feature-desc">@L["StudentTestKnowledgeDesc"]</div>
             </div>
         </div>
         <div class="sa-student-feature-item">
             <div class="sa-student-feature-icon" style="background:linear-gradient(135deg,#1a5c3a,#27ae60);"><i class="bi bi-bar-chart-fill"></i></div>
             <div>
-                <div class="sa-student-feature-title">Theo dõi kết quả</div>
-                <div class="sa-student-feature-desc">Xem lại các lần làm bài, so sánh điểm và cải thiện từng ngày.</div>
+                <div class="sa-student-feature-title">@L["StudentTrackResults"]</div>
+                <div class="sa-student-feature-desc">@L["StudentTrackResultsDesc"]</div>
             </div>
         </div>
     </div>
-
-   
 }
 else
 {
@@ -165,21 +164,21 @@ else
         <div style="flex:1; min-width:280px;">
             <h1 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3.2rem);
                            color:var(--text-dark); line-height:1.2; margin-bottom:1rem;">
-                Chào mừng đến với<br>
+                @L["WelcomeTitle"]<br>
                 <span style="color:var(--gold);">SchoolApp</span>
             </h1>
             <p style="color:var(--text-light); font-size:1rem; max-width:400px; margin-bottom:1.75rem; line-height:1.7;">
-                Nền tảng quản lý học tập hiện đại, kết nối học viên và giảng viên trong không gian chuyên nghiệp.
+                @L["WelcomeDesc"]
             </p>
             <div style="display:flex; flex-wrap:wrap; gap:.75rem;">
                 <a asp-controller="Account" asp-action="Register" class="home-nav-btn home-nav-btn-primary">
-                    <i class="bi bi-person-plus-fill"></i> Đăng ký miễn phí
+                    <i class="bi bi-person-plus-fill"></i> @L["RegisterFree"]
                 </a>
                 <a asp-controller="Account" asp-action="Login" class="home-nav-btn home-nav-btn-outline">
-                    <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+                    <i class="bi bi-box-arrow-in-right"></i> @L["Login"]
                 </a>
                 <a asp-controller="Course" asp-action="Index" class="home-nav-btn home-nav-btn-outline">
-                    <i class="bi bi-book-fill"></i> Xem khóa học
+                    <i class="bi bi-book-fill"></i> @L["ViewCourses"]
                 </a>
             </div>
         </div>
@@ -193,23 +192,23 @@ else
     <div class="sa-landing-features">
         <div class="sa-landing-feature-item">
             <div class="sa-landing-feature-icon"><i class="bi bi-book-half"></i></div>
-            <div class="sa-landing-feature-title">Nội dung phong phú</div>
-            <div class="sa-landing-feature-desc">Bài học dạng video, văn bản và tài liệu đính kèm.</div>
+            <div class="sa-landing-feature-title">@L["FeatureRichContent"]</div>
+            <div class="sa-landing-feature-desc">@L["FeatureRichContentDesc"]</div>
         </div>
         <div class="sa-landing-feature-item">
             <div class="sa-landing-feature-icon"><i class="bi bi-patch-check-fill"></i></div>
-            <div class="sa-landing-feature-title">Kiểm tra & đánh giá</div>
-            <div class="sa-landing-feature-desc">Quiz tương tác với nhiều dạng câu hỏi, tính điểm tự động.</div>
+            <div class="sa-landing-feature-title">@L["FeatureQuiz"]</div>
+            <div class="sa-landing-feature-desc">@L["FeatureQuizDesc"]</div>
         </div>
         <div class="sa-landing-feature-item">
             <div class="sa-landing-feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
-            <div class="sa-landing-feature-title">Theo dõi tiến độ</div>
-            <div class="sa-landing-feature-desc">Hệ thống ghi nhận tiến trình học tập chi tiết theo từng bài.</div>
+            <div class="sa-landing-feature-title">@L["FeatureProgress"]</div>
+            <div class="sa-landing-feature-desc">@L["FeatureProgressDesc"]</div>
         </div>
         <div class="sa-landing-feature-item">
             <div class="sa-landing-feature-icon"><i class="bi bi-shield-lock-fill"></i></div>
-            <div class="sa-landing-feature-title">Bảo mật & an toàn</div>
-            <div class="sa-landing-feature-desc">Mật khẩu mã hóa BCrypt, phân quyền rõ ràng Admin / Học viên.</div>
+            <div class="sa-landing-feature-title">@L["FeatureSecurity"]</div>
+            <div class="sa-landing-feature-desc">@L["FeatureSecurityDesc"]</div>
         </div>
     </div>
 
@@ -219,20 +218,18 @@ else
         <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:1.5rem;">
             <div style="text-align:center;">
                 <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">12+</div>
-                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Khóa học</div>
+                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">@L["NavCourses"]</div>
             </div>
             <div style="width:1px; height:50px; background:rgba(255,255,255,.1);"></div>
             <div style="text-align:center;">
                 <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">200+</div>
-                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Học viên</div>
+                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">@L["AdminStudents"]</div>
             </div>
             <div style="width:1px; height:50px; background:rgba(255,255,255,.1);"></div>
             <div style="text-align:center;">
                 <div style="font-family:var(--font-display); font-size:2.8rem; font-weight:700; color:var(--gold);">500+</div>
-                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">Lượt đăng ký</div>
+                <div style="font-size:.8rem; color:rgba(255,255,255,.55); text-transform:uppercase; letter-spacing:.08em; margin-top:.25rem;">@L["NavEnrollments"]</div>
             </div>
         </div>
     </div>
-
-    
 }

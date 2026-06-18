@@ -251,29 +251,19 @@
         position: relative;
     }
 
-    .ma-locked-blur {
-        filter: blur(5px);
-        pointer-events: none;
-        user-select: none;
-        opacity: .5;
-    }
-
     .ma-locked-overlay {
-        position: absolute;
-        inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: .5rem;
-        background: rgba(247,245,240,.6);
-        backdrop-filter: blur(1px);
-        z-index: 2;
+        gap: .4rem;
+        padding: 1.1rem 1rem;
     }
 
         .ma-locked-overlay i {
-            font-size: 1.4rem;
+            font-size: 1.25rem;
             color: var(--text-light);
+            opacity: .7;
         }
 
         .ma-locked-overlay span {
@@ -352,8 +342,17 @@
         </div>
 
         <div class="ma-locked-body">
-            <ul class="ma-lesson-list @(isLocked ? "ma-locked-blur" : "")" id="@mId"
-                style="@(isLocked ? "display:block;" : "")">
+            <ul class="ma-lesson-list" id="@mId"
+                style="@(isLocked ? "display:none;" : "")">
+                @if (isLocked)
+                {
+                    <li class="ma-locked-overlay">
+                        <i class="bi bi-lock-fill"></i>
+                        <span>Đăng ký để xem nội dung</span>
+                    </li>
+                }
+                else
+                {
                 @if (!lessons.Any())
                 {
                     <li style="padding:.6rem 1rem .6rem 1.4rem; color:var(--text-light); font-size:.82rem; font-style:italic;">
@@ -464,14 +463,8 @@
                         </li>
                     }
                 }
+                } @* end else (not locked) *@
             </ul>
-            @if (isLocked)
-            {
-                <div class="ma-locked-overlay">
-                    <i class="bi bi-lock-fill"></i>
-                    <span>Đăng ký để xem nội dung</span>
-                </div>
-            }
         </div>@*ma-locked-body*@
     </div>@*ma-module*@ 
 }
@@ -487,7 +480,7 @@
     }
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('[id^="ma-"]').forEach(function (el) {
-            if (el.tagName === 'UL') el.style.display = 'block';
+            if (el.tagName === 'UL' && el.style.display !== 'none') el.style.display = 'block';
         });
     });
 </script>

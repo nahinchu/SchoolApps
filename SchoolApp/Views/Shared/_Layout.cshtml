@@ -51,7 +51,7 @@
                     <li>
                         <a class="sa-nav-link" asp-controller="Course" asp-action="Index">
                             <i class="bi bi-book nav-icon"></i>
-                            Khóa học
+                            @L["NavCourses"]
                         </a>
                     </li>
                     @if (Context.Session.GetString("Role") == "Admin")
@@ -65,7 +65,7 @@
                         <li>
                             <a class="sa-nav-link" asp-controller="Admin" asp-action="Managers">
                                 <i class="bi bi-person-gear nav-icon"></i>
-                                Quản lý Manager
+                                @L["Nav_ManageManagers"]
                             </a>
                         </li>
                     }
@@ -75,19 +75,19 @@
                         <li>
                             <a class="sa-nav-link" asp-controller="Student" asp-action="Index">
                                 <i class="bi bi-people nav-icon"></i>
-                                Học viên
+                                @L["NavStudents"]
                             </a>
                         </li>
                         <li>
                             <a class="sa-nav-link" asp-controller="Enrollment" asp-action="Index">
                                 <i class="bi bi-journal-check nav-icon"></i>
-                                Đăng ký học
+                                @L["NavEnrollments"]
                             </a>
                         </li>
                         <li>
                             <a class="sa-nav-link" asp-controller="QuestionBank" asp-action="Index">
                                 <i class="bi bi-bank nav-icon"></i>
-                                Ngân hàng câu hỏi
+                                @L["NavQuestionBank"]
                             </a>
                         </li>
                     }
@@ -97,19 +97,29 @@
                         <li>
                             <a class="sa-nav-link" asp-controller="Enrollment" asp-action="MyEnrollments">
                                 <i class="bi bi-mortarboard nav-icon"></i>
-                                Khóa học của tôi
+                                @L["NavMyEnrollments"]
                             </a>
                         </li>
                         <li>
                             <a class="sa-nav-link" asp-controller="Certificate" asp-action="My">
                                 <i class="bi bi-patch-check-fill nav-icon"></i>
-                                Chứng chỉ
+                                @L["NavCertificates"]
                             </a>
                         </li>
                     }
                 </ul>
 
                 <ul class="sa-user-section" aria-label="Tài khoản">
+                    @{
+                        var _currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+                        var _langFlags = new Dictionary<string, (string Flag, string Label)>
+                        {
+                            ["vi-VN"] = ("🇻🇳", "Tiếng Việt"),
+                            ["en-GB"] = ("🇬🇧", "English")
+                        };
+                        var _currentFlag = _langFlags.TryGetValue(_currentCulture, out var _lf) ? _lf.Flag : "🌐";
+                    }
+
                     @if (Context.Session.GetString("UserName") != null)
                     {
                         var studentName = Context.Session.GetString("UserName");
@@ -126,7 +136,7 @@
                                            border-radius:50%; transition:background .2s;"
                                     onmouseenter="this.style.background='rgba(255,255,255,.08)'"
                                     onmouseleave="this.style.background='none'"
-                                    aria-label="Thông báo">
+                                    aria-label="@L["Nav_Notifications"]">
                                 <i class="bi bi-bell-fill" style="font-size:1.1rem; color:rgba(255,255,255,.75);"></i>
                                 <span id="notifBadge" style="display:none; position:absolute; top:4px; right:4px;
                                       width:16px; height:16px; border-radius:50%; background:#dc2626;
@@ -138,17 +148,17 @@
                                         border-radius:14px; padding:0; overflow:hidden;
                                         box-shadow:0 16px 40px rgba(0,0,0,.5);">
                                 <div style="padding:.75rem 1rem; border-bottom:1px solid rgba(255,255,255,.08);">
-                                    <strong style="font-size:.875rem; color:#fff;">Thông báo</strong>
+                                    <strong style="font-size:.875rem; color:#fff;">@L["Nav_Notifications"]</strong>
                                 </div>
                                 <div id="notifList" style="max-height:320px; overflow-y:auto;">
                                     <div style="padding:2rem; text-align:center; color:rgba(255,255,255,.35); font-size:.84rem;">
-                                        Đang tải...
+                                        @L["Nav_Loading"]
                                     </div>
                                 </div>
                                 <div style="padding:.6rem 1rem; border-top:1px solid rgba(255,255,255,.08); text-align:center;">
                                     <a href="@Url.Action("Index","Notification")"
                                        style="font-size:.8rem; color:rgba(201,168,76,.8); text-decoration:none;">
-                                        Xem tất cả thông báo
+                                        @L["Nav_AllNotifications"]
                                     </a>
                                 </div>
                             </div>
@@ -179,7 +189,7 @@
                                 }
                                 else if (role == "Student")
                                 {
-                                    <span class="sa-badge-student"><i class="bi bi-mortarboard-fill"></i> Học viên</span>
+                                    <span class="sa-badge-student"><i class="bi bi-mortarboard-fill"></i> @L["Nav_StudentBadge"]</span>
                                 }
                                 <i class="bi bi-chevron-down sa-greeting-chevron"></i>
                             </button>
@@ -223,15 +233,15 @@
                                         <div style="font-size:.75rem; color:#c9a84c; margin-top:2px;">
                                             @if (role == "Admin")
                                             {
-                                                <text><i class="bi bi-shield-fill-check"></i> Quản trị hệ thống</text>
+                                                <text><i class="bi bi-shield-fill-check"></i> @L["Nav_AdminRole"]</text>
                                             }
                                             else if (role == "Manager")
                                             {
-                                                <text><i class="bi bi-person-gear"></i> Quản lý nội dung</text>
+                                                <text><i class="bi bi-person-gear"></i> @L["Nav_ManagerRole"]</text>
                                             }
                                             else
                                             {
-                                                <text><i class="bi bi-mortarboard-fill"></i> Học viên</text>
+                                                <text><i class="bi bi-mortarboard-fill"></i> @L["Nav_StudentBadge"]</text>
                                             }
                                         </div>
                                     </div>
@@ -245,7 +255,7 @@
                                         <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(201,168,76,0.12);font-size:.85rem;flex-shrink:0;">
                                             <i class="bi bi-person-gear"></i>
                                         </span>
-                                        Sửa profile
+                                        @L["Nav_EditProfile"]
                                     </a>
                                 </li>
 
@@ -257,7 +267,7 @@
                                         <span style="width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(192,57,43,0.15);font-size:.85rem;flex-shrink:0;">
                                             <i class="bi bi-box-arrow-right"></i>
                                         </span>
-                                        Đăng xuất
+                                        @L["Nav_Logout"]
                                     </a>
                                 </li>
                             </ul>
@@ -268,16 +278,46 @@
                         <li>
                             <a class="sa-btn-login" asp-controller="Account" asp-action="Login">
                                 <i class="bi bi-person-fill"></i>
-                                Đăng nhập
+                                @L["Nav_LoginBtn"]
                             </a>
                         </li>
                         <li>
                             <a class="sa-btn-register" asp-controller="Account" asp-action="Register">
                                 <i class="bi bi-person-plus"></i>
-                                Đăng ký
+                                @L["Nav_RegisterBtn"]
                             </a>
                         </li>
                     }
+
+                    <!-- Language Toggle — click để switch vi-VN ↔ en-GB -->
+                    @{
+                        var _nextCulture  = _currentCulture == "vi-VN" ? "en-GB" : "vi-VN";
+                        var _nextLabel    = _langFlags.TryGetValue(_nextCulture, out var _nl) ? _nl.Label : _nextCulture;
+                        var _flagImgSrc   = _currentCulture == "vi-VN"
+                            ? "https://flagcdn.com/w40/vn.png"
+                            : "https://flagcdn.com/w40/gb.png";
+                        var _langCode     = _currentCulture == "vi-VN" ? "VI" : "EN";
+                    }
+                    <li>
+                        <form asp-controller="Language" asp-action="SetLanguage" method="post" style="margin:0;">
+                            <input type="hidden" name="culture" value="@_nextCulture" />
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                            <button type="submit"
+                                    title="@_nextLabel"
+                                    style="background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.15);
+                                           cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.4rem;
+                                           padding:.28rem .65rem; border-radius:20px; transition:background .2s, border-color .2s;"
+                                    onmouseenter="this.style.background='rgba(201,168,76,.18)'; this.style.borderColor='rgba(201,168,76,.6)';"
+                                    onmouseleave="this.style.background='rgba(255,255,255,.06)'; this.style.borderColor='rgba(255,255,255,.15)';">
+                                <img src="@_flagImgSrc" alt="@_langCode"
+                                     style="width:20px; height:14px; object-fit:cover; border-radius:2px;
+                                            box-shadow:0 1px 3px rgba(0,0,0,.4);" />
+                                <span style="font-size:.72rem; font-weight:700; color:rgba(255,255,255,.85); letter-spacing:.5px;">
+                                    @_langCode
+                                </span>
+                            </button>
+                        </form>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -291,7 +331,7 @@
                 <div class="sa-alert sa-alert-success" role="alert" id="alert-success">
                     <span class="sa-alert-icon"><i class="bi bi-check-circle-fill"></i></span>
                     <span>@TempData["Success"]</span>
-                    <button class="sa-alert-close" onclick="dismissAlert('alert-success')" aria-label="Đóng">
+                    <button class="sa-alert-close" onclick="dismissAlert('alert-success')" aria-label="@L["Btn_CloseAlert"]">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
@@ -301,7 +341,7 @@
                 <div class="sa-alert sa-alert-danger" role="alert" id="alert-error">
                     <span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span>
                     <span>@TempData["Error"]</span>
-                    <button class="sa-alert-close" onclick="dismissAlert('alert-error')" aria-label="Đóng">
+                    <button class="sa-alert-close" onclick="dismissAlert('alert-error')" aria-label="@L["Btn_CloseAlert"]">
                         <i class="bi bi-x"></i>
                     </button>
                 </div>
@@ -322,10 +362,7 @@
                             <div class="sa-brand-icon" style="width:34px;height:34px;font-size:16px;">&#127891;</div>
                             <span class="sa-footer-brand-name">School<span>App</span></span>
                         </a>
-                        <p class="sa-footer-desc">
-                            Nền tảng quản lý học tập hiện đại, kết nối học viên và giáo viên
-                            trong một không gian học thuật chuyên nghiệp.
-                        </p>
+                        <p class="sa-footer-desc">@L["Footer_Desc"]</p>
                     </div>
 
                     @* Cot 2: Kham pha — hien thi theo role *@
@@ -333,74 +370,74 @@
                         <p class="sa-footer-heading">
                             @if (Context.Session.GetString("Role") == "Admin")
                             {
-                                <text>Hệ thống</text>
+                                @L["Footer_System"]
                             }
                             else if (Context.Session.GetString("Role") == "Manager")
                             {
-                                <text>Quản lý</text>
+                                @L["Footer_Manage"]
                             }
                             else
                             {
-                                <text>Khám phá</text>
+                                @L["Footer_Explore"]
                             }
                         </p>
                         <ul class="sa-footer-links">
-                            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                            <li><a asp-controller="Course" asp-action="Index">Khóa học</a></li>
+                            <li><a asp-controller="Home" asp-action="Index">@L["Footer_Home"]</a></li>
+                            <li><a asp-controller="Course" asp-action="Index">@L["NavCourses"]</a></li>
                             @if (Context.Session.GetString("Role") == "Admin")
                             {
                                 <li><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
-                                <li><a asp-controller="Admin" asp-action="Managers">Quản lý Manager</a></li>
+                                <li><a asp-controller="Admin" asp-action="Managers">@L["Nav_ManageManagers"]</a></li>
                             }
                             @if (Context.Session.GetString("Role") == "Manager")
                             {
-                                <li><a asp-controller="Student" asp-action="Index">Quản lý học viên</a></li>
-                                <li><a asp-controller="Enrollment" asp-action="Index">Quản lý đăng ký</a></li>
-                                <li><a asp-controller="QuestionBank" asp-action="Index">Ngân hàng câu hỏi</a></li>
+                                <li><a asp-controller="Student" asp-action="Index">@L["Footer_ManageStudents"]</a></li>
+                                <li><a asp-controller="Enrollment" asp-action="Index">@L["Footer_ManageEnrollments"]</a></li>
+                                <li><a asp-controller="QuestionBank" asp-action="Index">@L["NavQuestionBank"]</a></li>
                             }
                             @if (Context.Session.GetString("Role") == "Student")
                             {
-                                <li><a asp-controller="Enrollment" asp-action="MyEnrollments">Khóa học của tôi</a></li>
+                                <li><a asp-controller="Enrollment" asp-action="MyEnrollments">@L["NavMyEnrollments"]</a></li>
                             }
                         </ul>
                     </div>
 
                     @* Cot 3: Tai khoan — hien thi theo role *@
                     <div>
-                        <p class="sa-footer-heading">Tài khoản</p>
+                        <p class="sa-footer-heading">@L["Footer_Account"]</p>
                         <ul class="sa-footer-links">
                             @{
                                 var footerRole = Context.Session.GetString("Role");
                             }
                             @if (footerRole == null)
                             {
-                                <li><a asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
-                                <li><a asp-controller="Account" asp-action="Register">Đăng ký tài khoản</a></li>
+                                <li><a asp-controller="Account" asp-action="Login">@L["Footer_Login"]</a></li>
+                                <li><a asp-controller="Account" asp-action="Register">@L["Footer_Register"]</a></li>
                             }
                             else if (footerRole == "Admin")
                             {
-                                <li><a asp-controller="Admin" asp-action="Dashboard">Dashboard hệ thống</a></li>
-                                <li><a asp-controller="Admin" asp-action="Managers">Quản lý Manager</a></li>
-                                <li><a asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                                <li><a asp-controller="Admin" asp-action="Dashboard">@L["Footer_SystemDashboard"]</a></li>
+                                <li><a asp-controller="Admin" asp-action="Managers">@L["Nav_ManageManagers"]</a></li>
+                                <li><a asp-controller="Account" asp-action="Logout">@L["Nav_Logout"]</a></li>
                             }
                             else if (footerRole == "Manager")
                             {
-                                <li><a asp-controller="Course" asp-action="Index">Quản lý khóa học</a></li>
-                                <li><a asp-controller="Student" asp-action="Index">Quản lý học viên</a></li>
-                                <li><a asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                                <li><a asp-controller="Course" asp-action="Index">@L["Footer_ManageCourses"]</a></li>
+                                <li><a asp-controller="Student" asp-action="Index">@L["Footer_ManageStudents"]</a></li>
+                                <li><a asp-controller="Account" asp-action="Logout">@L["Nav_Logout"]</a></li>
                             }
                             else
                             {
-                                <li><a asp-controller="Enrollment" asp-action="MyEnrollments">Khóa học của tôi</a></li>
-                                <li><a asp-controller="Account" asp-action="EditProfile">Sửa profile</a></li>
-                                <li><a asp-controller="Account" asp-action="Logout">Đăng xuất</a></li>
+                                <li><a asp-controller="Enrollment" asp-action="MyEnrollments">@L["NavMyEnrollments"]</a></li>
+                                <li><a asp-controller="Account" asp-action="EditProfile">@L["Nav_EditProfile"]</a></li>
+                                <li><a asp-controller="Account" asp-action="Logout">@L["Nav_Logout"]</a></li>
                             }
                         </ul>
                     </div>
 
                     @* Cot 4: Lien he *@
                     <div>
-                        <p class="sa-footer-heading">Liên hệ</p>
+                        <p class="sa-footer-heading">@L["Footer_Contact"]</p>
                         <ul class="sa-footer-links">
                             <li>
                                 <a href="mailto:support@schoolapp.vn">
@@ -429,9 +466,9 @@
         <div class="container">
             <div class="sa-footer-bottom">
                 <p class="sa-footer-copy">
-                    &copy; 2026 <strong>SchoolApp</strong>. Bảo lưu mọi quyền.
+                    &copy; 2026 <strong>SchoolApp</strong>. @L["Footer_Rights"]
                 </p>
-                <p class="sa-footer-tagline">Kiến thức là hành trình, không phải đích đến.</p>
+                <p class="sa-footer-tagline">@L["Footer_Tagline"]</p>
             </div>
         </div>
 

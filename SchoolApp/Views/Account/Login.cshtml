@@ -278,21 +278,21 @@
                 SchoolApp
             </a>
             <div class="auth-nav-text">
-                Chưa có tài khoản?
-                <a asp-controller="Account" asp-action="Register">Đăng ký.</a>
+                @L["Login_NoAccount"]
+                <a asp-controller="Account" asp-action="Register">@L["Login_RegisterLink"]</a>
             </div>
         </div>
 
         <!-- Form content -->
         <div class="auth-form-wrapper">
-            <h1 class="auth-title">Đăng nhập.</h1>
-            <p class="auth-subtitle">Chào mừng trở lại SchoolApp.</p>
+            <h1 class="auth-title">@L["Login_Title"]</h1>
+            <p class="auth-subtitle">@L["Login_Subtitle"]</p>
 
             @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
             {
                 <div style="background:#fff8f0;border:1.5px solid var(--gold);border-radius:8px;padding:0.7rem 1rem;margin-bottom:1.2rem;font-size:0.85rem;color:#b37818;display:flex;gap:0.5rem;align-items:center;">
                     <i class="bi bi-exclamation-circle-fill"></i>
-                    <span>Sai email hoặc mật khẩu. Vui lòng thử lại.</span>
+                    <span>@L["Login_Error"]</span>
                 </div>
             }
 
@@ -300,7 +300,7 @@
                 @Html.AntiForgeryToken()
 
                 <div class="auth-form-group">
-                    <label class="auth-label" asp-for="Email">Địa chỉ Email</label>
+                    <label class="auth-label" asp-for="Email">@L["Login_Email"]</label>
                     <input class="auth-input" asp-for="Email"
                            type="email" placeholder="Nhập địa chỉ email ..."
                            autocomplete="email" />
@@ -308,7 +308,7 @@
                 </div>
 
                 <div class="auth-form-group" style="margin-bottom:1.5rem;">
-                    <label class="auth-label" asp-for="Password">Mật khẩu</label>
+                    <label class="auth-label" asp-for="Password">@L["Login_Password"]</label>
                     <input class="auth-input" asp-for="Password"
                            type="password" placeholder="Nhập mật khẩu ..."
                            autocomplete="current-password" />
@@ -318,14 +318,14 @@
                 <div style="text-align:right; margin-bottom:.5rem;">
                     <a asp-controller="Account" asp-action="ForgotPassword"
                        style="font-size:.78rem; color:var(--gold); text-decoration:none;">
-                        Quên mật khẩu?
+                        @L["Login_ForgotPassword"]
                     </a>
                 </div>
 
-                <button type="submit" class="auth-btn">ĐĂNG NHẬP</button>
+                <button type="submit" class="auth-btn">@L["Login_Button"]</button>
             </form>
 
-            <div class="auth-divider">HOẶC ĐĂNG NHẬP VỚI</div>
+            <div class="auth-divider">@L["Login_OrWith"]</div>
 
             <div class="auth-social-row">
                 <a asp-controller="Account" asp-action="GoogleLogin" class="auth-social-btn" title="Google">

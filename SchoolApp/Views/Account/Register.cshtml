@@ -329,15 +329,15 @@
                 SchoolApp
             </a>
             <div class="auth-nav-text">
-                Đã có tài khoản?
-                <a asp-controller="Account" asp-action="Login">Đăng nhập.</a>
+                @L["Register_HasAccount"]
+                <a asp-controller="Account" asp-action="Login">@L["Register_LoginLink"]</a>
             </div>
         </div>
 
         <!-- Form content -->
         <div class="auth-form-wrapper">
-            <h1 class="auth-title">Đăng ký Miễn Phí.</h1>
-            <p class="auth-subtitle">Khám phá kiến thức không giới hạn.</p>
+            <h1 class="auth-title">@L["Register_Title"]</h1>
+            <p class="auth-subtitle">@L["Register_Subtitle"]</p>
 
             @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
             {
@@ -366,10 +366,10 @@
                 <!-- Mật khẩu | Xác nhận mật khẩu -->
                 <div class="auth-form-row">
                     <div class="auth-form-group">
-                        <label class="auth-label" asp-for="Password">Mật khẩu</label>
+                        <label class="auth-label" asp-for="Password">@L["Login_Password"]</label>
                         <div class="auth-pw-wrap">
                             <input class="auth-input" asp-for="Password" id="regPwd"
-                                   type="password" placeholder="Ít nhất 6 ký tự"
+                                   type="password" placeholder="@L["Register_PasswordPlaceholder"]"
                                    autocomplete="new-password"
                                    style="padding-right:42px;" />
                             <button type="button" class="auth-pw-toggle"
@@ -380,10 +380,10 @@
                         <span asp-validation-for="Password" class="auth-field-error"></span>
                     </div>
                     <div class="auth-form-group">
-                        <label class="auth-label" asp-for="ConfirmPassword">Xác nhận mật khẩu</label>
+                        <label class="auth-label" asp-for="ConfirmPassword">@L["Register_ConfirmPassword"]</label>
                         <div class="auth-pw-wrap">
                             <input class="auth-input" asp-for="ConfirmPassword" id="regCfm"
-                                   type="password" placeholder="Nhập lại mật khẩu"
+                                   type="password" placeholder="@L["Register_ConfirmPlaceholder"]"
                                    autocomplete="new-password"
                                    style="padding-right:42px;" />
                             <button type="button" class="auth-pw-toggle"
@@ -399,15 +399,15 @@
                 <div class="auth-checkbox-row">
                     <input type="checkbox" id="terms" required />
                     <label for="terms">
-                        Tôi đồng ý với <a href="#">Điều khoản dịch vụ</a>
-                        và <a href="#">Chính sách bảo mật</a> của SchoolApp.
+                        @L["Register_Terms"] <a href="#">@L["Register_TermsService"]</a>
+                        và <a href="#">@L["Register_TermsPrivacy"]</a> của SchoolApp.
                     </label>
                 </div>
 
-                <button type="submit" class="auth-btn">ĐĂNG KÝ NGAY</button>
+                <button type="submit" class="auth-btn">@L["Register_Button"]</button>
             </form>
 
-            <div class="auth-divider">HOẶC ĐĂNG KÝ VỚI</div>
+            <div class="auth-divider">@L["Register_OrWith"]</div>
 
             <div class="auth-social-row">
                 <a asp-controller="Account" asp-action="GoogleLogin" class="auth-social-btn" title="Google">

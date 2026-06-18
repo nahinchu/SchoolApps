@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavCourses" xml:space="preserve">
+    <value>Khóa học</value>
+  </data>
+  <data name="NavMyEnrollments" xml:space="preserve">
+    <value>Khóa học của tôi</value>
+  </data>
+  <data name="NavCertificates" xml:space="preserve">
+    <value>Chứng chỉ</value>
+  </data>
+  <data name="NavStudents" xml:space="preserve">
+    <value>Học viên</value>
+  </data>
+  <data name="NavEnrollments" xml:space="preserve">
+    <value>Đăng ký học</value>
+  </data>
+  <data name="NavQuestionBank" xml:space="preserve">
+    <value>Ngân hàng câu hỏi</value>
+  </data>
+  <data name="WelcomeTitle" xml:space="preserve">
+    <value>Chào mừng đến với</value>
+  </data>
+  <data name="WelcomeDesc" xml:space="preserve">
+    <value>Nền tảng quản lý học tập hiện đại, kết nối học viên và giảng viên trong không gian chuyên nghiệp.</value>
+  </data>
+  <data name="RegisterFree" xml:space="preserve">
+    <value>Đăng ký miễn phí</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Đăng nhập</value>
+  </data>
+  <data name="ViewCourses" xml:space="preserve">
+    <value>Xem khóa học</value>
+  </data>
+  <data name="FeatureRichContent" xml:space="preserve">
+    <value>Nội dung phong phú</value>
+  </data>
+  <data name="FeatureRichContentDesc" xml:space="preserve">
+    <value>Bài học dạng video, văn bản và tài liệu đính kèm.</value>
+  </data>
+  <data name="FeatureQuiz" xml:space="preserve">
+    <value>Kiểm tra &amp; đánh giá</value>
+  </data>
+  <data name="FeatureQuizDesc" xml:space="preserve">
+    <value>Quiz tương tác với nhiều dạng câu hỏi, tính điểm tự động.</value>
+  </data>
+  <data name="FeatureProgress" xml:space="preserve">
+    <value>Theo dõi tiến độ</value>
+  </data>
+  <data name="FeatureProgressDesc" xml:space="preserve">
+    <value>Hệ thống ghi nhận tiến trình học tập chi tiết theo từng bài.</value>
+  </data>
+  <data name="FeatureSecurity" xml:space="preserve">
+    <value>Bảo mật &amp; an toàn</value>
+  </data>
+  <data name="FeatureSecurityDesc" xml:space="preserve">
+    <value>Mật khẩu mã hóa BCrypt, phân quyền rõ ràng Admin / Học viên.</value>
+  </data>
+  <data name="StudentWelcomeBack" xml:space="preserve">
+    <value>Chào mừng trở lại</value>
+  </data>
+  <data name="StudentGreeting" xml:space="preserve">
+    <value>Xin chào</value>
+  </data>
+  <data name="StudentMotivation" xml:space="preserve">
+    <value>Tiếp tục hành trình học tập của bạn. Kiến thức là nền tảng cho mọi thành công.</value>
+  </data>
+  <data name="StudentLearnAtPace" xml:space="preserve">
+    <value>Học theo tiến độ</value>
+  </data>
+  <data name="StudentLearnAtPaceDesc" xml:space="preserve">
+    <value>Hệ thống tự động theo dõi bài học đã xem và hoàn thành.</value>
+  </data>
+  <data name="StudentTestKnowledge" xml:space="preserve">
+    <value>Kiểm tra kiến thức</value>
+  </data>
+  <data name="StudentTestKnowledgeDesc" xml:space="preserve">
+    <value>Làm quiz cuối mỗi bài, xem điểm và đáp án ngay sau khi nộp.</value>
+  </data>
+  <data name="StudentTrackResults" xml:space="preserve">
+    <value>Theo dõi kết quả</value>
+  </data>
+  <data name="StudentTrackResultsDesc" xml:space="preserve">
+    <value>Xem lại các lần làm bài, so sánh điểm và cải thiện từng ngày.</value>
+  </data>
+  <data name="AdminDashboardTitle" xml:space="preserve">
+    <value>Bảng điều khiển quản trị</value>
+  </data>
+  <data name="AdminGreeting" xml:space="preserve">
+    <value>Xin chào</value>
+  </data>
+  <data name="AdminGreetingSuffix" xml:space="preserve">
+    <value>Quản lý toàn bộ hệ thống học tập từ đây.</value>
+  </data>
+  <data name="AdminCourses" xml:space="preserve">
+    <value>Khóa học</value>
+  </data>
+  <data name="AdminCoursesDesc" xml:space="preserve">
+    <value>Tạo, chỉnh sửa và quản lý toàn bộ khóa học, chương học, bài học.</value>
+  </data>
+  <data name="AdminStudents" xml:space="preserve">
+    <value>Học viên</value>
+  </data>
+  <data name="AdminStudentsDesc" xml:space="preserve">
+    <value>Xem danh sách, thêm mới và quản lý thông tin học viên.</value>
+  </data>
+  <data name="AdminEnrollments" xml:space="preserve">
+    <value>Đăng ký học</value>
+  </data>
+  <data name="AdminEnrollmentsDesc" xml:space="preserve">
+    <value>Quản lý việc đăng ký khóa học của học viên, cấp quyền truy cập.</value>
+  </data>
+  <data name="AdminQuestionBank" xml:space="preserve">
+    <value>Ngân hàng câu hỏi</value>
+  </data>
+  <data name="AdminQuestionBankDesc" xml:space="preserve">
+    <value>Quản lý thư viện câu hỏi dùng chung cho các bài kiểm tra.</value>
+  </data>
+  <data name="SelectLanguage" xml:space="preserve">
+    <value>Ngôn ngữ</value>
+  </data>
+  <data name="Nav_ManageManagers" xml:space="preserve"><value>Quản lý Manager</value></data>
+  <data name="Nav_Notifications" xml:space="preserve"><value>Thông báo</value></data>
+  <data name="Nav_AllNotifications" xml:space="preserve"><value>Xem tất cả thông báo</value></data>
+  <data name="Nav_Loading" xml:space="preserve"><value>Đang tải...</value></data>
+  <data name="Nav_EditProfile" xml:space="preserve"><value>Sửa profile</value></data>
+  <data name="Nav_Logout" xml:space="preserve"><value>Đăng xuất</value></data>
+  <data name="Nav_LoginBtn" xml:space="preserve"><value>Đăng nhập</value></data>
+  <data name="Nav_RegisterBtn" xml:space="preserve"><value>Đăng ký</value></data>
+  <data name="Nav_StudentBadge" xml:space="preserve"><value>Học viên</value></data>
+  <data name="Nav_AdminRole" xml:space="preserve"><value>Quản trị hệ thống</value></data>
+  <data name="Nav_ManagerRole" xml:space="preserve"><value>Quản lý nội dung</value></data>
+  <data name="Login_Title" xml:space="preserve"><value>Đăng nhập.</value></data>
+  <data name="Login_Subtitle" xml:space="preserve"><value>Chào mừng trở lại SchoolApp.</value></data>
+  <data name="Login_NoAccount" xml:space="preserve"><value>Chưa có tài khoản?</value></data>
+  <data name="Login_RegisterLink" xml:space="preserve"><value>Đăng ký.</value></data>
+  <data name="Login_Email" xml:space="preserve"><value>Địa chỉ Email</value></data>
+  <data name="Login_Password" xml:space="preserve"><value>Mật khẩu</value></data>
+  <data name="Login_ForgotPassword" xml:space="preserve"><value>Quên mật khẩu?</value></data>
+  <data name="Login_Button" xml:space="preserve"><value>ĐĂNG NHẬP</value></data>
+  <data name="Login_OrWith" xml:space="preserve"><value>HOẶC ĐĂNG NHẬP VỚI</value></data>
+  <data name="Login_Error" xml:space="preserve"><value>Sai email hoặc mật khẩu. Vui lòng thử lại.</value></data>
+  <data name="Register_Title" xml:space="preserve"><value>Đăng ký Miễn Phí.</value></data>
+  <data name="Register_Subtitle" xml:space="preserve"><value>Khám phá kiến thức không giới hạn.</value></data>
+  <data name="Register_HasAccount" xml:space="preserve"><value>Đã có tài khoản?</value></data>
+  <data name="Register_LoginLink" xml:space="preserve"><value>Đăng nhập.</value></data>
+  <data name="Register_PasswordPlaceholder" xml:space="preserve"><value>Ít nhất 6 ký tự</value></data>
+  <data name="Register_ConfirmPassword" xml:space="preserve"><value>Xác nhận mật khẩu</value></data>
+  <data name="Register_ConfirmPlaceholder" xml:space="preserve"><value>Nhập lại mật khẩu</value></data>
+  <data name="Register_Terms" xml:space="preserve"><value>Tôi đồng ý với</value></data>
+  <data name="Register_TermsService" xml:space="preserve"><value>Điều khoản dịch vụ</value></data>
+  <data name="Register_TermsPrivacy" xml:space="preserve"><value>Chính sách bảo mật</value></data>
+  <data name="Register_Button" xml:space="preserve"><value>ĐĂNG KÝ NGAY</value></data>
+  <data name="Register_OrWith" xml:space="preserve"><value>HOẶC ĐĂNG KÝ VỚI</value></data>
+  <data name="Course_Title" xml:space="preserve"><value>Danh sách khóa học</value></data>
+  <data name="Course_Subtitle" xml:space="preserve"><value>Quản lý và khám phá các khóa học hiện có</value></data>
+  <data name="Course_SearchPlaceholder" xml:space="preserve"><value>Tìm khóa học...</value></data>
+  <data name="Course_SortLabel" xml:space="preserve"><value>Sắp xếp</value></data>
+  <data name="Course_Newest" xml:space="preserve"><value>Mới nhất</value></data>
+  <data name="Course_NameAZ" xml:space="preserve"><value>Tên A-Z</value></data>
+  <data name="Course_PriceAsc" xml:space="preserve"><value>Học phí tăng dần</value></data>
+  <data name="Course_PriceDesc" xml:space="preserve"><value>Học phí giảm dần</value></data>
+  <data name="Course_SearchBtn" xml:space="preserve"><value>Tìm kiếm</value></data>
+  <data name="Course_Results" xml:space="preserve"><value>kết quả</value></data>
+  <data name="Course_AllLevels" xml:space="preserve"><value>Tất cả cấp độ</value></data>
+  <data name="Course_AllStatus" xml:space="preserve"><value>Tất cả</value></data>
+  <data name="Course_Active" xml:space="preserve"><value>Đang mở</value></data>
+  <data name="Course_Inactive" xml:space="preserve"><value>Đã đóng</value></data>
+  <data name="Level_Basic" xml:space="preserve"><value>Cơ bản</value></data>
+  <data name="Level_Intermediate" xml:space="preserve"><value>Trung cấp</value></data>
+  <data name="Level_Advanced" xml:space="preserve"><value>Nâng cao</value></data>
+  <data name="Btn_Save" xml:space="preserve"><value>Lưu</value></data>
+  <data name="Btn_Cancel" xml:space="preserve"><value>Hủy</value></data>
+  <data name="Btn_Close" xml:space="preserve"><value>Đóng</value></data>
+  <data name="Btn_Update" xml:space="preserve"><value>Cập nhật</value></data>
+  <data name="Btn_Delete" xml:space="preserve"><value>Xóa</value></data>
+  <data name="Btn_Edit" xml:space="preserve"><value>Sửa</value></data>
+  <data name="Btn_Add" xml:space="preserve"><value>Thêm</value></data>
+  <data name="Btn_Export" xml:space="preserve"><value>Xuất Excel</value></data>
+  <data name="Btn_Import" xml:space="preserve"><value>Nhập Excel</value></data>
+  <data name="Course_AddNew" xml:space="preserve"><value>Thêm khóa học mới</value></data>
+  <data name="Course_NoResults" xml:space="preserve"><value>Không tìm thấy khóa học.</value></data>
+  <data name="Course_EnrollNow" xml:space="preserve"><value>Đăng ký học</value></data>
+  <data name="Course_ViewDetail" xml:space="preserve"><value>Xem chi tiết</value></data>
+  <data name="Course_Free" xml:space="preserve"><value>Miễn phí</value></data>
+  <data name="Course_Students" xml:space="preserve"><value>học viên</value></data>
+  <data name="Course_Lessons" xml:space="preserve"><value>bài học</value></data>
+  <data name="Footer_Desc" xml:space="preserve"><value>Nền tảng quản lý học tập hiện đại, kết nối học viên và giáo viên trong một không gian học thuật chuyên nghiệp.</value></data>
+  <data name="Footer_Explore" xml:space="preserve"><value>Khám phá</value></data>
+  <data name="Footer_System" xml:space="preserve"><value>Hệ thống</value></data>
+  <data name="Footer_Manage" xml:space="preserve"><value>Quản lý</value></data>
+  <data name="Footer_Home" xml:space="preserve"><value>Trang chủ</value></data>
+  <data name="Footer_ManageStudents" xml:space="preserve"><value>Quản lý học viên</value></data>
+  <data name="Footer_ManageEnrollments" xml:space="preserve"><value>Quản lý đăng ký</value></data>
+  <data name="Footer_Account" xml:space="preserve"><value>Tài khoản</value></data>
+  <data name="Footer_Login" xml:space="preserve"><value>Đăng nhập</value></data>
+  <data name="Footer_Register" xml:space="preserve"><value>Đăng ký tài khoản</value></data>
+  <data name="Footer_SystemDashboard" xml:space="preserve"><value>Dashboard hệ thống</value></data>
+  <data name="Footer_ManageCourses" xml:space="preserve"><value>Quản lý khóa học</value></data>
+  <data name="Footer_Contact" xml:space="preserve"><value>Liên hệ</value></data>
+  <data name="Footer_Rights" xml:space="preserve"><value>Bảo lưu mọi quyền.</value></data>
+  <data name="Footer_Tagline" xml:space="preserve"><value>Kiến thức là hành trình, không phải đích đến.</value></data>
+  <data name="Btn_CloseAlert" xml:space="preserve"><value>Đóng</value></data>
+</root>
