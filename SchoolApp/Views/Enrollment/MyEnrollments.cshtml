@@ -2,7 +2,7 @@
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Enrollment>
 @{
-    ViewData["Title"] = "Khóa học của tôi";
+    ViewData["Title"] = L["MyEnr_Title"].Value;
     var studentName = Context.Session.GetString("StudentName");
     var filter = Context.Request.Query["filter"].ToString();
     if (string.IsNullOrEmpty(filter)) filter = "all";
@@ -216,10 +216,10 @@
 <!-- Hero -->
 <div class="sa-page-hero mb-4">
     <h1 style="font-family:var(--font-display); font-size:1.8rem; color:#fff; margin-bottom:.25rem;">
-        🎓 Khóa học của tôi
+        🎓 @L["MyEnr_Title"]
     </h1>
     <p style="color:rgba(255,255,255,.55); font-size:.9rem;">
-        Xin chào <strong style="color:var(--gold-light);">@studentName</strong> — danh sách khóa học bạn đã đăng ký
+        @L["MyEnr_Welcome"] <strong style="color:var(--gold-light);">@studentName</strong> — @L["MyEnr_WelcomeSub"]
     </p>
 </div>
 
@@ -228,13 +228,13 @@
     <div class="sa-card" style="text-align:center; padding:3rem 1.5rem;">
         <div style="font-size:3rem; margin-bottom:1rem;">📭</div>
         <h3 style="font-family:var(--font-display); color:var(--text-mid); margin-bottom:.5rem;">
-            Bạn chưa đăng ký khóa học nào
+            @L["MyEnr_NoEnrollments"]
         </h3>
         <p style="color:var(--text-light); margin-bottom:1.5rem;">
-            Khám phá các khóa học đang mở và bắt đầu học ngay hôm nay!
+            @L["MyEnr_Explore"]
         </p>
         <a asp-controller="Course" asp-action="Index" class="sa-btn sa-btn-gold">
-            <i class="bi bi-book-fill"></i> Xem khóa học
+            <i class="bi bi-book-fill"></i> @L["MyEnr_ViewCourse"]
         </a>
     </div>
 }
@@ -244,43 +244,43 @@ else
 
         <!-- Sidebar -->
         <nav class="mec-sidebar">
-            <div class="s-label">Lọc khóa học</div>
+            <div class="s-label">@L["MyEnr_Filter"]</div>
             <a href="@Url.Action("MyEnrollments", new { filter = "all" })"
                class="s-link @(filter == "all" ? "active" : "")">
-                <span><i class="bi bi-grid me-2"></i>Tất cả</span>
+                <span><i class="bi bi-grid me-2"></i>@L["MyEnr_All"]</span>
                 <span class="badge">@allCount</span>
             </a>
             <a href="@Url.Action("MyEnrollments", new { filter = "inprogress" })"
                class="s-link @(filter == "inprogress" ? "active" : "")">
-                <span><i class="bi bi-play-circle me-2"></i>Đang học</span>
+                <span><i class="bi bi-play-circle me-2"></i>@L["MyEnr_InProgress"]</span>
                 <span class="badge">@activeCount</span>
             </a>
             <a href="@Url.Action("MyEnrollments", new { filter = "completed" })"
                class="s-link @(filter == "completed" ? "active" : "")">
-                <span><i class="bi bi-patch-check me-2"></i>Đã hoàn thành</span>
+                <span><i class="bi bi-patch-check me-2"></i>@L["MyEnr_Completed"]</span>
                 <span class="badge">@completedCount</span>
             </a>
 
             <hr style="margin:.6rem .75rem;" />
 
-            <div class="s-label">Thống kê</div>
+            <div class="s-label">@L["MyEnr_StatsTitle"]</div>
             <div style="padding:.4rem 1.1rem .8rem;">
                 <div style="display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:.35rem;">
-                    <span style="color:var(--text-light);">Đã đăng ký</span>
+                    <span style="color:var(--text-light);">@L["MyEnr_Enrolled"]</span>
                     <strong>@allCount</strong>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:.35rem;">
-                    <span style="color:var(--text-light);">Hoàn thành</span>
+                    <span style="color:var(--text-light);">@L["MyEnr_CompletedStat"]</span>
                     <strong style="color:#198754;">@completedCount</strong>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:.65rem;">
-                    <span style="color:var(--text-light);">Đang học</span>
+                    <span style="color:var(--text-light);">@L["MyEnr_InProgressStat"]</span>
                     <strong style="color:var(--navy,#0d1b2a);">@activeCount</strong>
                 </div>
                 @if (allCount > 0)
                 {
                     <div style="font-size:.72rem; color:var(--text-light); margin-bottom:.25rem;">
-                        Tiến độ tổng thể
+                        @L["MyEnr_OverallProgress"]
                     </div>
                     <div style="background:#e9ecef; border-radius:999px; height:7px; overflow:hidden;">
                         <div style="width:@pct%; height:100%; background:linear-gradient(90deg,#198754,#34d399); border-radius:999px; transition:width .4s;"></div>
@@ -299,7 +299,7 @@ else
                         @(filter == "completed" ? "🏆" : "📖")
                     </div>
                     <p style="color:var(--text-light); margin:0;">
-                        @(filter == "completed" ? "Bạn chưa hoàn thành khóa học nào." : "Không có khóa học đang học.")
+                        @(filter == "completed" ? L["MyEnr_NoneCompleted"].Value : L["MyEnr_NoneInProgress"].Value)
                     </p>
                 </div>
             }
@@ -321,7 +321,7 @@ else
                                 @if (item.IsCompleted)
                                 {
                                     <span style="color:#198754; font-weight:600;">
-                                        <i class="bi bi-check-circle-fill"></i> Đã hoàn thành
+                                        <i class="bi bi-check-circle-fill"></i> @L["MyEnr_Completed"]
                                         @if (item.CompletedAt.HasValue)
                                         {
                                             <text>· @item.CompletedAt.Value.ToString("dd/MM/yyyy")</text>
@@ -331,7 +331,7 @@ else
                                 else
                                 {
                                     <span style="color:var(--navy,#0d1b2a); font-weight:500;">
-                                        <i class="bi bi-play-circle-fill"></i> Đang học
+                                        <i class="bi bi-play-circle-fill"></i> @L["MyEnr_InProgress"]
                                     </span>
                                 }
                             </div>
@@ -344,18 +344,18 @@ else
                                 @if (certMap.TryGetValue(item.EnrollmentId, out var certId))
                                 {
                                     <a href="@Url.Action("Download", "Certificate", new { id = certId })"
-                                       class="btn-review" target="_blank" title="Tải chứng chỉ PDF"
+                                       class="btn-review" target="_blank" title="@L["MyEnr_CertTitle"]"
                                        style="border-color:#16a34a; color:#16a34a;"
                                        onmouseenter="this.style.background='#16a34a';this.style.color='#fff'"
                                        onmouseleave="this.style.background='transparent';this.style.color='#16a34a'">
-                                        <i class="bi bi-patch-check-fill"></i> Chứng chỉ
+                                        <i class="bi bi-patch-check-fill"></i> @L["MyEnr_CertBadge"]
                                     </a>
                                 }
 
                                 @if (reviewedIds.Contains(item.CourseId))
                                 {
                                     <span class="btn-reviewed">
-                                        <i class="bi bi-star-fill" style="color:#f59e0b;"></i> Đã đánh giá
+                                        <i class="bi bi-star-fill" style="color:#f59e0b;"></i> @L["MyEnr_ReviewedBadge"]
                                     </span>
                                 }
                                 else
@@ -363,7 +363,7 @@ else
                                     <button class="btn-review btn-open-review"
                                             data-course-id="@item.CourseId"
                                             data-course-name="@item.Course?.CourseName">
-                                        <i class="bi bi-star"></i> Đánh giá
+                                        <i class="bi bi-star"></i> @L["MyEnr_ReviewBtn"]
                                     </button>
                                 }
                             }
@@ -371,7 +371,7 @@ else
                             <a asp-controller="Learn" asp-action="Course" asp-route-id="@item.CourseId"
                                class="sa-btn sa-btn-gold" style="padding:.38rem .95rem; font-size:.82rem;">
                                 <i class="bi @(item.IsCompleted ? "bi-eye-fill" : "bi-play-fill")"></i>
-                                @(item.IsCompleted ? "Xem lại" : "Vào học")
+                                @(item.IsCompleted ? L["MyEnr_ViewAgain"].Value : L["MyEnr_GoLearn"].Value)
                             </a>
                         </div>
                     </div>
@@ -381,8 +381,8 @@ else
                 <!-- Pagination -->
                 <div class="d-flex justify-content-between align-items-center px-1 py-2 mt-1">
                     <small style="color:var(--text-light);">
-                        Trang @Model.PageNumber / @Model.PageCount
-                        (Tổng: @Model.TotalItemCount khóa học)
+                        @L["MyEnr_Page"] @Model.PageNumber / @Model.PageCount
+                        (@L["MyEnr_Total"] @Model.TotalItemCount @L["MyEnr_TotalSuffix"])
                     </small>
                     @Html.PagedListPager(Model,
                     page => Url.Action("MyEnrollments", new { page, filter }),
@@ -405,7 +405,7 @@ else
             <div style="background:var(--navy,#0d1b2a); padding:1.1rem 1.4rem; display:flex; align-items:center; justify-content:space-between;">
                 <h6 style="margin:0; color:#fff; font-size:.95rem;">
                     <i class="bi bi-star-fill" style="color:var(--gold-light,#c9a84c);"></i>
-                    Đánh giá khóa học
+                    @L["MyEnr_ReviewTitle"]
                 </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -414,7 +414,7 @@ else
 
                 <!-- Stars -->
                 <div style="margin-bottom:1rem;">
-                    <label style="font-size:.82rem; color:var(--text-light); display:block; margin-bottom:.4rem;">Mức độ hài lòng</label>
+                    <label style="font-size:.82rem; color:var(--text-light); display:block; margin-bottom:.4rem;">@L["MyEnr_RatingLabel"]</label>
                     <div id="rmStars" style="display:flex; gap:.4rem;">
                         @for (int s = 1; s <= 5; s++)
                         {
@@ -427,8 +427,8 @@ else
 
                 <!-- Comment -->
                 <div style="margin-bottom:1.1rem;">
-                    <label style="font-size:.82rem; color:var(--text-light); display:block; margin-bottom:.4rem;">Nhận xét (tùy chọn)</label>
-                    <textarea id="rmComment" rows="3" placeholder="Chia sẻ trải nghiệm của bạn…"
+                    <label style="font-size:.82rem; color:var(--text-light); display:block; margin-bottom:.4rem;">@L["MyEnr_ReviewComment"]</label>
+                    <textarea id="rmComment" rows="3" placeholder="@L["MyEnr_CommentPh"]"
                               style="width:100%; border:1px solid #dee2e6; border-radius:10px;
                                      padding:.65rem .9rem; font-size:.875rem; resize:vertical; outline:none;
                                      transition:border-color .15s; font-family:inherit;"></textarea>
@@ -437,7 +437,7 @@ else
                 <div id="rmError" style="font-size:.82rem; color:#dc2626; margin-bottom:.6rem; display:none;"></div>
 
                 <button id="rmSubmit" class="sa-btn sa-btn-gold" style="width:100%; justify-content:center;">
-                    <i class="bi bi-send-fill me-1"></i> Gửi đánh giá
+                    <i class="bi bi-send-fill me-1"></i> @L["MyEnr_SubmitReview"]
                 </button>
             </div>
         </div>
@@ -447,7 +447,7 @@ else
 
 @section Scripts {
     <script>
-        var starLabels = ['', 'Rất tệ', 'Không hài lòng', 'Bình thường', 'Hài lòng', 'Rất tuyệt vời'];
+        var starLabels = ['', '@L["MyEnr_Star1"]', '@L["MyEnr_Star2"]', '@L["MyEnr_Star3"]', '@L["MyEnr_Star4"]', '@L["MyEnr_Star5"]'];
         var rmRating = 0;
         var rmCourseId = 0;
         var rmModal = new bootstrap.Modal(document.getElementById('reviewModal'));
@@ -494,7 +494,7 @@ else
         document.getElementById('rmSubmit').addEventListener('click', function() {
             var errEl = document.getElementById('rmError');
             if (!rmRating) {
-                errEl.textContent = 'Vui lòng chọn số sao';
+                errEl.textContent = '@L["MyEnr_SelectStars"]';
                 errEl.style.display = 'block';
                 return;
             }

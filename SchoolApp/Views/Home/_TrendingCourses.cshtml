@@ -1,12 +1,13 @@
 ﻿@using SchoolApp.Models
 @model List<Course>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 
 @{
     string LvLabel(CourseLevel l) => l switch
     {
-        CourseLevel.Basic => "Cơ bản",
-        CourseLevel.Intermediate => "Trung cấp",
-        CourseLevel.Advanced => "Nâng cao",
+        CourseLevel.Basic => L["Det_LevelBasic"].Value,
+        CourseLevel.Intermediate => L["Det_LevelIntermediate"].Value,
+        CourseLevel.Advanced => L["Det_LevelAdvanced"].Value,
         _ => l.ToString()
     };
     string LvColor(CourseLevel l) => l switch
@@ -24,11 +25,11 @@
         <!-- Header -->
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
             <h2 style="font-size:1.35rem; font-weight:700; color:var(--text-dark); margin:0;">
-                Các khóa học thịnh hành
+                @L["Trnd_Title"]
             </h2>
             <a asp-controller="Course" asp-action="Index"
                style="font-size:.85rem; color:#6d28d9; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:.3rem;">
-                Xem tất cả <i class="bi bi-arrow-right"></i>
+                @L["Trnd_ViewAll"] <i class="bi bi-arrow-right"></i>
             </a>
         </div>
 
@@ -86,7 +87,7 @@
                                     @LvLabel(c.Level)
                                 </span>
                                 <span style="font-size:.72rem; color:#9ca3af;">
-                                    <i class="bi bi-journal-bookmark"></i> @c.Credits tín chỉ
+                                    <i class="bi bi-journal-bookmark"></i> @c.Credits @L["Det_Credits"]
                                 </span>
                             </div>
 
@@ -94,7 +95,7 @@
                             <div style="margin-top:auto; padding-top:.4rem;">
                                 @if (c.Fee == 0)
                                 {
-                                    <span style="font-size:1rem; font-weight:800; color:#059669;">Miễn phí</span>
+                                    <span style="font-size:1rem; font-weight:800; color:#059669;">@L["Det_Free"]</span>
                                 }
                                 else
                                 {

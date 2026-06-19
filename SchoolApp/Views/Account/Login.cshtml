@@ -1,6 +1,6 @@
 ﻿@model SchoolApp.Models.LoginViewModel
 @{
-    ViewData["Title"] = "Đăng nhập";
+    ViewData["Title"] = L["Login_PageTitle"].Value;
 }
 
 @section Styles {
@@ -263,7 +263,7 @@
         <div class="auth-deco" style="width:160px;height:160px;top:42%;left:-55px;background:transparent;border:1px solid rgba(255,255,255,0.18);"></div>
 
         <!-- Illustration image — thay file tại wwwroot/images/Studying.gif để đổi ảnh -->
-        <img src="~/images/Studying.gif" alt="Minh hoạ học tập"
+        <img src="~/images/Studying.gif" alt="@L["Login_GifAlt"]"
              style="width:80%; max-width:340px; object-fit:contain; position:relative; z-index:1;
                     filter: drop-shadow(0 12px 32px rgba(0,0,0,0.18));" />
     </div>
@@ -302,7 +302,7 @@
                 <div class="auth-form-group">
                     <label class="auth-label" asp-for="Email">@L["Login_Email"]</label>
                     <input class="auth-input" asp-for="Email"
-                           type="email" placeholder="Nhập địa chỉ email ..."
+                           type="email" placeholder="@L["Login_EmailPlaceholder"]"
                            autocomplete="email" />
                     <span asp-validation-for="Email" class="auth-field-error"></span>
                 </div>
@@ -310,7 +310,7 @@
                 <div class="auth-form-group" style="margin-bottom:1.5rem;">
                     <label class="auth-label" asp-for="Password">@L["Login_Password"]</label>
                     <input class="auth-input" asp-for="Password"
-                           type="password" placeholder="Nhập mật khẩu ..."
+                           type="password" placeholder="@L["Login_PasswordPlaceholder"]"
                            autocomplete="current-password" />
                     <span asp-validation-for="Password" class="auth-field-error"></span>
                 </div>

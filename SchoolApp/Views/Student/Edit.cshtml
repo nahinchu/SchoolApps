@@ -1,9 +1,9 @@
-﻿@model SchoolApp.Models.User
+@model SchoolApp.Models.User
 @{
-    ViewData["Title"] = "Sửa học viên";
+    ViewData["Title"] = L["Stu_EditTitle"].Value;
 }
 
-<h2>Cập nhật thông tin học viên</h2>
+<h2>@L["Stu_EditHeading"]</h2>
 <hr />
 
 <div class="row">
@@ -40,8 +40,8 @@
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-success">Cập nhật</button>
-            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            <button type="submit" class="btn btn-success">@L["Btn_Update"]</button>
+            <a asp-action="Index" class="btn btn-secondary">@L["Btn_Cancel"]</a>
         </form>
     </div>
 </div>

@@ -1,8 +1,8 @@
-﻿@using SchoolApp.Models
+@using SchoolApp.Models
 @model Quiz?
 
 @{
-    ViewData["Title"] = "Quản lý Quiz";
+    ViewData["Title"] = L["Qz_Title"].Value;
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var lessonId = (int)ViewData["LessonId"]!;
     var lessonTitle = ViewData["LessonTitle"] as string;
@@ -11,7 +11,7 @@
 <div class="adm-page-header">
     <div>
         <div class="adm-page-title">📋 Quiz — <span>@lessonTitle</span></div>
-        <div class="adm-page-sub">Quản lý câu hỏi và cài đặt bài kiểm tra</div>
+        <div class="adm-page-sub">@L["Qz_Sub"]</div>
     </div>
 </div>
 
@@ -21,9 +21,9 @@
         {
             <div style="text-align:center; padding:3rem 1rem;" id="noQuizBlock">
                 <i class="bi bi-clipboard-x" style="font-size:2.5rem; color:rgba(255,255,255,0.2); display:block; margin-bottom:.75rem;"></i>
-                <div style="color:rgba(255,255,255,0.5); margin-bottom:1rem;">Chưa có bài kiểm tra cho bài học này</div>
+                <div style="color:rgba(255,255,255,0.5); margin-bottom:1rem;">@L["Qz_NoQuiz"]</div>
                 <button class="adm-btn adm-btn-primary" onclick="openQuizSettingsModal(0)">
-                    <i class="bi bi-plus-circle"></i> Tạo bài kiểm tra mới
+                    <i class="bi bi-plus-circle"></i> @L["Qz_CreateNew"]
                 </button>
             </div>
         }
@@ -32,14 +32,14 @@
             <div class="d-flex justify-content-between align-items-center mb-4" id="quizHeaderBlock">
                 <div style="display:flex; align-items:center; gap:.75rem;">
                     <span id="quizTitleDisplay" style="font-size:1.1rem; font-weight:700; color:#fff;">@Model.Title</span>
-                    <span class="adm-badge adm-badge-info" id="questionCountBadge">@Model.Questions.Count câu hỏi</span>
+                    <span class="adm-badge adm-badge-info" id="questionCountBadge">@Model.Questions.Count @L["Qz_QuestionCountSuffix"]</span>
                 </div>
                 <div style="display:flex; gap:.5rem;">
                     <button class="adm-btn adm-btn-warning adm-btn-sm" onclick="openQuizSettingsModal(@Model.QuizId)">
-                        <i class="bi bi-pencil"></i> Sửa cài đặt
+                        <i class="bi bi-pencil"></i> @L["Qz_EditSettings"]
                     </button>
                     <button class="adm-btn adm-btn-danger adm-btn-sm" onclick="deleteQuiz(@Model.QuizId)">
-                        <i class="bi bi-trash"></i> Xóa Quiz
+                        <i class="bi bi-trash"></i> @L["Qz_DeleteQuiz"]
                     </button>
                 </div>
             </div>
@@ -52,13 +52,13 @@
 
         <div class="d-flex justify-content-between mt-3">
             <button class="adm-btn adm-btn-primary" onclick="openCreateQuestionModal()">
-                <i class="bi bi-plus-circle"></i> Thêm câu hỏi mới
+                <i class="bi bi-plus-circle"></i> @L["Qz_AddQuestion"]
             </button>
             <button class="adm-btn adm-btn-ghost" onclick="openBankModal()">
-                <i class="bi bi-bank"></i> Thêm từ ngân hàng
+                <i class="bi bi-bank"></i> @L["Qz_AddFromBank"]
             </button>
             <small style="color:rgba(255,255,255,0.35); align-self:center; font-size:.78rem;">
-                <i class="bi bi-info-circle"></i> Kéo thả vào cột <i class="bi bi-grip-vertical"></i> để đổi thứ tự câu hỏi
+                <i class="bi bi-info-circle"></i> @L["Qz_DragHint"] <i class="bi bi-grip-vertical"></i>
             </small>
         </div>
     }
@@ -69,7 +69,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-navy text-white">
-                <h5 class="modal-title" id="quizModalLabel">Cài đặt Quiz</h5>
+                <h5 class="modal-title" id="quizModalLabel">@L["Qz_SettingsTitle"]</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -80,28 +80,28 @@
 
                     <div class="row">
                         <div class="col-md-8">
-                            <label class="adm-label">Tiêu đề Quiz <span class="text-danger">*</span></label>
+                            <label class="adm-label">@L["Qz_QuizTitle"] <span class="text-danger">*</span></label>
                             <input type="text" id="qz_Title" name="Title" class="adm-input" required />
                         </div>
                         <div class="col-md-4">
-                            <label class="adm-label">Điểm đạt (%)</label>
+                            <label class="adm-label">@L["Qz_PassingScore"]</label>
                             <input type="number" id="qz_PassingScore" name="PassingScore" class="adm-input" value="70" min="1" max="100" />
                         </div>
                     </div>
 
                     <div class="row mt-3">
                         <div class="col-md-4">
-                            <label class="adm-label">Thời gian (phút, 0 = không giới hạn)</label>
+                            <label class="adm-label">@L["Qz_TimeLimit"]</label>
                             <input type="number" id="qz_TimeLimitMinutes" name="TimeLimitMinutes" class="adm-input" value="0" min="0" />
                         </div>
                         <div class="col-md-4">
-                            <label class="adm-label">Số lần làm tối đa (0 = không giới hạn)</label>
+                            <label class="adm-label">@L["Qz_MaxAttempts"]</label>
                             <input type="number" id="qz_MaxAttempts" name="MaxAttempts" class="adm-input" value="0" min="0" />
                         </div>
                         <div class="col-md-4 pt-4">
                             <div class="form-check">
                                 <input type="checkbox" id="qz_IsPublished" name="IsPublished" value="true" class="form-check-input" checked />
-                                <label class="form-check-label" for="qz_IsPublished">Công bố Quiz</label>
+                                <label class="form-check-label" for="qz_IsPublished">@L["Qz_IsPublished"]</label>
                             </div>
                         </div>
                     </div>
@@ -110,27 +110,27 @@
                         <div class="col-md-6">
                             <div class="form-check">
                                 <input type="checkbox" id="qz_AllowRetry" name="AllowRetry" value="true" class="form-check-input" checked />
-                                <label class="form-check-label" for="qz_AllowRetry">Cho phép làm lại</label>
+                                <label class="form-check-label" for="qz_AllowRetry">@L["Qz_AllowRetry"]</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check">
                                 <input type="checkbox" id="qz_ShowAnswersAfterSubmit" name="ShowAnswersAfterSubmit" value="true" class="form-check-input" checked />
-                                <label class="form-check-label" for="qz_ShowAnswersAfterSubmit">Hiển thị đáp án sau khi nộp</label>
+                                <label class="form-check-label" for="qz_ShowAnswersAfterSubmit">@L["Qz_ShowAnswers"]</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <label class="adm-label">Mô tả / Hướng dẫn</label>
+                        <label class="adm-label">@L["Qz_Description"]</label>
                         <textarea id="qz_Description" name="Description" class="adm-input" rows="3"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="adm-btn adm-btn-ghost" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="adm-btn adm-btn-ghost" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="adm-btn adm-btn-primary" id="btnSaveQuiz">
-                    <i class="bi bi-check-lg"></i> Lưu Quiz
+                    <i class="bi bi-check-lg"></i> @L["Qz_SaveQuiz"]
                 </button>
             </div>
         </div>
@@ -142,7 +142,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-navy text-white">
-                <h5 class="modal-title" id="questionModalLabel">Thêm / Sửa Câu Hỏi</h5>
+                <h5 class="modal-title" id="questionModalLabel">@L["Qz_ModalAddQuestion"]</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -151,86 +151,83 @@
 
                     <div class="row">
                         <div class="col-md-8">
-                            <label class="adm-label">Nội dung câu hỏi <span class="text-danger">*</span></label>
+                            <label class="adm-label">@L["QB_QuestionContent"] <span class="text-danger">*</span></label>
                             <textarea id="q_Content" class="adm-input" rows="3" required></textarea>
                         </div>
                         <div class="col-md-4">
-                            <label class="adm-label">Loại câu hỏi</label>
+                            <label class="adm-label">@L["QB_QuestionType"]</label>
                             <select id="q_Type" class="adm-input" onchange="onQuestionTypeChange()">
-                                <option value="0">Một đáp án</option>
-                                <option value="1">Nhiều đáp án</option>
-                                <option value="2">Đúng / Sai</option>
+                                <option value="0">@L["QB_SingleChoice"]</option>
+                                <option value="1">@L["QB_MultiChoice"]</option>
+                                <option value="2">@L["QB_TrueFalse"]</option>
                             </select>
 
-                            <label class="adm-label mt-3">Điểm</label>
+                            <label class="adm-label mt-3">@L["QB_ColPoints"]</label>
                             <input type="number" id="q_Points" class="adm-input" value="1" min="1" max="20" />
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <label class="adm-label">Giải thích đáp án (tùy chọn)</label>
+                        <label class="adm-label">@L["QB_Explanation"]</label>
                         <textarea id="q_Explanation" class="adm-input" rows="2"></textarea>
                     </div>
 
                     <hr />
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">Đáp án</h6>
-                        <small class="text-muted" id="optionsHint">Đánh dấu vào ô <strong>Đúng</strong> cho đáp án chính xác</small>
+                        <h6 class="mb-0">@L["QB_Answers"]</h6>
+                        <small class="text-muted" id="optionsHint">@Html.Raw(L["Qz_AnswerHint"])</small>
                     </div>
                     <div id="optionsContainer" class="mt-2"></div>
 
                     <button type="button" id="btnAddOption" class="adm-btn adm-btn-info adm-btn-sm mt-2" onclick="addOptionField()">
-                        <i class="bi bi-plus"></i> Thêm đáp án
+                        <i class="bi bi-plus"></i> @L["QB_AddAnswer"]
                     </button>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="adm-btn adm-btn-ghost" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="adm-btn adm-btn-ghost" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="adm-btn adm-btn-primary" id="btnSaveQuestion">
-                    <i class="bi bi-check-lg"></i> Lưu Câu Hỏi
+                    <i class="bi bi-check-lg"></i> @L["Btn_Save"]
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ====================== MODAL IMPORT===================== -->
-
+<!-- ====================== MODAL IMPORT ====================== -->
 <div class="modal fade" id="bankImportModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
 
             <div class="modal-header bg-navy text-white">
-                <h5 class="modal-title">🗃️ Chọn câu hỏi từ ngân hàng</h5>
+                <h5 class="modal-title">🗃️ @L["Qz_BankTitle"]</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
 
-                @* ── TOOLBAR ─────────────────────────────────────────── *@
                 <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
                     <div style="position:relative; flex:1; min-width:200px;">
                         <i class="bi bi-search"
                            style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#aaa;"></i>
                         <input type="text" id="bankSearchInput" class="adm-input"
-                               placeholder="Tìm nội dung câu hỏi..."
+                               placeholder="@L["Qz_SearchQuestion"]"
                                oninput="filterBankTable()"
                                style="padding-left:32px;" />
                     </div>
                     <select id="bankTagFilter" class="adm-input" style="max-width:180px;"
                             onchange="filterBankTable()">
-                        <option value="">-- Tất cả tag --</option>
+                        <option value="">@L["Qz_AllTags"]</option>
                     </select>
                     <select id="bankTypeFilter" class="adm-input" style="max-width:170px;"
                             onchange="filterBankTable()">
-                        <option value="">-- Tất cả loại --</option>
-                        <option value="0">Một đáp án</option>
-                        <option value="1">Nhiều đáp án</option>
-                        <option value="2">Đúng / Sai</option>
+                        <option value="">@L["Qz_AllTypes"]</option>
+                        <option value="0">@L["QB_SingleChoice"]</option>
+                        <option value="1">@L["QB_MultiChoice"]</option>
+                        <option value="2">@L["QB_TrueFalse"]</option>
                     </select>
                 </div>
 
-                @* ── BẢNG ─────────────────────────────────────────────── *@
                 <div class="adm-table-wrap" style="max-height:420px; overflow-y:auto;">
                     <table class="adm-table adm-table-bordered">
                         <thead style="position:sticky;top:0;z-index:1;">
@@ -240,52 +237,51 @@
                                            class="form-check-input mt-0"
                                            onchange="toggleCheckAll(this)" />
                                 </th>
-                                <th>Nội dung câu hỏi</th>
-                                <th style="width:130px;">Loại</th>
-                                <th style="width:70px;" class="text-center">Điểm</th>
-                                <th style="width:100px;">Tag</th>
+                                <th>@L["QB_ColContent"]</th>
+                                <th style="width:130px;">@L["QB_ColType"]</th>
+                                <th style="width:70px;" class="text-center">@L["QB_ColPoints"]</th>
+                                <th style="width:100px;">@L["QB_Tags"]</th>
                             </tr>
                         </thead>
                         <tbody id="bankImportBody">
                             <tr>
                                 <td colspan="5" style="text-align:center; padding:1.5rem; color:rgba(255,255,255,0.3);">
                                     <div class="spinner-border spinner-border-sm me-2" style="color:var(--adm-gold);"></div>
-                                    Đang tải...
+                                    @L["Qz_Loading"]
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                @* ── FOOTER INFO ──────────────────────────────────────── *@
                 <div class="d-flex justify-content-between align-items-center mt-2">
                     <small class="text-muted">
-                        Hiển thị <strong id="bankVisibleCount">0</strong> câu —
-                        Đã chọn: <strong id="bankSelectedCount" class="text-primary">0</strong> câu
+                        @L["Qz_ShowingWord"] <strong id="bankVisibleCount">0</strong> @L["Qz_QuestionCountSuffix"] —
+                        @L["Qz_SelectedWord"] <strong id="bankSelectedCount" class="text-primary">0</strong>
                     </small>
                     <small class="text-muted">
                         <i class="bi bi-info-circle me-1"></i>
-                        Câu hỏi sẽ được sao chép vào quiz, bản gốc trong ngân hàng không thay đổi
+                        @L["Qz_BankCopyInfo"]
                     </small>
                 </div>
 
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="adm-btn adm-btn-ghost" data-bs-dismiss="modal">Huỷ</button>
+                <button type="button" class="adm-btn adm-btn-ghost" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="adm-btn adm-btn-primary" id="btnImportBank"
                         onclick="importFromBank()" disabled>
                     <i class="bi bi-download me-1"></i>
-                    Import <span id="importCount">0</span> câu vào quiz
+                    @L["Btn_Import"] <span id="importCount">0</span> @L["Qz_QuestionCountSuffix"]
                 </button>
             </div>
 
         </div>
     </div>
 </div>
+
 @section Styles {
     <style>
-        /* Dark modal cho trang Manage Quiz */
         #quizModal .modal-content,
         #questionModal .modal-content,
         #bankImportModal .modal-content {
@@ -333,21 +329,52 @@
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
 
-    <!-- SortableJS cho drag-drop reorder -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
     <script>
-        // =========================================================
-        // STATE
-        // =========================================================
-        let currentQuizId   = @((Model?.QuizId ?? 0));
-        let currentLessonId = @((int)ViewData["LessonId"]!);
-        let isEditQuestion  = false;
+        // ── LOCALIZED STRINGS ──────────────────────────────────────────────────
+        var _qzModalCreate     = '➕ @L["Qz_ModalCreateQuiz"]';
+        var _qzModalEdit       = '✏️ @L["Qz_ModalEditSettings"]';
+        var _qzModalAddQ       = '➕ @L["Qz_ModalAddQuestion"]';
+        var _qzModalEditQ      = '✏️ @L["Qz_ModalEditQuestion"]';
+        var _qzSave            = '<i class="bi bi-check-lg"></i> @L["Btn_Save"]';
+        var _qzUpdate          = '<i class="bi bi-check-lg"></i> @L["Btn_Update"]';
+        var _qzDelConfirm      = '@L["Qz_DeleteQuizConfirm"]';
+        var _qzSaveFail        = '@L["Qz_SaveFail"]';
+        var _qzConnError       = '@L["Qz_ConnError"]';
+        var _qzNeedQuizFirst   = '@L["Qz_NeedQuizFirst"]';
+        var _qzLoadQuizError   = '@L["Qz_LoadQuizError"]';
+        var _qzLoadQError      = '@L["Qz_LoadQuestionError"]';
+        var _qzNoBankLoaded    = '@L["Qz_NoBankLoaded"]';
+        var _qzNoSelected      = '@L["Qz_NoSelected"]';
+        var _qzImportFail      = '@L["Qz_ImportFail"]';
+        var _qzNeedQuizForBank = '@L["Qz_NeedQuizForBank"]';
+        var _qzSaveToBankConf  = '@L["Qz_SaveToBankConfirm"]';
+        var _qzNoMatchingQ     = '@L["Qz_NoMatchingQuestions"]';
+        var _qzDelQConfirm     = '@L["Qz_DeleteQuestionConfirm"]';
+        var _qzQCountSuffix    = '@L["Qz_QuestionCountSuffix"]';
+        var _qzAnswerSuffix    = '@L["Qz_AnswerCountSuffix"]';
+        var _qzLoading         = '@L["Qz_Loading"]';
+        var _qzShowingWord     = '@L["Qz_ShowingWord"]';
+        var _qzSelectedWord    = '@L["Qz_SelectedWord"]';
+        var _qzTFHint          = '@Html.Raw(L["Qz_TFHint"])';
+        var _qzSingleHint      = '@Html.Raw(L["Qz_SingleHint"])';
+        var _qzMultiHint       = '@Html.Raw(L["Qz_MultiHint"])';
+        var _qzAnswerHint      = '@Html.Raw(L["Qz_AnswerHint"])';
+        var _qzOptionPh        = '@L["QB_AnswerPlaceholder"]';
+        var _qzCorrect         = '@L["QB_Correct"]';
+        var _qzSingle          = '@L["QB_SingleChoice"]';
+        var _qzMulti           = '@L["QB_MultiChoice"]';
+        var _qzTF              = '@L["QB_TrueFalse"]';
+        var _qzBtnImport       = '@L["Btn_Import"]';
+
+        // ── STATE ──────────────────────────────────────────────────────────────
+        let currentQuizId    = @((Model?.QuizId ?? 0));
+        let currentLessonId  = @((int)ViewData["LessonId"]!);
+        let isEditQuestion   = false;
         let sortableInstance = null;
 
-        // =========================================================
-        // HELPERS
-        // =========================================================
+        // ── HELPERS ────────────────────────────────────────────────────────────
         function getAntiForgeryToken() {
             return $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
         }
@@ -363,7 +390,7 @@
         }
 
         window.showToast = function (message, type = 'success') {
-            const cls = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
+            const cls  = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
             const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';
             const toast = $(`
                 <div class="sa-alert ${cls}" style="position:fixed;top:1rem;right:1rem;z-index:9999;min-width:320px;">
@@ -375,29 +402,22 @@
             setTimeout(() => toast.fadeOut(400, () => toast.remove()), 3000);
         };
 
-        // =========================================================
-        // LOAD QUESTIONS LIST
-        // =========================================================
+        // ── LOAD QUESTIONS ─────────────────────────────────────────────────────
         function loadQuestions() {
             if (currentQuizId === 0) return;
             $.get('@Url.Action("GetQuestions", "Quiz")', { quizId: currentQuizId }, function (html) {
                 $('#questionsTableContainer').html(html);
-
                 const count = $('#questionsTbody tr[data-question-id]').length;
-                $('#questionCountBadge').text(count + ' câu hỏi');
-
+                $('#questionCountBadge').text(count + ' ' + _qzQCountSuffix);
                 initSortable();
             });
         }
 
-        // =========================================================
-        // SORTABLE / REORDER
-        // =========================================================
+        // ── SORTABLE ───────────────────────────────────────────────────────────
         function initSortable() {
             const tbody = document.getElementById('questionsTbody');
             if (!tbody) return;
 
-            // Destroy old instance nếu có
             if (sortableInstance) {
                 sortableInstance.destroy();
                 sortableInstance = null;
@@ -414,7 +434,6 @@
 
                     if (ids.length === 0) return;
 
-                    // Cập nhật UI ngay (optimistic)
                     $('#questionsTbody tr[data-question-id]').each(function (i) {
                         $(this).find('.order-cell').text(i + 1);
                     });
@@ -423,30 +442,28 @@
                         { QuizId: currentQuizId, QuestionIds: ids })
                         .done(function (res) {
                             if (res.success) {
-                                showToast(res.message || 'Đã cập nhật thứ tự', 'success');
+                                showToast(res.message, 'success');
                             } else {
-                                showToast(res.message || 'Lỗi cập nhật thứ tự', 'danger');
-                                loadQuestions(); // rollback bằng cách reload
+                                showToast(res.message, 'danger');
+                                loadQuestions();
                             }
                         })
                         .fail(function () {
-                            showToast('Lỗi kết nối', 'danger');
+                            showToast(_qzConnError, 'danger');
                             loadQuestions();
                         });
                 }
             });
         }
 
-        // =========================================================
-        // QUIZ SETTINGS MODAL
-        // =========================================================
+        // ── QUIZ SETTINGS MODAL ────────────────────────────────────────────────
         function openQuizSettingsModal(quizId) {
             $('#quizForm')[0].reset();
             $('#qz_QuizId').val(quizId || 0);
             $('#qz_LessonId').val(currentLessonId);
 
             if (quizId && quizId > 0) {
-                $('#quizModalLabel').text('✏️ Sửa cài đặt Quiz');
+                $('#quizModalLabel').text(_qzModalEdit);
                 $.get('@Url.Action("GetQuiz", "Quiz")', { id: quizId }, function (data) {
                     $('#qz_Title').val(data.title);
                     $('#qz_Description').val(data.description || '');
@@ -458,10 +475,10 @@
                     $('#qz_ShowAnswersAfterSubmit').prop('checked', data.showAnswersAfterSubmit);
                     $('#quizModal').modal('show');
                 }).fail(function () {
-                    showToast('Không tải được thông tin Quiz!', 'danger');
+                    showToast(_qzLoadQuizError, 'danger');
                 });
             } else {
-                $('#quizModalLabel').text('➕ Tạo bài kiểm tra mới');
+                $('#quizModalLabel').text(_qzModalCreate);
                 $('#qz_PassingScore').val(70);
                 $('#qz_IsPublished').prop('checked', true);
                 $('#qz_AllowRetry').prop('checked', true);
@@ -470,9 +487,8 @@
             }
         }
 
-                       $('#btnSaveQuiz').on('click', function () {
+        $('#btnSaveQuiz').on('click', function () {
             const formData = $('#quizForm').serializeArray();
-
             $.ajax({
                 url: '@Url.Action("SaveQuiz", "Quiz")',
                 type: 'POST',
@@ -483,18 +499,17 @@
                         showToast(res.message, 'success');
                         setTimeout(() => location.reload(), 700);
                     } else {
-                        console.log(res.errors);
-                        showToast(res.message || 'Lưu thất bại', 'danger');
+                        showToast(res.message || _qzSaveFail, 'danger');
                     }
                 },
                 error: function () {
-                    showToast('Lỗi kết nối!', 'danger');
+                    showToast(_qzConnError, 'danger');
                 }
             });
         });
 
         function deleteQuiz(quizId) {
-            if (!confirm('Xóa bài kiểm tra này? Toàn bộ câu hỏi sẽ bị xóa theo.')) return;
+            if (!confirm(_qzDelConfirm)) return;
             $.ajax({
                 url: '@Url.Action("Delete", "Quiz")',
                 type: 'POST',
@@ -510,46 +525,37 @@
             });
         }
 
-        // =========================================================
-        // QUESTION MODAL
-        // =========================================================
-               function onQuestionTypeChange() {
-            const type = parseInt($('#q_Type').val());
+        // ── QUESTION MODAL ─────────────────────────────────────────────────────
+        function onQuestionTypeChange() {
+            const type        = parseInt($('#q_Type').val());
             const isTrueFalse = type === 2;
 
             if (isTrueFalse) {
                 $('#btnAddOption').hide();
-                $('#optionsHint').html('Câu Đúng/Sai có cố định 2 đáp án. Chỉ được chọn 1 đáp án đúng.');
+                $('#optionsHint').html(_qzTFHint);
 
-                // ✅ Chỉ hard-code khi TẠO MỚI, còn edit thì giữ nguyên options đã load
                 if (!isEditQuestion && $('#optionsContainer .option-item').length === 0) {
                     $('#optionsContainer').html('');
-                    addOptionField('Đúng', true, 0);   // Mặc định "Đúng" là đúng
-                    addOptionField('Sai', false, 0);
+                    addOptionField('@L["QB_OptionTrue"]', true, 0);
+                    addOptionField('@L["QB_OptionFalse"]', false, 0);
                 }
 
-                // Force radio
                 $('#optionsContainer .option-correct').attr('type', 'radio').attr('name', 'tf_correct');
-            }
-            else {
+            } else {
                 $('#btnAddOption').show();
-                $('#optionsHint').html(
-                    type === 1
-                        ? 'Đánh dấu vào ô <strong>Đúng</strong> cho TẤT CẢ đáp án chính xác'
-                        : 'Đánh dấu vào ô <strong>Đúng</strong> cho 1 đáp án chính xác'
-                );
+                $('#optionsHint').html(type === 1 ? _qzMultiHint : _qzSingleHint);
                 $('#optionsContainer .option-correct').attr('type', 'checkbox').removeAttr('name');
             }
         }
 
         function openCreateQuestionModal() {
             if (currentQuizId === 0) {
-                showToast('Vui lòng tạo Quiz trước khi thêm câu hỏi', 'danger');
+                showToast(_qzNeedQuizFirst, 'danger');
                 return;
             }
             isEditQuestion = false;
-            $('#questionModalLabel').text('➕ Thêm câu hỏi mới');
-            $('#btnSaveQuestion').html('<i class="bi bi-check-lg"></i> Lưu Câu Hỏi');
+            $('#questionModalLabel').text(_qzModalAddQ);
+            $('#btnSaveQuestion').html(_qzSave);
             $('#questionForm')[0].reset();
             $('#q_QuestionId').val(0);
             $('#q_Type').val(0);
@@ -562,8 +568,8 @@
 
         function editQuestion(questionId) {
             isEditQuestion = true;
-            $('#questionModalLabel').text('✏️ Sửa câu hỏi');
-            $('#btnSaveQuestion').html('<i class="bi bi-check-lg"></i> Cập nhật');
+            $('#questionModalLabel').text(_qzModalEditQ);
+            $('#btnSaveQuestion').html(_qzUpdate);
             $('#optionsContainer').html('');
 
             $.get('@Url.Action("GetQuestion", "Quiz")', { id: questionId }, function (data) {
@@ -582,7 +588,7 @@
                 onQuestionTypeChange();
                 $('#questionModal').modal('show');
             }).fail(function () {
-                showToast('Không tải được thông tin câu hỏi!', 'danger');
+                showToast(_qzLoadQError, 'danger');
             });
         }
 
@@ -590,10 +596,10 @@
             const safeContent = $('<div>').text(content).html();
             const optionHtml = `
                 <div class="option-item input-group mb-2" data-option-id="${answerOptionId}">
-                    <input type="text" class="form-control option-content" placeholder="Nội dung đáp án" value="${safeContent}">
+                    <input type="text" class="form-control option-content" placeholder="${_qzOptionPh}" value="${safeContent}">
                     <div class="input-group-text">
                         <input type="checkbox" class="option-correct form-check-input mt-0 me-2" ${isCorrect ? 'checked' : ''}>
-                        <span>Đúng</span>
+                        <span>${_qzCorrect}</span>
                     </div>
                     <button type="button" class="btn btn-outline-danger" onclick="$(this).closest('.option-item').remove()">
                         <i class="bi bi-x-lg"></i>
@@ -604,30 +610,22 @@
 
         $('#btnSaveQuestion').on('click', function () {
             const type = parseInt($('#q_Type').val());
-
             const options = [];
             $('.option-item').each(function () {
-                const content = $(this).find('.option-content').val().trim();
+                const content   = $(this).find('.option-content').val().trim();
                 const isCorrect = $(this).find('.option-correct').is(':checked');
-                const optionId = parseInt($(this).data('option-id')) || 0;
-
-                if (content) {
-                    options.push({
-                        AnswerOptionId: optionId,
-                        Content: content,
-                        IsCorrect: isCorrect
-                    });
-                }
+                const optionId  = parseInt($(this).data('option-id')) || 0;
+                if (content) options.push({ AnswerOptionId: optionId, Content: content, IsCorrect: isCorrect });
             });
 
             const payload = {
-                QuestionId: parseInt($('#q_QuestionId').val()) || 0,
-                QuizId: currentQuizId,
-                Content: $('#q_Content').val(),
-                Type: type,
-                Points: parseInt($('#q_Points').val()) || 1,
+                QuestionId:  parseInt($('#q_QuestionId').val()) || 0,
+                QuizId:      currentQuizId,
+                Content:     $('#q_Content').val(),
+                Type:        type,
+                Points:      parseInt($('#q_Points').val()) || 1,
                 Explanation: $('#q_Explanation').val(),
-                Options: options
+                Options:     options
             };
 
             const url = isEditQuestion
@@ -641,14 +639,14 @@
                         showToast(res.message, 'success');
                         loadQuestions();
                     } else {
-                        showToast(res.message || 'Lưu thất bại', 'danger');
+                        showToast(res.message || _qzSaveFail, 'danger');
                     }
                 })
-                .fail(function () { showToast('Lỗi kết nối!', 'danger'); });
+                .fail(function () { showToast(_qzConnError, 'danger'); });
         });
 
         function deleteQuestion(questionId) {
-            if (!confirm('Xóa câu hỏi này?')) return;
+            if (!confirm(_qzDelQConfirm)) return;
             $.ajax({
                 url: '@Url.Action("DeleteQuestion", "Quiz")',
                 type: 'POST',
@@ -663,53 +661,39 @@
                 }
             });
         }
-                window.copyToBank = function (questionId) {
-            if (!confirm('Lưu câu hỏi này vào ngân hàng?')) return;
 
+        window.copyToBank = function (questionId) {
+            if (!confirm(_qzSaveToBankConf)) return;
             $.ajax({
                 url: '@Url.Action("CopyToBank", "Quiz")',
                 type: 'POST',
-                data: {
-                    questionId: questionId,
-                    __RequestVerificationToken: getAntiForgeryToken()
-                },
+                data: { questionId: questionId, __RequestVerificationToken: getAntiForgeryToken() },
                 success: function (res) {
-                    if (res.success) {
-                        showToast(res.message, 'success');
-                    } else {
-                        showToast(res.message, 'danger');
-                    }
+                    showToast(res.message, res.success ? 'success' : 'danger');
                 },
-                error: () => showToast('Lỗi kết nối!', 'danger')
+                error: () => showToast(_qzConnError, 'danger')
             });
         };
-        // =========================================================
-        // INIT
-        // =========================================================
+
+        // ── INIT ───────────────────────────────────────────────────────────────
         $(function () {
-            if (currentQuizId > 0) {
-                loadQuestions();
-            }
+            if (currentQuizId > 0) loadQuestions();
         });
 
-                // ── STATE ─────────────────────────────────────────────────────────────
+        // ── BANK MODAL ─────────────────────────────────────────────────────────
         let allBankQuestions = [];
 
-        // ── MỞ MODAL ──────────────────────────────────────────────────────────
         window.openBankModal = function () {
             if (currentQuizId === 0) {
-                showToast('Vui lòng tạo Quiz trước!', 'danger');
+                showToast(_qzNeedQuizForBank, 'danger');
                 return;
             }
-
-            // Reset UI
             $('#bankSearchInput').val('');
             $('#bankTagFilter').val('');
             $('#bankTypeFilter').val('');
             $('#checkAll').prop('checked', false);
             updateImportButton();
 
-            // Load data rồi mở modal
             $.get('/QuestionBank/GetAll')
                 .done(function (data) {
                     allBankQuestions = data;
@@ -717,10 +701,9 @@
                     renderBankTable(data);
                     $('#bankImportModal').modal('show');
                 })
-                .fail(() => showToast('Không tải được ngân hàng câu hỏi!', 'danger'));
+                .fail(() => showToast(_qzNoBankLoaded, 'danger'));
         };
 
-        // ── RENDER TAG FILTER ──────────────────────────────────────────────────
         function populateTagFilter(list) {
             const tags = [...new Set(list.map(q => q.tag).filter(Boolean))].sort();
             const sel  = $('#bankTagFilter');
@@ -728,15 +711,9 @@
             tags.forEach(t => sel.append(`<option value="${t}">${t}</option>`));
         }
 
-        // ── RENDER BẢNG ───────────────────────────────────────────────────────
         function renderBankTable(list) {
-            const typeLabel = { 0: 'Một đáp án', 1: 'Nhiều đáp án', 2: 'Đúng / Sai' };
-            const typeBadge = {
-                0: 'bg-primary',
-                1: 'bg-warning text-dark',
-                2: 'bg-info text-dark'
-            };
-
+            const typeLabel = { 0: _qzSingle, 1: _qzMulti, 2: _qzTF };
+            const typeBadge = { 0: 'bg-primary', 1: 'bg-warning text-dark', 2: 'bg-info text-dark' };
             const tbody = $('#bankImportBody');
 
             if (list.length === 0) {
@@ -744,7 +721,7 @@
                     <tr>
                         <td colspan="5" class="text-center py-4 text-muted">
                             <i class="bi bi-inbox d-block fs-2 mb-1"></i>
-                            Không có câu hỏi nào phù hợp
+                            ${_qzNoMatchingQ}
                         </td>
                     </tr>`);
                 $('#bankVisibleCount').text(0);
@@ -763,7 +740,7 @@
                     </td>
                     <td>
                         <div class="fw-medium">${escapeHtml(q.content)}</div>
-                        ${q.optionCount ? `<small class="text-muted">${q.optionCount} đáp án</small>` : ''}
+                        ${q.optionCount ? `<small class="text-muted">${q.optionCount} ${_qzAnswerSuffix}</small>` : ''}
                     </td>
                     <td>
                         <span class="badge ${typeBadge[q.type] ?? 'bg-secondary'}">
@@ -782,7 +759,6 @@
             updateImportButton();
         }
 
-        // ── FILTER ────────────────────────────────────────────────────────────
         function filterBankTable() {
             const kw   = $('#bankSearchInput').val().toLowerCase().trim();
             const tag  = $('#bankTagFilter').val();
@@ -798,13 +774,11 @@
             renderBankTable(filtered);
         }
 
-        // ── CHECK ALL ─────────────────────────────────────────────────────────
         window.toggleCheckAll = function (master) {
             $('.bank-cb').prop('checked', master.checked);
             updateImportButton();
         };
 
-        // ── CẬP NHẬT NÚT IMPORT ──────────────────────────────────────────────
         function updateImportButton() {
             const count = $('.bank-cb:checked').length;
             $('#bankSelectedCount').text(count);
@@ -812,19 +786,18 @@
             $('#btnImportBank').prop('disabled', count === 0);
         }
 
-        // ── IMPORT ────────────────────────────────────────────────────────────
         window.importFromBank = function () {
             const ids = $('.bank-cb:checked').map(function () {
                 return parseInt($(this).val());
             }).get();
 
             if (ids.length === 0) {
-                showToast('Chưa chọn câu hỏi nào!', 'danger');
+                showToast(_qzNoSelected, 'danger');
                 return;
             }
 
             $('#btnImportBank').prop('disabled', true)
-                .html('<span class="spinner-border spinner-border-sm me-1"></span> Đang import...');
+                .html('<span class="spinner-border spinner-border-sm me-1"></span> ' + _qzLoading);
 
             $.ajax({
                 url: '/QuestionBank/ImportToQuiz',
@@ -836,20 +809,19 @@
                     if (res.success) {
                         $('#bankImportModal').modal('hide');
                         showToast(res.message, 'success');
-                        loadQuestions();   // reload bảng câu hỏi quiz
+                        loadQuestions();
                     } else {
-                        showToast(res.message || 'Import thất bại!', 'danger');
+                        showToast(res.message || _qzImportFail, 'danger');
                     }
                 },
-                error: () => showToast('Lỗi kết nối!', 'danger'),
+                error: () => showToast(_qzConnError, 'danger'),
                 complete: function () {
                     $('#btnImportBank').prop('disabled', false)
-                        .html('<i class="bi bi-download me-1"></i> Import <span id="importCount">' + ids.length + '</span> câu vào quiz');
+                        .html('<i class="bi bi-download me-1"></i> ' + _qzBtnImport + ' <span id="importCount">' + ids.length + '</span> ' + _qzQCountSuffix);
                 }
             });
         };
 
-        // ── HELPER ────────────────────────────────────────────────────────────
         function escapeHtml(str) {
             return $('<div>').text(str ?? '').html();
         }

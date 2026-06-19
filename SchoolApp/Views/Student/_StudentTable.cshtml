@@ -1,6 +1,7 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.User>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 @{
     var role = Context.Session.GetString("Role");
     var isAdmin = role == "Admin";
@@ -11,12 +12,12 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Họ và tên</th>
+                <th>@L["Stu_ColName"]</th>
                 <th>Email</th>
-                <th>Số điện thoại</th>
-                <th>Ngày sinh</th>
-                <th>Ngày đăng ký</th>
-                <th class="text-center">Thao tác</th>
+                <th>@L["Stu_ColPhone"]</th>
+                <th>@L["Stu_ColDateOfBirth"]</th>
+                <th>@L["Stu_ColRegDate"]</th>
+                <th class="text-center">@L["Stu_ColActions"]</th>
             </tr>
         </thead>
         <tbody>
@@ -25,7 +26,7 @@
                 <tr>
                     <td colspan="7" style="text-align:center; padding:2.5rem; color:rgba(255,255,255,0.3);">
                         <i class="bi bi-people" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
-                        Không có học viên nào
+                        @L["Stu_NoStudents"]
                     </td>
                 </tr>
             }
@@ -44,17 +45,17 @@
                         <td class="text-center" style="white-space:nowrap;">
                             <button type="button" class="adm-btn adm-btn-info adm-btn-sm"
                                     onclick="openDetailModal(@s.UserId)">
-                                <i class="bi bi-eye"></i> Chi tiết
+                                <i class="bi bi-eye"></i> @L["Btn_Detail"]
                             </button>
                             @if (isAdmin)
                             {
                                 <button type="button" class="adm-btn adm-btn-warning adm-btn-sm"
                                         onclick="openEditModal(@s.UserId)">
-                                    <i class="bi bi-pencil"></i> Sửa
+                                    <i class="bi bi-pencil"></i> @L["Btn_Edit"]
                                 </button>
                                 <button type="button" class="adm-btn adm-btn-danger adm-btn-sm btn-delete-student"
                                         data-id="@s.UserId">
-                                    <i class="bi bi-trash"></i> Xóa
+                                    <i class="bi bi-trash"></i> @L["Btn_Delete"]
                                 </button>
                             }
                         </td>
@@ -67,8 +68,8 @@
 </div>
 <div class="d-flex justify-content-between align-items-center mt-3">
     <span style="color:rgba(255,255,255,0.45); font-size:.82rem;">
-        Trang @Model.PageNumber / @Model.PageCount
-        (Tổng: @Model.TotalItemCount học viên)
+        @L["Stu_Page"] @Model.PageNumber / @Model.PageCount
+        (@L["Adm_Total"]: @Model.TotalItemCount @L["Stu_TotalStudents"])
     </span>
     @Html.PagedListPager(Model,
     page => Url.Action("Index", new { page, searchTerm }),

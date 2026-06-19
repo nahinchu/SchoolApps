@@ -1,6 +1,6 @@
 ﻿@model SchoolApp.DTOs.EditProfileViewModel
 @{
-    ViewData["Title"] = "Hồ sơ cá nhân";
+    ViewData["Title"] = L["Prof_Title"].Value;
     var pwdErrorsJson = TempData["PwdErrors"]?.ToString();
     var pwdErrors = pwdErrorsJson != null
         ? System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(pwdErrorsJson)
@@ -9,9 +9,9 @@
     var userRole = Context.Session.GetString("Role") ?? "Student";
     var roleLabel = userRole switch
     {
-        "Admin" => "Quản trị viên",
-        "Manager" => "Quản lý",
-        _ => "Học viên"
+        "Admin" => L["Prof_RoleAdmin"].Value,
+        "Manager" => L["Prof_RoleManager"].Value,
+        _ => L["Prof_RoleStudent"].Value
     };
     var initials = string.IsNullOrEmpty(Model.FullName) ? "?" :
         string.Concat(Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
@@ -544,7 +544,7 @@
 
         <!-- Avatar + User info -->
         <div class="sidebar-avatar-block">
-            <div class="sidebar-avatar" id="avatarBtn" title="Nhấn để thay đổi ảnh đại diện" onclick="document.getElementById('avatarInput').click()">
+            <div class="sidebar-avatar" id="avatarBtn" title="@L["Prof_AvatarTitle"]" onclick="document.getElementById('avatarInput').click()">
                 @if (!string.IsNullOrEmpty(avatarUrl))
                 {
                     <img src="@avatarUrl" id="avatarImg" alt="Avatar" />
@@ -558,14 +558,14 @@
                 </div>
             </div>
             <div>
-                <div class="sidebar-name">@(Model.FullName ?? "Chưa cập nhật")</div>
+                <div class="sidebar-name">@(Model.FullName ?? L["Prof_NotUpdated"].Value)</div>
                 <div style="margin-top:4px;">
                     <span class="sidebar-role-badge">
                         <i class="bi bi-patch-check-fill" style="font-size:0.65rem;"></i>
                         @roleLabel
                     </span>
                 </div>
-                <div class="avatar-upload-hint" style="margin-top:5px;">Nhấn ảnh để thay đổi</div>
+                <div class="avatar-upload-hint" style="margin-top:5px;">@L["Prof_AvatarHint"]</div>
             </div>
         </div>
 
@@ -577,40 +577,40 @@
 
         <!-- Navigation -->
         <nav class="sidebar-nav">
-            <div class="sidebar-section-title">Tài khoản</div>
+            <div class="sidebar-section-title">@L["Prof_Account"]</div>
 
             <button class="sidebar-item @(activeSection == "profile" ? "active" : "")"
                     onclick="switchSection('profile')">
                 <i class="bi bi-person-fill"></i>
-                <span>Thông tin cá nhân</span>
+                <span>@L["Prof_PersonalInfo"]</span>
                 <i class="bi bi-chevron-right item-chevron"></i>
             </button>
 
             <button class="sidebar-item @(activeSection == "password" ? "active" : "")"
                     onclick="switchSection('password')">
                 <i class="bi bi-shield-lock-fill"></i>
-                <span>Đổi mật khẩu</span>
+                <span>@L["Prof_ChangePassword"]</span>
                 <i class="bi bi-chevron-right item-chevron"></i>
             </button>
 
             <div class="sidebar-divider"></div>
-            <div class="sidebar-section-title">Học tập</div>
+            <div class="sidebar-section-title">@L["Prof_Learning"]</div>
 
             <a class="sidebar-item" asp-controller="Enrollment" asp-action="MyEnrollments">
                 <i class="bi bi-book-half"></i>
-                <span>Khoá học của tôi</span>
+                <span>@L["Prof_MyCourses"]</span>
                 <i class="bi bi-chevron-right item-chevron"></i>
             </a>
 
             <a class="sidebar-item" asp-controller="Certificate" asp-action="My">
                 <i class="bi bi-trophy-fill"></i>
-                <span>Chứng chỉ</span>
+                <span>@L["Prof_MyCerts"]</span>
                 <i class="bi bi-chevron-right item-chevron"></i>
             </a>
 
             <a class="sidebar-item" asp-controller="Enrollment" asp-action="MyEnrollments">
                 <i class="bi bi-bar-chart-fill"></i>
-                <span>Tiến trình học</span>
+                <span>@L["Prof_Progress"]</span>
                 <i class="bi bi-chevron-right item-chevron"></i>
             </a>
         </nav>
@@ -619,7 +619,7 @@
         <div class="sidebar-footer">
             <a class="sidebar-logout" asp-controller="Account" asp-action="Logout">
                 <i class="bi bi-box-arrow-right"></i>
-                <span>Đăng xuất</span>
+                <span>@L["Prof_Logout"]</span>
             </a>
         </div>
     </aside>
@@ -635,15 +635,15 @@
                     <i class="bi bi-person-fill"></i>
                 </div>
                 <div>
-                    <div class="section-title">Thông tin cá nhân</div>
-                    <div class="section-subtitle">Cập nhật tên, liên hệ và địa chỉ của bạn</div>
+                    <div class="section-title">@L["Prof_PersonalInfo"]</div>
+                    <div class="section-subtitle">@L["Prof_PersonalInfoSub"]</div>
                 </div>
             </div>
 
             <div class="profile-card">
                 <div class="profile-card-header">
                     <i class="bi bi-person-vcard-fill" style="color:var(--gold);"></i>
-                    <span class="profile-card-title">Thông tin cơ bản</span>
+                    <span class="profile-card-title">@L["Prof_BasicInfo"]</span>
                 </div>
                 <div class="profile-card-body">
 
@@ -666,16 +666,16 @@
 
                             <div class="pf-field form-grid-full">
                                 <label class="pf-label" asp-for="FullName">
-                                    Họ và tên <span class="req">*</span>
+                                    @L["Prof_Fullname"] <span class="req">*</span>
                                 </label>
                                 <input class="pf-input" asp-for="FullName"
-                                       placeholder="Nguyễn Văn A"
+                                       placeholder="@L["Prof_FullNamePh"]"
                                        autocomplete="name" />
                                 <span asp-validation-for="FullName" class="pf-error"></span>
                             </div>
 
                             <div class="pf-field">
-                                <label class="pf-label" asp-for="Phone">Số điện thoại</label>
+                                <label class="pf-label" asp-for="Phone">@L["Prof_Phone"]</label>
                                 <input class="pf-input" asp-for="Phone"
                                        type="tel" placeholder="0901 234 567"
                                        autocomplete="tel" />
@@ -683,16 +683,16 @@
                             </div>
 
                             <div class="pf-field">
-                                <label class="pf-label" asp-for="DateOfBirth">Ngày sinh</label>
+                                <label class="pf-label" asp-for="DateOfBirth">@L["Prof_DOB"]</label>
                                 <input class="pf-input" asp-for="DateOfBirth"
                                        type="date" autocomplete="bday" />
                                 <span asp-validation-for="DateOfBirth" class="pf-error"></span>
                             </div>
 
                             <div class="pf-field form-grid-full">
-                                <label class="pf-label" asp-for="Address">Địa chỉ</label>
+                                <label class="pf-label" asp-for="Address">@L["Prof_Address"]</label>
                                 <textarea class="pf-input" asp-for="Address"
-                                          placeholder="123 Đường ABC, Quận 1, TP.Hồ Chí Minh"
+                                          placeholder="@L["Prof_AddressPh"]"
                                           rows="2"></textarea>
                                 <span asp-validation-for="Address" class="pf-error"></span>
                             </div>
@@ -701,7 +701,7 @@
 
                         <div class="section-actions">
                             <button type="submit" class="pf-btn pf-btn-primary">
-                                <i class="bi bi-check-lg"></i> Lưu thay đổi
+                                <i class="bi bi-check-lg"></i> @L["Prof_SaveChanges"]
                             </button>
                         </div>
                     </form>
@@ -718,15 +718,15 @@
                     <i class="bi bi-shield-lock-fill"></i>
                 </div>
                 <div>
-                    <div class="section-title">Đổi mật khẩu</div>
-                    <div class="section-subtitle">Sử dụng mật khẩu mạnh để bảo mật tài khoản của bạn</div>
+                    <div class="section-title">@L["Prof_ChangePassword"]</div>
+                    <div class="section-subtitle">@L["Prof_PwdSectionSub"]</div>
                 </div>
             </div>
 
             <div class="profile-card">
                 <div class="profile-card-header">
                     <i class="bi bi-shield-lock-fill" style="color:var(--gold);"></i>
-                    <span class="profile-card-title">Bảo mật tài khoản</span>
+                    <span class="profile-card-title">@L["Prof_SecurityCard"]</span>
                 </div>
                 <div class="profile-card-body">
 
@@ -745,12 +745,12 @@
 
                             <div class="pf-field">
                                 <label class="pf-label" for="CurrentPassword">
-                                    Mật khẩu hiện tại <span class="req">*</span>
+                                    @L["Prof_CurrentPwd"] <span class="req">*</span>
                                 </label>
                                 <div class="pw-wrap">
                                     <input class="pf-input" type="password"
                                            id="CurrentPassword" name="CurrentPassword"
-                                           placeholder="Nhập mật khẩu hiện tại"
+                                           placeholder="@L["Prof_CurrentPwdPh"]"
                                            autocomplete="current-password"
                                            style="padding-right:42px;" />
                                     <button type="button" class="pw-toggle"
@@ -766,12 +766,12 @@
 
                             <div class="pf-field">
                                 <label class="pf-label" for="NewPassword">
-                                    Mật khẩu mới <span class="req">*</span>
+                                    @L["Prof_NewPwd"] <span class="req">*</span>
                                 </label>
                                 <div class="pw-wrap">
                                     <input class="pf-input" type="password"
                                            id="NewPassword" name="NewPassword"
-                                           placeholder="Ít nhất 6 ký tự"
+                                           placeholder="@L["Prof_NewPwdPh"]"
                                            autocomplete="new-password"
                                            style="padding-right:42px;" />
                                     <button type="button" class="pw-toggle"
@@ -787,12 +787,12 @@
 
                             <div class="pf-field">
                                 <label class="pf-label" for="ConfirmNewPassword">
-                                    Xác nhận mật khẩu mới <span class="req">*</span>
+                                    @L["Prof_ConfirmPwd"] <span class="req">*</span>
                                 </label>
                                 <div class="pw-wrap">
                                     <input class="pf-input" type="password"
                                            id="ConfirmNewPassword" name="ConfirmNewPassword"
-                                           placeholder="Nhập lại mật khẩu mới"
+                                           placeholder="@L["Prof_ConfirmPwdPh"]"
                                            autocomplete="new-password"
                                            style="padding-right:42px;" />
                                     <button type="button" class="pw-toggle"
@@ -810,7 +810,7 @@
 
                         <div class="section-actions">
                             <button type="submit" class="pf-btn pf-btn-primary">
-                                <i class="bi bi-shield-check"></i> Cập nhật mật khẩu
+                                <i class="bi bi-shield-check"></i> @L["Prof_UpdatePwd"]
                             </button>
                         </div>
                     </form>
@@ -887,7 +887,7 @@
                     alert(data.message);
                 }
             } catch (e) {
-                alert('Lỗi tải ảnh, vui lòng thử lại.');
+                alert('@L["Prof_AvatarError"]');
             } finally {
                 overlay.innerHTML = '<i class="bi bi-camera-fill"></i>';
                 this.value = '';

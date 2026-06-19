@@ -1,6 +1,6 @@
-﻿@model SchoolApp.Models.Certificate?
+@model SchoolApp.Models.Certificate?
 @{
-    ViewData["Title"] = "Xác thực chứng chỉ";
+    ViewData["Title"] = L["Cert_VerifyTitle"].Value;
     bool isValid = (bool)(ViewBag.Valid ?? false);
 }
 
@@ -90,21 +90,21 @@
         {
             <div class="verify-icon">✅</div>
             <div class="verify-status-valid">
-                <i class="bi bi-shield-fill-check"></i> Chứng chỉ hợp lệ
+                <i class="bi bi-shield-fill-check"></i> @L["Cert_Valid"]
             </div>
-            <p style="color:#8090a0;">Chứng chỉ này được cấp bởi <strong style="color:#c9a84c;">School App</strong> và đã được xác thực.</p>
+            <p style="color:#8090a0;">@L["Cert_IssuedBy"] <strong style="color:#c9a84c;">School App</strong></p>
 
             <table class="verify-info-table">
                 <tr>
-                    <td>Học viên</td>
+                    <td>@L["Cert_ColStudent"]</td>
                     <td>@Model.User?.FullName</td>
                 </tr>
                 <tr>
-                    <td>Khóa học</td>
+                    <td>@L["Cert_ColCourse"]</td>
                     <td>@Model.Course?.CourseName</td>
                 </tr>
                 <tr>
-                    <td>Ngày cấp</td>
+                    <td>@L["Cert_ColIssued"]</td>
                     <td>@Model.IssuedDate.ToString("dd/MM/yyyy")</td>
                 </tr>
             </table>
@@ -117,15 +117,15 @@
         {
             <div class="verify-icon">❌</div>
             <div class="verify-status-invalid">
-                <i class="bi bi-shield-x"></i> Chứng chỉ không hợp lệ
+                <i class="bi bi-shield-x"></i> @L["Cert_Invalid"]
             </div>
-            <p style="color:#8090a0;">Mã chứng chỉ không tồn tại hoặc đã bị thu hồi. Vui lòng kiểm tra lại.</p>
+            <p style="color:#8090a0;">@L["Cert_InvalidDesc"]</p>
         }
     </div>
 
     <div style="margin-top:1.5rem;">
         <a asp-controller="Home" asp-action="Index" style="color:#8090a0;text-decoration:none;">
-            <i class="bi bi-arrow-left"></i> Về trang chủ
+            <i class="bi bi-arrow-left"></i> @L["Cert_Home"]
         </a>
     </div>
 </div>

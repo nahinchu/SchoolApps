@@ -1,32 +1,32 @@
-﻿@model SchoolApp.Models.Enrollment
+@model SchoolApp.Models.Enrollment
 @{
-    ViewData["Title"] = "Chi tiết đăng ký";
+    ViewData["Title"] = L["Enr_DetailsTitle"].Value;
 }
 
-<h2>Thông tin đăng ký</h2>
+<h2>@L["Enr_DetailsHeading"]</h2>
 <hr />
 
 <dl class="row">
-    <dt class="col-sm-3">Học viên</dt>
+    <dt class="col-sm-3">@L["Enr_ColStudent"]</dt>
     <dd class="col-sm-9">@Model.User?.FullName</dd>
 
-    <dt class="col-sm-3">Email học viên</dt>
+    <dt class="col-sm-3">@L["Enr_ColStudentEmail"]</dt>
     <dd class="col-sm-9">@Model.User?.Email</dd>
 
-    <dt class="col-sm-3">Khóa học</dt>
+    <dt class="col-sm-3">@L["Enr_ColCourse"]</dt>
     <dd class="col-sm-9">@Model.Course?.CourseName</dd>
 
-    <dt class="col-sm-3">Số tín chỉ</dt>
+    <dt class="col-sm-3">@L["Enr_ColCredits"]</dt>
     <dd class="col-sm-9">@Model.Course?.Credits</dd>
 
-    <dt class="col-sm-3">Học phí</dt>
-    <dd class="col-sm-9">@Model.Course?.Fee.ToString("N0") VNĐ</dd>
+    <dt class="col-sm-3">@L["Enr_ColFee"]</dt>
+    <dd class="col-sm-9">@Model.Course?.Fee.ToString("N0")@L["Enr_FeeVND"]</dd>
 
-    <dt class="col-sm-3">Ngày đăng ký</dt>
+    <dt class="col-sm-3">@L["Enr_ColEnrollDate"]</dt>
     <dd class="col-sm-9">@Model.EnrollDate.ToString("dd/MM/yyyy")</dd>
 
-    <dt class="col-sm-3">Ghi chú</dt>
+    <dt class="col-sm-3">@L["Enr_ColNotes"]</dt>
     <dd class="col-sm-9">@Model.Notes</dd>
 </dl>
 
-<a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+<a asp-action="Index" class="btn btn-secondary">@L["Enr_BackToList"]</a>

@@ -2,7 +2,7 @@
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.User>
 @{
-    ViewData["Title"] = "Danh sách học viên";
+    ViewData["Title"] = L["Stu_Title"].Value;
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var role = Context.Session.GetString("Role");
     var isAdmin = role == "Admin";
@@ -12,8 +12,8 @@
 <!-- ==================== PAGE HEADER ==================== -->
 <div class="adm-page-header">
     <div>
-        <div class="adm-page-title">👥 Danh sách <span>Học viên</span></div>
-        <div class="adm-page-sub">Quản lý thông tin và theo dõi học viên</div>
+        <div class="adm-page-title">👥 @L["Stu_Title"]</div>
+        <div class="adm-page-sub">@L["Stu_Sub"]</div>
     </div>
 </div>
 
@@ -23,11 +23,11 @@
         <div style="position:relative; flex:1;">
             <i class="bi bi-search" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="adm-input" placeholder="Tìm theo tên, email, SĐT..."
+                   class="adm-input" placeholder="@L["Stu_SearchPlaceholder"]"
                    style="padding-left:34px; border-radius:8px 0 0 8px;" />
         </div>
         <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">
-            Tìm
+            @L["Course_SearchBtn"]
         </button>
     </form>
 
@@ -36,16 +36,16 @@
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <a id="btnExport" href="@Url.Action("ExportExcel", "Student", new { searchTerm = ViewData["SearchTerm"] })"
                class="adm-btn" style="background:rgba(29,122,58,0.9); color:#fff; border:none;">
-                <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+                <i class="bi bi-file-earmark-excel"></i> @L["Btn_Export"]
             </a>
             <button type="button" class="adm-btn" style="background:rgba(13,110,253,0.9); color:#fff; border:none;"
                     data-bs-toggle="modal" data-bs-target="#importModal">
-                <i class="bi bi-upload"></i> Nhập từ Excel
+                <i class="bi bi-upload"></i> @L["Btn_Import"]
             </button>
             <button type="button" class="adm-btn adm-btn-primary"
                     data-bs-toggle="modal" data-bs-target="#studentModal"
                     onclick="openCreateModal()">
-                <i class="bi bi-person-plus"></i> Thêm học viên
+                <i class="bi bi-person-plus"></i> @L["Stu_AddNew"]
             </button>
         </div>
     }
@@ -70,9 +70,9 @@
                     font-family:var(--font-display); font-size:1.15rem; font-weight:600;
                     color:var(--gold-light); margin:0;
                 ">
-                    Thêm học viên
+                    @L["Stu_AddNew"]
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@L["Btn_Close"]"></button>
             </div>
 
             <!-- Body -->
@@ -86,10 +86,10 @@
                         <div class="col-md-6">
                             <div class="sa-form-group">
                                 <label class="sa-label" for="FullName">
-                                    Họ và tên <span style="color:var(--danger)">*</span>
+                                    @L["Stu_ColName"] <span style="color:var(--danger)">*</span>
                                 </label>
                                 <input type="text" id="FullName" name="FullName"
-                                       class="sa-input" placeholder="Nhập họ tên (2–100 ký tự)" />
+                                       class="sa-input" placeholder="@L["Stu_FullNamePlaceholder"]" />
                                 <div class="invalid-feedback" id="err-FullName"></div>
                             </div>
                         </div>
@@ -109,20 +109,20 @@
                         <div class="col-md-6">
                             <div class="sa-form-group">
                                 <label class="sa-label" for="Password">
-                                    Mật khẩu <span style="color:var(--danger)">*</span>
+                                    @L["Adm_Password"] <span style="color:var(--danger)">*</span>
                                 </label>
                                 <input type="password" id="Password" name="Password"
-                                       class="sa-input" placeholder="Tối thiểu 6 ký tự" />
+                                       class="sa-input" placeholder="@L["Stu_PasswordPlaceholder"]" />
                                 <div class="invalid-feedback" id="err-Password"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="sa-form-group">
                                 <label class="sa-label" for="Phone">
-                                    Số điện thoại <span style="color:var(--danger)">*</span>
+                                    @L["Adm_Phone"] <span style="color:var(--danger)">*</span>
                                 </label>
                                 <input type="text" id="Phone" name="Phone"
-                                       class="sa-input" placeholder="9–15 ký tự" />
+                                       class="sa-input" placeholder="@L["Stu_PhonePlaceholder"]" />
                                 <div class="invalid-feedback" id="err-Phone"></div>
                             </div>
                         </div>
@@ -131,16 +131,16 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="sa-form-group">
-                                <label class="sa-label" for="DateOfBirth">Ngày sinh</label>
+                                <label class="sa-label" for="DateOfBirth">@L["Stu_DateOfBirth"]</label>
                                 <input type="date" id="DateOfBirth" name="DateOfBirth" class="sa-input" />
                                 <div class="invalid-feedback" id="err-DateOfBirth"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="sa-form-group">
-                                <label class="sa-label" for="Address">Địa chỉ</label>
+                                <label class="sa-label" for="Address">@L["Stu_Address"]</label>
                                 <input type="text" id="Address" name="Address"
-                                       class="sa-input" placeholder="Nhập địa chỉ..." />
+                                       class="sa-input" placeholder="@L["Stu_AddressPlaceholder"]" />
                                 <div class="invalid-feedback" id="err-Address"></div>
                             </div>
                         </div>
@@ -150,9 +150,9 @@
 
             <!-- Footer -->
             <div class="modal-footer" style="padding:1rem 1.5rem; background:var(--off-white); border-top:1px solid var(--smoke);">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="sa-btn sa-btn-primary" id="btnSaveStudent">
-                    <i class="bi bi-check-lg"></i> <span class="btn-text">Lưu</span>
+                    <i class="bi bi-check-lg"></i> <span class="btn-text">@L["Btn_Save"]</span>
                 </button>
             </div>
 
@@ -171,20 +171,20 @@
                 <h5 id="studentDetailModalLabel" style="
                     font-family:var(--font-display); font-size:1.15rem; font-weight:600;
                     color:var(--gold-light); margin:0;">
-                    👤 Chi tiết học viên
+                    👤 @L["Stu_ModalDetailTitle"]
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="@L["Btn_Close"]"></button>
             </div>
 
             <div class="modal-body" id="studentDetailBody" style="padding:1.5rem; background:var(--white);">
                 <div style="text-align:center; padding:2rem 0;">
                     <div class="spinner-border" style="color:var(--gold);" role="status"></div>
-                    <p style="margin-top:.75rem; color:var(--text-light);">Đang tải...</p>
+                    <p style="margin-top:.75rem; color:var(--text-light);">@L["Stu_Loading"]</p>
                 </div>
             </div>
 
             <div class="modal-footer" style="padding:1rem 1.5rem; background:var(--off-white); border-top:1px solid var(--smoke);">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
             </div>
 
         </div>
@@ -202,7 +202,7 @@
                 <h5 id="importModalLabel" style="
                     font-family:var(--font-display); font-size:1.1rem; font-weight:600;
                     color:#fff; margin:0;">
-                    <i class="bi bi-upload me-2"></i>Nhập học viên từ Excel
+                    <i class="bi bi-upload me-2"></i>@L["Stu_ImportTitle"]
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -214,11 +214,11 @@
                     display:flex; align-items:center; gap:.75rem;">
                     <i class="bi bi-info-circle-fill" style="color:#0d6efd; font-size:1.1rem; flex-shrink:0;"></i>
                     <div style="font-size:.85rem; color:var(--text-mid); line-height:1.5;">
-                        Mật khẩu mặc định sẽ là <strong>SchoolApp@123</strong>.
+                        @Html.Raw(L["Stu_ImportDefaultPwd"])
                         <br>
                         <a href="@Url.Action("DownloadImportTemplate", "Student")"
                            style="color:#0d6efd; font-weight:600; text-decoration:none;">
-                            <i class="bi bi-download me-1"></i>Tải file mẫu (.xlsx)
+                            <i class="bi bi-download me-1"></i>@L["Stu_DownloadTemplate"]
                         </a>
                     </div>
                 </div>
@@ -226,7 +226,7 @@
                 <form id="importForm" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <div class="sa-form-group">
-                        <label class="sa-label">Chọn file Excel (.xlsx)</label>
+                        <label class="sa-label">@L["Stu_SelectFile"]</label>
                         <input type="file" id="importFile" name="file" accept=".xlsx"
                                class="sa-input" style="padding:.45rem .75rem;" />
                     </div>
@@ -236,10 +236,10 @@
             </div>
 
             <div class="modal-footer" style="padding:1rem 1.5rem; background:var(--off-white); border-top:1px solid var(--smoke);">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="sa-btn" id="btnImport"
                         style="background:#0d6efd; color:#fff; border:none; min-width:110px;">
-                    <span class="btn-text"><i class="bi bi-upload me-1"></i>Nhập</span>
+                    <span class="btn-text"><i class="bi bi-upload me-1"></i>@L["Btn_Import"]</span>
                 </button>
             </div>
 
@@ -251,20 +251,49 @@
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
     <script>
         var isEditMode = false;
+        var _stuColName      = '@L["Stu_ColName"]';
+        var _stuColPhone     = '@L["Stu_ColPhone"]';
+        var _stuDateOfBirth  = '@L["Stu_DateOfBirth"]';
+        var _stuAddress      = '@L["Stu_Address"]';
+        var _stuRegDate      = '@L["Stu_RegDate"]';
+        var _stuCourses      = '@L["Stu_EnrolledCourses"]';
+        var _stuEnrDate      = '@L["Enr_ColEnrollDate"]';
+        var _stuNoEnr        = '@L["Stu_NoEnrollments"]';
+        var _stuLoadErr      = '@L["Stu_LoadDetailError"]';
+        var _stuNoPerm       = '@L["Stu_NoPermission"]';
+        var _stuDelConf      = '@L["Stu_DeleteConfirm"]';
+        var _stuAddTitle     = '➕ @L["Stu_ModalAddTitle"]';
+        var _stuEditTitle    = '✏️ @L["Stu_ModalEditTitle"]';
+        var _stuSave         = '@L["Btn_Save"]';
+        var _stuUpdate       = '@L["Btn_Update"]';
+        var _stuProcessing   = '...' ;
+        var _stuColCourse    = '@L["AdminCourses"]';
+        var _stuColPoints    = '@L["QB_ColPoints"]';
+        var _stuAjaxError    = '@L["Stu_AjaxError"]';
+        var _stuLoadDataErr  = '@L["Stu_LoadDataError"]';
+        var _stuServerError  = '@L["Stu_ServerError"]';
+        var _stuBtnImport    = '<i class="bi bi-upload me-1"></i> @L["Stu_ImportBtn"]';
+        var _stuImportSelFile = '@L["Stu_ImportSelectFile"]';
+        var _stuImportProc   = '@L["Stu_ImportProcessing"]';
+        var _stuImportAdded  = '@L["Stu_ImportAdded"]';
+        var _stuImportStuWrd = '@L["Stu_ImportStudentWord"]';
+        var _stuImportSkip   = '@L["Stu_ImportSkippedWord"]';
+        var _stuImportRow    = '@L["Stu_ImportRowPrefix"]';
+        var _stuImportNoData = '@L["Stu_ImportNoData"]';
 
         // ====== MỞ MODAL CHI TIẾT ======
         function openDetailModal(id) {
             $('#studentDetailBody').html(
                 '<div style="text-align:center; padding:2rem 0;">' +
                 '<div class="spinner-border" style="color:var(--gold);" role="status"></div>' +
-                '<p style="margin-top:.75rem; color:var(--text-light);">Đang tải...</p></div>'
+                '</div>'
             );
             $('#studentDetailModal').modal('show');
 
             $.get('@Url.Action("GetStudentDetails", "Student")/' + id, function (data) {
                 var enrollHtml = '';
                 if (data.enrollments.length === 0) {
-                    enrollHtml = '<tr><td colspan="3" style="text-align:center; color:var(--text-light); padding:1.25rem;">Chưa đăng ký khóa học nào</td></tr>';
+                    enrollHtml = '<tr><td colspan="3" style="text-align:center; color:var(--text-light); padding:1.25rem;">' + _stuNoEnr + '</td></tr>';
                 } else {
                     $.each(data.enrollments, function (_, e) {
                         enrollHtml +=
@@ -278,23 +307,23 @@
 
                 $('#studentDetailBody').html(
                     '<div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem 2rem; margin-bottom:1.5rem;">' +
-                        '<div><span class="sa-label" style="margin-bottom:2px;">Họ và tên</span><div style="font-weight:600; color:var(--text-dark);">' + $('<span>').text(data.fullName).html() + '</div></div>' +
+                        '<div><span class="sa-label" style="margin-bottom:2px;">' + _stuColName + '</span><div style="font-weight:600; color:var(--text-dark);">' + $('<span>').text(data.fullName).html() + '</div></div>' +
                         '<div><span class="sa-label" style="margin-bottom:2px;">Email</span><div style="color:var(--text-dark);">' + $('<span>').text(data.email).html() + '</div></div>' +
-                        '<div><span class="sa-label" style="margin-bottom:2px;">Số điện thoại</span><div style="color:var(--text-dark);">' + $('<span>').text(data.phone).html() + '</div></div>' +
-                        '<div><span class="sa-label" style="margin-bottom:2px;">Ngày sinh</span><div style="color:var(--text-dark);">' + $('<span>').text(data.dateOfBirth).html() + '</div></div>' +
-                        '<div><span class="sa-label" style="margin-bottom:2px;">Địa chỉ</span><div style="color:var(--text-dark);">' + $('<span>').text(data.address).html() + '</div></div>' +
-                        '<div><span class="sa-label" style="margin-bottom:2px;">Ngày đăng ký</span><div style="color:var(--text-dark);">' + $('<span>').text(data.registeredDate).html() + '</div></div>' +
+                        '<div><span class="sa-label" style="margin-bottom:2px;">' + _stuColPhone + '</span><div style="color:var(--text-dark);">' + $('<span>').text(data.phone).html() + '</div></div>' +
+                        '<div><span class="sa-label" style="margin-bottom:2px;">' + _stuDateOfBirth + '</span><div style="color:var(--text-dark);">' + $('<span>').text(data.dateOfBirth).html() + '</div></div>' +
+                        '<div><span class="sa-label" style="margin-bottom:2px;">' + _stuAddress + '</span><div style="color:var(--text-dark);">' + $('<span>').text(data.address).html() + '</div></div>' +
+                        '<div><span class="sa-label" style="margin-bottom:2px;">' + _stuRegDate + '</span><div style="color:var(--text-dark);">' + $('<span>').text(data.registeredDate).html() + '</div></div>' +
                     '</div>' +
                     '<div style="height:1px; background:var(--smoke); margin-bottom:1.25rem;"></div>' +
-                    '<h6 style="font-family:var(--font-display); font-weight:600; color:var(--navy); margin-bottom:.75rem;">📚 Khóa học đã đăng ký</h6>' +
+                    '<h6 style="font-family:var(--font-display); font-weight:600; color:var(--navy); margin-bottom:.75rem;">📚 ' + _stuCourses + '</h6>' +
                     '<div class="sa-table-wrap"><table class="sa-table">' +
-                    '<thead><tr><th>Khóa học</th><th>Ngày đăng ký</th><th>Điểm</th></tr></thead>' +
+                    '<thead><tr><th>' + _stuColCourse + '</th><th>' + _stuEnrDate + '</th><th>' + _stuColPoints + '</th></tr></thead>' +
                     '<tbody>' + enrollHtml + '</tbody>' +
                     '</table></div>'
                 );
             }).fail(function () {
                 $('#studentDetailBody').html(
-                    '<div class="sa-alert sa-alert-danger"><span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span><span>Không thể tải thông tin học viên!</span></div>'
+                    '<div class="sa-alert sa-alert-danger"><span class="sa-alert-icon"><i class="bi bi-exclamation-circle-fill"></i></span><span>' + _stuLoadErr + '</span></div>'
                 );
             });
         }
@@ -308,8 +337,8 @@
         // ====== MỞ MODAL TẠO MỚI ======
         function openCreateModal() {
             isEditMode = false;
-            $('#studentModalLabel').text('➕ Thêm học viên mới');
-            $('#btnSaveStudent .btn-text').text('Lưu');
+            $('#studentModalLabel').text(_stuAddTitle);
+            $('#btnSaveStudent .btn-text').text(_stuSave);
             $('#studentForm')[0].reset();
             $('#userId').val(0);
             clearErrors();
@@ -322,8 +351,8 @@
         // ====== MỞ MODAL CHỈNH SỬA ======
         function openEditModal(id) {
             isEditMode = true;
-            $('#studentModalLabel').text('✏️ Sửa học viên');
-            $('#btnSaveStudent .btn-text').text('Cập nhật');
+            $('#studentModalLabel').text(_stuEditTitle);
+            $('#btnSaveStudent .btn-text').text(_stuUpdate);
             clearErrors();
 
             $.get('@Url.Action("GetStudent", "Student")/' + id, function (data) {
@@ -338,7 +367,7 @@
                 $('#Email').prop('disabled', true).removeAttr('name');
                 $('#studentModal').modal('show');
             }).fail(function () {
-                showToast('Không thể tải thông tin học viên!', 'danger');
+                showToast(_stuLoadErr, 'danger');
             });
         }
 
@@ -377,8 +406,8 @@
                         }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
-                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
+                        if (xhr.status === 403) showToast(_stuNoPerm, 'danger');
+                        else showToast(_stuAjaxError + xhr.statusText, 'danger');
                     }
                 });
             });
@@ -398,7 +427,7 @@
 
             // ====== XÓA ======
             $(document).on('click', '.btn-delete-student', function () {
-                if (!confirm('Bạn có chắc muốn xóa học viên này?')) return;
+                if (!confirm(_stuDelConf)) return;
                 var id = $(this).data('id');
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
                 $.ajax({
@@ -410,8 +439,8 @@
                         else { showToast(res.message, 'danger'); }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
-                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
+                        if (xhr.status === 403) showToast(_stuNoPerm, 'danger');
+                        else showToast(_stuAjaxError + xhr.statusText, 'danger');
                     }
                 });
             });
@@ -428,7 +457,7 @@
                         $('#studentTableContainer').html(html);
                     },
                     error: function (xhr) {
-                        showToast('Lỗi tải dữ liệu: ' + xhr.statusText, 'danger');
+                        showToast(_stuLoadDataErr + xhr.statusText, 'danger');
                     }
                 });
                 // Cập nhật link export theo từ khóa hiện tại
@@ -441,14 +470,14 @@
             $('#importModal').on('hidden.bs.modal', function () {
                 $('#importForm')[0].reset();
                 $('#importResult').hide().html('');
-                $('#btnImport .btn-text').html('<i class="bi bi-upload me-1"></i>Nhập');
+                $('#btnImport .btn-text').html(_stuBtnImport);
                 $('#btnImport').prop('disabled', false);
             });
 
             $('#btnImport').on('click', function () {
                 var fileInput = $('#importFile')[0];
                 if (!fileInput.files.length) {
-                    showImportResult('danger', 'Vui lòng chọn file Excel trước.');
+                    showImportResult('danger', _stuImportSelFile);
                     return;
                 }
 
@@ -457,7 +486,7 @@
                 // do @Html.AntiForgeryToken() sinh ra — không cần append thêm
 
                 $('#btnImport .btn-text').html(
-                    '<span class="spinner-border spinner-border-sm me-1"></span>Đang xử lý...'
+                    '<span class="spinner-border spinner-border-sm me-1"></span>' + _stuImportProc
                 );
                 $('#btnImport').prop('disabled', true);
                 $('#importResult').hide();
@@ -469,7 +498,7 @@
                     processData: false,
                     contentType: false,
                     success: function (res) {
-                        $('#btnImport .btn-text').html('<i class="bi bi-upload me-1"></i>Nhập');
+                        $('#btnImport .btn-text').html(_stuBtnImport);
                         $('#btnImport').prop('disabled', false);
 
                         if (!res.success) {
@@ -481,18 +510,18 @@
                         if (res.added > 0) {
                             html += '<div class="sa-alert sa-alert-success" style="margin-bottom:.75rem;">' +
                                 '<span class="sa-alert-icon"><i class="bi bi-check-circle-fill"></i></span>' +
-                                '<span>Thêm thành công <strong>' + res.added + '</strong> học viên.</span>' +
+                                '<span>' + _stuImportAdded + ' <strong>' + res.added + '</strong> ' + _stuImportStuWrd + '</span>' +
                                 '</div>';
                         }
 
                         if (res.skipped && res.skipped.length > 0) {
                             html += '<div class="sa-alert sa-alert-danger" style="margin-bottom:.5rem;">' +
                                 '<span class="sa-alert-icon"><i class="bi bi-exclamation-triangle-fill"></i></span>' +
-                                '<span><strong>' + res.skipped.length + '</strong> dòng bị bỏ qua:</span>' +
+                                '<span><strong>' + res.skipped.length + '</strong> ' + _stuImportSkip + '</span>' +
                                 '</div>';
                             html += '<ul style="margin:0; padding-left:1.25rem; font-size:.82rem; color:var(--text-mid);">';
                             $.each(res.skipped, function (_, s) {
-                                var prefix = s.row > 0 ? ('Dòng ' + s.row + ': ') : '';
+                                var prefix = s.row > 0 ? (_stuImportRow + ' ' + s.row + ': ') : '';
                                 html += '<li>' + prefix + $('<span>').text(s.reason).html() + '</li>';
                             });
                             html += '</ul>';
@@ -501,7 +530,7 @@
                         if (res.added === 0 && (!res.skipped || res.skipped.length === 0)) {
                             html = '<div class="sa-alert sa-alert-danger">' +
                                 '<span class="sa-alert-icon"><i class="bi bi-info-circle-fill"></i></span>' +
-                                '<span>Không có dữ liệu hợp lệ nào được nhập.</span></div>';
+                                '<span>' + _stuImportNoData + '</span></div>';
                         }
 
                         $('#importResult').html(html).show();
@@ -511,12 +540,12 @@
                         }
                     },
                     error: function (xhr) {
-                        $('#btnImport .btn-text').html('<i class="bi bi-upload me-1"></i>Nhập');
+                        $('#btnImport .btn-text').html(_stuBtnImport);
                         $('#btnImport').prop('disabled', false);
                         if (xhr.status === 403)
-                            showImportResult('danger', 'Bạn không có quyền Admin!');
+                            showImportResult('danger', _stuNoPerm);
                         else
-                            showImportResult('danger', 'Lỗi server: ' + xhr.statusText);
+                            showImportResult('danger', _stuServerError + xhr.statusText);
                     }
                 });
             });

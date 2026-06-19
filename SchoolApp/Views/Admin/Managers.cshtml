@@ -241,11 +241,12 @@
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
     <script>
+        var _admLoading = '@L["Adm_Loading"]';
         function openEditModal(id) {
             $('#editManagerResult').html('');
             $('#err-fullName').text('');
             $('#editFullName').val('');
-            $('#editEmail').val('Đang tải...');
+            $('#editEmail').val(_admLoading);
             $('#editPhone').val('');
             $('#editManagerModal').modal('show');
 

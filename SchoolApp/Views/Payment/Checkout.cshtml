@@ -1,6 +1,6 @@
 ﻿@model SchoolApp.Models.Course
 @{
-    ViewData["Title"] = "Xác nhận thanh toán";
+    ViewData["Title"] = L["Pay_Title"].Value;
 }
 
 <div class="container py-5">
@@ -8,10 +8,10 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header py-3" style="background: var(--sa-navy, #1a2f5a); color:#fff;">
-                    <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>Xác nhận đăng ký & thanh toán</h5>
+                    <h5 class="mb-0"><i class="bi bi-credit-card me-2"></i>@L["Pay_Heading"]</h5>
                 </div>
                 <div class="card-body p-4">
-                    <h6 class="text-muted mb-1">Khóa học</h6>
+                    <h6 class="text-muted mb-1">@L["Pay_CourseLabel"]</h6>
                     <p class="fw-semibold fs-5 mb-3">@Model.CourseName</p>
 
                     @if (!string.IsNullOrWhiteSpace(Model.Description))
@@ -22,7 +22,7 @@
                     <hr />
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <span class="text-muted">Học phí</span>
+                        <span class="text-muted">@L["Pay_Fee"]</span>
                         <span class="fw-bold fs-4" style="color: var(--sa-gold, #c9a84c);">
                             @Model.Fee.ToString("N0") VNĐ
                         </span>
@@ -35,12 +35,12 @@
                         <input type="hidden" name="courseId" value="@Model.CourseId" />
                         <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="pay-btn"
                                 style="background: var(--sa-navy, #1a2f5a); border:none;">
-                            <i class="bi bi-shield-lock me-2"></i>Thanh toán qua PayOS
+                            <i class="bi bi-shield-lock me-2"></i>@L["Pay_PayBtn"]
                         </button>
                     </form>
 
                     <a asp-controller="Course" asp-action="Index" class="btn btn-link w-100 mt-2 text-muted">
-                        Hủy, quay lại
+                        @L["Pay_Cancel"]
                     </a>
                 </div>
             </div>
@@ -55,7 +55,7 @@
             const btn = document.getElementById('pay-btn');
             const errDiv = document.getElementById('error-msg');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>@L["Pay_Processing"]';
             errDiv.classList.add('d-none');
 
             const formData = new FormData(this);
@@ -71,16 +71,16 @@
                 if (data.success) {
                     window.location.href = data.checkoutUrl;
                 } else {
-                    errDiv.textContent = data.message || 'Có lỗi xảy ra';
+                    errDiv.textContent = data.message || '@L["Pay_Error"]';
                     errDiv.classList.remove('d-none');
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="bi bi-shield-lock me-2"></i>Thanh toán qua PayOS';
+                    btn.innerHTML = '<i class="bi bi-shield-lock me-2"></i>@L["Pay_PayBtn"]';
                 }
             } catch {
-                errDiv.textContent = 'Không thể kết nối. Vui lòng thử lại.';
+                errDiv.textContent = '@L["Pay_ConnError"]';
                 errDiv.classList.remove('d-none');
                 btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-shield-lock me-2"></i>Thanh toán qua PayOS';
+                btn.innerHTML = '<i class="bi bi-shield-lock me-2"></i>@L["Pay_PayBtn"]';
             }
         });
     </script>

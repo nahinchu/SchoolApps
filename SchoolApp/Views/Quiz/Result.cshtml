@@ -1,9 +1,9 @@
-﻿@using SchoolApp.Models
+@using SchoolApp.Models
 @using SchoolApp.Models.Enums
 @model QuizAttempt
 
 @{
-    ViewData["Title"] = "Kết quả bài kiểm tra";
+    ViewData["Title"] = L["Qr_Title"].Value;
     var quiz = Model.Quiz;
     var percent = Model.MaxScore > 0
         ? (int)Math.Round((double)Model.Score * 100 / Model.MaxScore)
@@ -12,7 +12,6 @@
     var courseId = ViewData["CourseId"] as int?;
     var courseName = ViewData["CourseName"] as string;
 
-    // Group selected answers by QuestionId
     var selectedByQuestion = Model.Answers
         .GroupBy(a => a.QuestionId)
         .ToDictionary(g => g.Key, g => g.Select(a => a.SelectedOptionId).ToHashSet());
@@ -25,13 +24,13 @@
         <div style="background:linear-gradient(135deg,#1b5e20,#388e3c);color:#fff;border-radius:12px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
             <div style="font-size:3rem;">🎓</div>
             <div style="flex:1;min-width:200px;">
-                <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a5d6a7;margin-bottom:.25rem;">Chúc mừng!</div>
-                <div style="font-size:1.3rem;font-weight:700;margin-bottom:.25rem;">Bạn đã hoàn thành khoá học!</div>
-                <div style="font-size:.9rem;color:#c8e6c9;">@(courseName ?? "Khoá học") — Tất cả bài học và bài kiểm tra đã hoàn tất.</div>
+                <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a5d6a7;margin-bottom:.25rem;">@L["Qr_CongratsLabel"]</div>
+                <div style="font-size:1.3rem;font-weight:700;margin-bottom:.25rem;">@L["Qr_CourseCompleted"]</div>
+                <div style="font-size:.9rem;color:#c8e6c9;">@(courseName ?? "") — @L["Qr_AllCompleted"]</div>
             </div>
             <a asp-controller="Enrollment" asp-action="MyEnrollments"
                style="background:#fff;color:#1b5e20;font-weight:700;padding:.6rem 1.25rem;border-radius:8px;text-decoration:none;white-space:nowrap;">
-                <i class="bi bi-mortarboard-fill me-1"></i> Khóa học của tôi
+                <i class="bi bi-mortarboard-fill me-1"></i> @L["Qr_MyCourses"]
             </a>
         </div>
     }
@@ -44,32 +43,32 @@
                 <div class="display-1 text-success mb-3">
                     <i class="bi bi-trophy-fill"></i>
                 </div>
-                <h2 class="text-success">Chúc mừng! Bạn đã đạt yêu cầu</h2>
+                <h2 class="text-success">@L["Qr_Passed"]</h2>
             }
             else
             {
                 <div class="display-1 text-warning mb-3">
                     <i class="bi bi-emoji-frown"></i>
                 </div>
-                <h2 class="text-warning">Chưa đạt điểm tối thiểu</h2>
+                <h2 class="text-warning">@L["Qr_Failed"]</h2>
             }
 
             <div class="row mt-4 justify-content-center">
                 <div class="col-md-3">
                     <div class="border rounded p-3">
-                        <div class="text-muted small">Điểm</div>
+                        <div class="text-muted small">@L["Qr_Score"]</div>
                         <div class="fs-2 fw-bold">@Model.Score / @Model.MaxScore</div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="border rounded p-3">
-                        <div class="text-muted small">Phần trăm</div>
+                        <div class="text-muted small">@L["Qr_Percent"]</div>
                         <div class="fs-2 fw-bold @(Model.Passed ? "text-success" : "text-danger")">@percent%</div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="border rounded p-3">
-                        <div class="text-muted small">Yêu cầu</div>
+                        <div class="text-muted small">@L["Qr_Required"]</div>
                         <div class="fs-2 fw-bold">@quiz.PassingScore%</div>
                     </div>
                 </div>
@@ -77,23 +76,23 @@
 
             <div class="mt-3 text-muted small">
                 <i class="bi bi-calendar"></i>
-                Lần thứ @Model.AttemptNumber &middot;
-                Bắt đầu: @Model.StartedAt.ToLocalTime().ToString("HH:mm dd/MM/yyyy") &middot;
+                @L["Qr_AttemptNo"] @Model.AttemptNumber &middot;
+                @L["Qr_StartedAt"] @Model.StartedAt.ToLocalTime().ToString("HH:mm dd/MM/yyyy") &middot;
                 @if (Model.FinishedAt.HasValue)
                 {
                     var dur = Model.FinishedAt.Value - Model.StartedAt;
-                    <span>Thời gian làm: @((int)dur.TotalMinutes) phút @dur.Seconds giây</span>
+                    <span>@L["Qr_Duration"] @((int)dur.TotalMinutes) @L["Qt_MinUnit"] @dur.Seconds @L["Qr_SecondsUnit"]</span>
                 }
             </div>
 
             <div class="mt-4">
                 <a href="@Url.Action("MyAttempts", "Quiz", new { quizId = quiz.QuizId })" class="btn btn-outline-primary">
-                    <i class="bi bi-list"></i> Xem lịch sử
+                    <i class="bi bi-list"></i> @L["Qr_ViewHistory"]
                 </a>
                 @if (quiz.AllowRetry && (quiz.MaxAttempts == 0 || Model.AttemptNumber < quiz.MaxAttempts))
                 {
                     <a href="@Url.Action("Take", "Quiz", new { id = quiz.QuizId })" class="btn btn-primary ms-2">
-                        <i class="bi bi-arrow-repeat"></i> Làm lại
+                        <i class="bi bi-arrow-repeat"></i> @L["Qr_Retry"]
                     </a>
                 }
             </div>
@@ -102,7 +101,7 @@
 
     @if (quiz.ShowAnswersAfterSubmit)
     {
-        <h4 class="mb-3"><i class="bi bi-list-check"></i> Xem lại đáp án</h4>
+        <h4 class="mb-3"><i class="bi bi-list-check"></i> @L["Qr_ReviewAnswers"]</h4>
 
         @foreach (var q in quiz.Questions.OrderBy(qq => qq.OrderIndex))
         {
@@ -115,17 +114,17 @@
             <div class="card mb-3 @(questionCorrect ? "border-success" : "border-danger")">
                 <div class="card-header @(questionCorrect ? "bg-success-subtle" : "bg-danger-subtle") d-flex justify-content-between">
                     <div>
-                        <strong>Câu @q.OrderIndex:</strong> @q.Content
-                        <span class="badge bg-secondary ms-2">@q.Points điểm</span>
+                        <strong>@L["Qt_QuestionLabel"] @q.OrderIndex:</strong> @q.Content
+                        <span class="badge bg-secondary ms-2">@q.Points @L["Qt_PointsUnit"]</span>
                     </div>
                     <div>
                         @if (questionCorrect)
                         {
-                            <span class="badge bg-success"><i class="bi bi-check-lg"></i> Đúng</span>
+                            <span class="badge bg-success"><i class="bi bi-check-lg"></i> @L["Qr_BadgeCorrect"]</span>
                         }
                         else
                         {
-                            <span class="badge bg-danger"><i class="bi bi-x-lg"></i> Sai</span>
+                            <span class="badge bg-danger"><i class="bi bi-x-lg"></i> @L["Qr_BadgeWrong"]</span>
                         }
                     </div>
                 </div>
@@ -147,11 +146,11 @@
                             <i class="bi @icon"></i> @opt.Content
                             @if (isCorrect && !isSelected)
                             {
-                                <small>(đáp án đúng)</small>
+                                <small>@L["Qr_CorrectAnswer"]</small>
                             }
                             @if (!isCorrect && isSelected)
                             {
-                                <small>(bạn đã chọn)</small>
+                                <small>@L["Qr_YourChoice"]</small>
                             }
                         </div>
                     }
@@ -160,7 +159,7 @@
                     {
                         <div class="mt-3 p-3 bg-light rounded">
                             <i class="bi bi-info-circle text-primary"></i>
-                            <strong>Giải thích:</strong> @q.Explanation
+                            <strong>@L["Qr_Explanation"]</strong> @q.Explanation
                         </div>
                     }
                 </div>
@@ -170,7 +169,7 @@
     else
     {
         <div class="alert alert-info">
-            <i class="bi bi-info-circle"></i> Bài kiểm tra này không hiển thị đáp án sau khi nộp.
+            <i class="bi bi-info-circle"></i> @L["Qr_NoAnswersShown"]
         </div>
     }
 </div>

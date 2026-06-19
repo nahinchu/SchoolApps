@@ -1,8 +1,8 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Course>
 @{
-    ViewData["Title"] = "Danh sách khóa học";
+    ViewData["Title"] = L["Course_Title"].Value;
     var role = Context.Session.GetString("Role");
     var isAdminOrManager = role == "Admin" || role == "Manager";
     Layout = isAdminOrManager
@@ -41,9 +41,9 @@ else
             <div style="position:relative; min-width:200px; max-width:320px; flex:1;">
                 <i class="bi bi-search" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem;"></i>
                 <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                       class="adm-input" placeholder="Tìm theo tên khóa học..."
+                       class="adm-input" placeholder="@L["Course_SearchPlaceholder"]"
                        style="padding-left:34px; border-radius:8px 0 0 8px;" />
-                <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600; position:absolute; right:0; top:0; bottom:0;">Tìm</button>
+                <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600; position:absolute; right:0; top:0; bottom:0;">@L["Course_SearchBtn"]</button>
             </div>
             <input type="hidden" id="levelInput"  name="level"  value="@curLevel" />
             <input type="hidden" id="statusInput" name="status" value="@curStatus" />
@@ -159,9 +159,9 @@ else
                 <h5 id="courseModalLabel" style="
                     font-family:var(--font-display); font-size:1.15rem; font-weight:600;
                     color:var(--gold-light); margin:0;">
-                    Thêm khóa học
+                    @L["Crs_ModalAddTitle"]
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body" style="padding:1.5rem; background:var(--white);">
@@ -174,27 +174,27 @@ else
                         <div class="col-md-8">
                             <div class="sa-form-group">
                                 <label class="sa-label" for="CourseName">
-                                    Tên khóa học <span style="color:var(--danger)">*</span>
+                                    @L["Crs_CourseName"] <span style="color:var(--danger)">*</span>
                                 </label>
                                 <input type="text" id="CourseName" name="CourseName"
-                                       class="sa-input" placeholder="Nhập tên khóa học (3–200 ký tự)" />
+                                       class="sa-input" placeholder="@L["Crs_CourseNamePlaceholder"]" />
                                 <div class="invalid-feedback" id="err-CourseName"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="sa-form-group">
-                                <label class="sa-label" for="Level">Cấp độ</label>
+                                <label class="sa-label" for="Level">@L["Crs_Level"]</label>
                                 <select id="Level" name="Level" class="sa-input">
-                                    <option value="0">Cơ bản</option>
-                                    <option value="1">Trung cấp</option>
-                                    <option value="2">Nâng cao</option>
+                                    <option value="0">@L["Level_Basic"]</option>
+                                    <option value="1">@L["Level_Intermediate"]</option>
+                                    <option value="2">@L["Level_Advanced"]</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="sa-form-group">
                                 <label class="sa-label" for="FeeDisplay">
-                                    Học phí (VNĐ) <span style="color:var(--danger)">*</span>
+                                    @L["Crs_Fee"] <span style="color:var(--danger)">*</span>
                                 </label>
                                 <input type="text" id="FeeDisplay"
                                        class="sa-input" placeholder="0–100.000.000"
@@ -206,16 +206,16 @@ else
                     </div>
 
                     <div class="sa-form-group">
-                        <label class="sa-label" for="Description">Mô tả</label>
+                        <label class="sa-label" for="Description">@L["Crs_Description"]</label>
                         <textarea id="Description" name="Description"
                                   class="sa-input" rows="3" style="resize:vertical;"
-                                  placeholder="Mô tả khóa học (tối đa 1000 ký tự)..."></textarea>
+                                  placeholder="@L["Crs_Description"]..."></textarea>
                         <div class="invalid-feedback" id="err-Description"></div>
                     </div>
 
                     <!-- ===== THUMBNAIL ===== -->
                     <div class="sa-form-group">
-                        <label class="sa-label">Ảnh bìa</label>
+                        <label class="sa-label">@L["Crs_Thumbnail"]</label>
                         <div style="display:flex; align-items:flex-start; gap:1rem;">
                             <div id="thumbnailPreviewWrap" style="
                                 width:120px; height:80px; flex-shrink:0;
@@ -233,7 +233,7 @@ else
                                        class="sa-input" accept=".png,.jpg,.jpeg,.gif,.webp"
                                        style="padding:.45rem .75rem;" />
                                 <div style="font-size:.75rem; color:var(--text-light); margin-top:.3rem;">
-                                    PNG / JPG / GIF / WEBP — tối đa 5 MB
+                                    @L["Crs_ThumbnailHint"]
                                 </div>
                                 <div class="invalid-feedback" id="err-thumbnail"></div>
                             </div>
@@ -245,7 +245,7 @@ else
                                class="form-check-input" checked />
                         <label for="IsActive" class="form-check-label"
                                style="font-size:.85rem; font-weight:500; color:var(--text-mid);">
-                            Đang mở đăng ký
+                            @L["Crs_IsActive"]
                         </label>
                     </div>
                 </form>
@@ -255,9 +255,9 @@ else
                 padding:1rem 1.5rem;
                 background:var(--off-white);
                 border-top:1px solid var(--smoke);">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="sa-btn sa-btn-primary" id="btnSaveCourse">
-                    <i class="bi bi-check-lg"></i> <span class="btn-text">Lưu</span>
+                    <i class="bi bi-check-lg"></i> <span class="btn-text">@L["Btn_Save"]</span>
                 </button>
             </div>
 
@@ -276,7 +276,7 @@ else
                 <h5 id="importModalLabel" style="
                     font-family:var(--font-display); font-size:1.1rem; font-weight:600;
                     color:#fff; margin:0;">
-                    <i class="bi bi-upload me-2"></i>Nhập khóa học từ Excel
+                    <i class="bi bi-upload me-2"></i>@L["Crs_ImportTitle"]
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -288,12 +288,11 @@ else
                     display:flex; align-items:center; gap:.75rem;">
                     <i class="bi bi-info-circle-fill" style="color:#0d6efd; font-size:1.1rem; flex-shrink:0;"></i>
                     <div style="font-size:.85rem; color:var(--text-mid); line-height:1.5;">
-                        Cột bắt buộc: <strong>Tên khóa học</strong>, <strong>Học phí (VNĐ)</strong>.
-                        Trạng thái để trống sẽ mặc định <strong>Đang mở</strong>.
+                        @Html.Raw(L["Crs_ImportHint"])
                         <br>
                         <a href="@Url.Action("DownloadImportTemplate", "Course")"
                            style="color:#0d6efd; font-weight:600; text-decoration:none;">
-                            <i class="bi bi-download me-1"></i>Tải file mẫu (.xlsx)
+                            <i class="bi bi-download me-1"></i>@L["Crs_DownloadTemplate"]
                         </a>
                     </div>
                 </div>
@@ -301,7 +300,7 @@ else
                 <form id="importForm" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <div class="sa-form-group">
-                        <label class="sa-label">Chọn file Excel (.xlsx)</label>
+                        <label class="sa-label">@L["Crs_SelectFile"]</label>
                         <input type="file" id="importFile" name="file" accept=".xlsx"
                                class="sa-input" style="padding:.45rem .75rem;" />
                     </div>
@@ -311,10 +310,10 @@ else
             </div>
 
             <div class="modal-footer" style="padding:1rem 1.5rem; background:var(--off-white); border-top:1px solid var(--smoke);">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Close"]</button>
                 <button type="button" class="sa-btn" id="btnImport"
                         style="background:#0d6efd; color:#fff; border:none; min-width:110px;">
-                    <span class="btn-text"><i class="bi bi-upload me-1"></i>Nhập</span>
+                    <span class="btn-text"><i class="bi bi-upload me-1"></i>@L["Btn_Import"]</span>
                 </button>
             </div>
 
@@ -326,6 +325,26 @@ else
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
     <script>
         var isEditMode = false;
+        var _crsModalAdd  = '➕ @L["Crs_ModalAddTitle"]';
+        var _crsModalEdit = '✏️ @L["Crs_ModalEditTitle"]';
+        var _crsSave      = '@L["Btn_Save"]';
+        var _crsUpdate    = '@L["Btn_Update"]';
+        var _crsLoadErr   = '@L["Crs_LoadError"]';
+        var _crsDelConf   = '@L["Crs_DeleteConfirm"]';
+        var _crsToggleErr = '@L["Crs_ToggleError"]';
+        var _crsNoPermAdmin   = '@L["Adm_NoPermAdmin"]';
+        var _crsNoPermManager = '@L["Adm_NoPermManager"]';
+        var _crsFileRequired  = '@L["Crs_FileRequired"]';
+        var _crsProcessing    = '@L["Les_Processing"]';
+        var _crsImportNoData  = '@L["Crs_ImportNoData"]';
+        var _crsImportAdded   = '@L["Crs_ImportAdded"]';
+        var _crsImportCourse  = '@L["Crs_ImportCourseWord"]';
+        var _crsImportSkipped = '@L["Crs_ImportSkippedWord"]';
+        var _crsImportRow     = '@L["Crs_ImportRowPrefix"]';
+        var _crsRegFree       = '@L["Crs_RegisterFreeConfirm"]';
+        var _crsBtnImport     = '<i class="bi bi-upload me-1"></i> @L["Btn_Import"]';
+        var _errAjaxPrefix    = '@L["Err_AjaxPrefix"]';
+        var _errServerPrefix  = '@L["Err_ServerPrefix"]';
 
         // ====== COURSE FILTER DROPDOWN ======
         function setCourseFilter(name, val) {
@@ -360,7 +379,6 @@ else
             $('#modalResult').html('');
         });
 
-        // ====== XÓA LỖI KHI GÕ LẠI ======
         $(document).on('input change', '#courseForm input:not(#FeeDisplay), #courseForm textarea', function () {
             $(this).removeClass('is-invalid');
             var fieldId = $(this).attr('id') || $(this).attr('name');
@@ -385,7 +403,6 @@ else
             }
         }
 
-        // Preview ảnh ngay khi chọn file
         $(document).on('change', '#thumbnail', function () {
             var file = this.files[0];
             if (file) setThumbnailPreview(URL.createObjectURL(file));
@@ -394,7 +411,7 @@ else
         // ====== MỞ MODAL TẠO MỚI ======
         function openCreateModal() {
             isEditMode = false;
-            $('#courseModalLabel').text('➕ Thêm khóa học mới');
+            $('#courseModalLabel').text(_crsModalAdd);
             $('#courseForm')[0].reset();
             $('#CourseId').val(0);
             $('#IsActive').prop('checked', true);
@@ -403,14 +420,14 @@ else
             $('#Fee').val('');
             setThumbnailPreview(null);
             clearErrors();
-            $('#btnSaveCourse .btn-text').text('Lưu');
+            $('#btnSaveCourse .btn-text').text(_crsSave);
         }
 
         // ====== MỞ MODAL CHỈNH SỬA ======
         function openEditModal(id) {
             isEditMode = true;
-            $('#courseModalLabel').text('✏️ Sửa khóa học');
-            $('#btnSaveCourse .btn-text').text('Cập nhật');
+            $('#courseModalLabel').text(_crsModalEdit);
+            $('#btnSaveCourse .btn-text').text(_crsUpdate);
             clearErrors();
 
             $.get('@Url.Action("GetCourse", "Course")/' + id, function (data) {
@@ -425,7 +442,7 @@ else
                 setThumbnailPreview(data.thumbnailUrl || null);
                 $('#courseModal').modal('show');
             }).fail(function () {
-                showToast('Không thể tải thông tin khóa học!', 'danger');
+                showToast(_crsLoadErr, 'danger');
             });
         }
 
@@ -468,8 +485,8 @@ else
                         }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
-                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
+                        if (xhr.status === 403) showToast(_crsNoPermAdmin, 'danger');
+                        else showToast(_errAjaxPrefix + xhr.statusText, 'danger');
                     }
                 });
             });
@@ -486,7 +503,7 @@ else
                         if (res.success) { loadCourses($('.pagination .active a').data('page') || 1); }
                         else showToast(res.message, 'danger');
                     },
-                    error: function () { showToast('Lỗi khi thay đổi trạng thái!', 'danger'); }
+                    error: function () { showToast(_crsToggleErr, 'danger'); }
                 });
             });
 
@@ -505,7 +522,7 @@ else
 
             // ====== XÓA ======
             $(document).on('click', '.btn-delete-course', function () {
-                if (!confirm('Bạn có chắc muốn xóa khóa học này?')) return;
+                if (!confirm(_crsDelConf)) return;
                 var id = $(this).data('id');
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
                 $.ajax({
@@ -517,8 +534,8 @@ else
                         else { showToast(res.message, 'danger'); }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) showToast('Bạn không có quyền Admin!', 'danger');
-                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
+                        if (xhr.status === 403) showToast(_crsNoPermAdmin, 'danger');
+                        else showToast(_errAjaxPrefix + xhr.statusText, 'danger');
                     }
                 });
             });
@@ -533,7 +550,7 @@ else
                     return;
                 }
 
-                if (!confirm('Bạn có chắc muốn đăng ký khóa học miễn phí này?')) return;
+                if (!confirm(_crsRegFree)) return;
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
                 $.ajax({
                     url: '@Url.Action("Register", "Enrollment")',
@@ -544,8 +561,8 @@ else
                         else { showToast(res.message, 'danger'); }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) showToast('Bạn không có quyền!', 'danger');
-                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
+                        if (xhr.status === 403) showToast(_crsNoPermAdmin, 'danger');
+                        else showToast(_errAjaxPrefix + xhr.statusText, 'danger');
                     }
                 });
             });
@@ -573,21 +590,21 @@ else
             $('#importModal').on('hidden.bs.modal', function () {
                 $('#importForm')[0].reset();
                 $('#importResult').hide().html('');
-                $('#btnImport .btn-text').html('<i class="bi bi-upload me-1"></i>Nhập');
+                $('#btnImport .btn-text').html(_crsBtnImport);
                 $('#btnImport').prop('disabled', false);
             });
 
             $('#btnImport').on('click', function () {
                 var fileInput = $('#importFile')[0];
                 if (!fileInput.files.length) {
-                    showImportResult('danger', 'Vui lòng chọn file Excel trước.');
+                    showImportResult('danger', _crsFileRequired);
                     return;
                 }
 
                 var formData = new FormData($('#importForm')[0]);
 
                 $('#btnImport .btn-text').html(
-                    '<span class="spinner-border spinner-border-sm me-1"></span>Đang xử lý...'
+                    '<span class="spinner-border spinner-border-sm me-1"></span>' + _crsProcessing
                 );
                 $('#btnImport').prop('disabled', true);
                 $('#importResult').hide();
@@ -599,7 +616,7 @@ else
                     processData: false,
                     contentType: false,
                     success: function (res) {
-                        $('#btnImport .btn-text').html('<i class="bi bi-upload me-1"></i>Nhập');
+                        $('#btnImport .btn-text').html(_crsBtnImport);
                         $('#btnImport').prop('disabled', false);
 
                         if (!res.success) {
@@ -611,18 +628,18 @@ else
                         if (res.added > 0) {
                             html += '<div class="sa-alert sa-alert-success" style="margin-bottom:.75rem;">' +
                                 '<span class="sa-alert-icon"><i class="bi bi-check-circle-fill"></i></span>' +
-                                '<span>Thêm thành công <strong>' + res.added + '</strong> khóa học.</span>' +
+                                '<span>' + _crsImportAdded + ' <strong>' + res.added + '</strong> ' + _crsImportCourse + '</span>' +
                                 '</div>';
                         }
 
                         if (res.skipped && res.skipped.length > 0) {
                             html += '<div class="sa-alert sa-alert-danger" style="margin-bottom:.5rem;">' +
                                 '<span class="sa-alert-icon"><i class="bi bi-exclamation-triangle-fill"></i></span>' +
-                                '<span><strong>' + res.skipped.length + '</strong> dòng bị bỏ qua:</span>' +
+                                '<span><strong>' + res.skipped.length + '</strong> ' + _crsImportSkipped + '</span>' +
                                 '</div>';
                             html += '<ul style="margin:0; padding-left:1.25rem; font-size:.82rem; color:var(--text-mid);">';
                             $.each(res.skipped, function (_, s) {
-                                var prefix = s.row > 0 ? ('Dòng ' + s.row + ': ') : '';
+                                var prefix = s.row > 0 ? (_crsImportRow + ' ' + s.row + ': ') : '';
                                 html += '<li>' + prefix + $('<span>').text(s.reason).html() + '</li>';
                             });
                             html += '</ul>';
@@ -631,7 +648,7 @@ else
                         if (res.added === 0 && (!res.skipped || res.skipped.length === 0)) {
                             html = '<div class="sa-alert sa-alert-danger">' +
                                 '<span class="sa-alert-icon"><i class="bi bi-info-circle-fill"></i></span>' +
-                                '<span>Không có dữ liệu hợp lệ nào được nhập.</span></div>';
+                                '<span>' + _crsImportNoData + '</span></div>';
                         }
 
                         $('#importResult').html(html).show();
@@ -639,12 +656,12 @@ else
                         if (res.added > 0) loadCourses(1);
                     },
                     error: function (xhr) {
-                        $('#btnImport .btn-text').html('<i class="bi bi-upload me-1"></i>Nhập');
+                        $('#btnImport .btn-text').html(_crsBtnImport);
                         $('#btnImport').prop('disabled', false);
                         if (xhr.status === 403)
-                            showImportResult('danger', 'Bạn không có quyền Manager!');
+                            showImportResult('danger', _crsNoPermManager);
                         else
-                            showImportResult('danger', 'Lỗi server: ' + xhr.statusText);
+                            showImportResult('danger', _errServerPrefix + xhr.statusText);
                     }
                 });
             });

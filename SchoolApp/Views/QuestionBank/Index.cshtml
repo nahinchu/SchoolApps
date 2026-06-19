@@ -1,7 +1,7 @@
-﻿@* Views/QuestionBank/Index.cshtml *@
+@* Views/QuestionBank/Index.cshtml *@
 @model IEnumerable<SchoolApp.Models.Question>
 @{
-    ViewData["Title"] = "Ngân hàng câu hỏi";
+    ViewData["Title"] = L["QB_Title"].Value;
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var currentTag = ViewData["CurrentTag"] as string;
     var allTags = ViewData["AllTags"] as List<string> ?? new();
@@ -9,8 +9,8 @@
 
 <div class="adm-page-header">
     <div>
-        <div class="adm-page-title">🗃️ Ngân hàng <span>Câu hỏi</span></div>
-        <div class="adm-page-sub">Quản lý câu hỏi dùng chung cho nhiều bài kiểm tra</div>
+        <div class="adm-page-title">🗃️ @L["QB_Title"]</div>
+        <div class="adm-page-sub">@L["QB_Sub"]</div>
     </div>
 </div>
 
@@ -25,12 +25,12 @@
         <div style="position:relative; flex:1; min-width:200px; max-width:380px; display:flex;">
             <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem; z-index:1;"></i>
             <input type="text" id="searchInput" class="adm-input"
-                   placeholder="Tìm nội dung câu hỏi..."
+                   placeholder="@L["QB_SearchPlaceholder"]"
                    oninput="filterTable()"
                    style="padding-left:36px; border-radius:8px 0 0 8px; flex:1;" />
             <button type="button" class="adm-btn adm-btn-primary" onclick="filterTable()"
                     style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">
-                Tìm
+                @L["Course_SearchBtn"]
             </button>
         </div>
 
@@ -48,7 +48,7 @@
                     <li>
                         <a class="dropdown-item @(currentTag == null ? "active" : "")"
                            href="/QuestionBank/Index">
-                            <i class="bi bi-list-ul me-2"></i> Tất cả
+                            <i class="bi bi-list-ul me-2"></i> @L["QB_TagAll"]
                             <span class="badge bg-secondary ms-1">@Model.Count()</span>
                         </a>
                     </li>
@@ -68,7 +68,7 @@
     </div>
 
     <button class="adm-btn adm-btn-primary" onclick="openModal(0)">
-        <i class="bi bi-plus-circle me-1"></i> Thêm câu hỏi
+        <i class="bi bi-plus-circle me-1"></i> @L["QB_AddQuestion"]
     </button>
 </div>
 
@@ -76,22 +76,22 @@
 <div class="adm-stats mb-4">
     <div class="adm-stat-card">
         <div class="adm-stat-icon" style="background:rgba(201,168,76,0.12); color:#c9a84c;"><i class="bi bi-collection"></i></div>
-        <div class="adm-stat-label">Tổng câu hỏi</div>
+        <div class="adm-stat-label">@L["QB_TotalQuestions"]</div>
         <div class="adm-stat-value">@Model.Count()</div>
     </div>
     <div class="adm-stat-card">
         <div class="adm-stat-icon" style="background:rgba(63,185,80,0.12); color:#3fb950;"><i class="bi bi-tags"></i></div>
-        <div class="adm-stat-label">Chủ đề / Tag</div>
+        <div class="adm-stat-label">@L["QB_Tags"]</div>
         <div class="adm-stat-value">@allTags.Count</div>
     </div>
     <div class="adm-stat-card">
         <div class="adm-stat-icon" style="background:rgba(88,166,255,0.12); color:#58a6ff;"><i class="bi bi-check-circle"></i></div>
-        <div class="adm-stat-label">Một đáp án</div>
+        <div class="adm-stat-label">@L["QB_SingleChoice"]</div>
         <div class="adm-stat-value">@Model.Count(q => q.Type == SchoolApp.Models.Enums.QuestionType.SingleChoice)</div>
     </div>
     <div class="adm-stat-card">
         <div class="adm-stat-icon" style="background:rgba(227,179,65,0.12); color:#e3b341;"><i class="bi bi-check2-all"></i></div>
-        <div class="adm-stat-label">Nhiều đáp án</div>
+        <div class="adm-stat-label">@L["QB_MultiChoice"]</div>
         <div class="adm-stat-value">@Model.Count(q => q.Type == SchoolApp.Models.Enums.QuestionType.MultiChoice)</div>
     </div>
 </div>
@@ -103,12 +103,12 @@
             <thead>
                 <tr>
                     <th style="width:50px" class="text-center">#</th>
-                    <th>Nội dung câu hỏi</th>
-                    <th style="width:140px">Loại</th>
-                    <th style="width:80px" class="text-center">Điểm</th>
-                    <th style="width:80px" class="text-center">Đáp án</th>
+                    <th>@L["QB_ColContent"]</th>
+                    <th style="width:140px">@L["QB_ColType"]</th>
+                    <th style="width:80px" class="text-center">@L["QB_ColPoints"]</th>
+                    <th style="width:80px" class="text-center">@L["QB_ColAnswers"]</th>
                     <th style="width:110px">Tag</th>
-                    <th style="width:130px" class="text-center">Thao tác</th>
+                    <th style="width:130px" class="text-center">@L["Adm_ColActions"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -117,7 +117,7 @@
                     <tr>
                         <td colspan="7" style="text-align:center; padding:2.5rem; color:rgba(255,255,255,0.3);">
                             <i class="bi bi-inbox" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
-                            Chưa có câu hỏi nào trong ngân hàng
+                            @L["QB_NoQuestions"]
                         </td>
                     </tr>
                 }
@@ -133,7 +133,7 @@
                             @if (!string.IsNullOrWhiteSpace(q.Explanation))
                             {
                                 <small style="color:#58a6ff;">
-                                    <i class="bi bi-info-circle me-1"></i>Có giải thích
+                                    <i class="bi bi-info-circle me-1"></i>@L["QB_HasExplanation"]
                                 </small>
                             }
                         </td>
@@ -141,13 +141,13 @@
                             @switch (q.Type)
                             {
                                 case SchoolApp.Models.Enums.QuestionType.SingleChoice:
-                                    <span class="adm-badge adm-badge-info">Một đáp án</span>
+                                    <span class="adm-badge adm-badge-info">@L["QB_SingleChoice"]</span>
                                     break;
                                 case SchoolApp.Models.Enums.QuestionType.MultiChoice:
-                                    <span class="adm-badge adm-badge-warning">Nhiều đáp án</span>
+                                    <span class="adm-badge adm-badge-warning">@L["QB_MultiChoice"]</span>
                                     break;
                                 case SchoolApp.Models.Enums.QuestionType.TrueFalse:
-                                    <span class="adm-badge adm-badge-gold">Đúng / Sai</span>
+                                    <span class="adm-badge adm-badge-gold">@L["QB_TrueFalse"]</span>
                                     break;
                             }
                         </td>
@@ -164,12 +164,12 @@
                         <td class="text-center" style="white-space:nowrap;">
                             <button class="adm-btn adm-btn-warning adm-btn-sm me-1"
                                     onclick="openModal(@q.QuestionId)"
-                                    title="Sửa">
+                                    title="@L["Btn_Edit"]">
                                 <i class="bi bi-pencil"></i>
                             </button>
                             <button class="adm-btn adm-btn-danger adm-btn-sm"
                                     onclick="deleteQuestion(@q.QuestionId)"
-                                    title="Xóa">
+                                    title="@L["Btn_Delete"]">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -181,7 +181,7 @@
     @if (Model.Any())
     {
         <div style="padding:.6rem 1rem; border-top:1px solid rgba(201,168,76,0.12); color:rgba(255,255,255,0.35); font-size:.78rem;">
-            Hiển thị <span id="visibleCount">@Model.Count()</span> / @Model.Count() câu hỏi
+            @L["QB_Showing"] <span id="visibleCount">@Model.Count()</span> / @Model.Count() @L["QB_Questions"]
         </div>
     }
 </div>
@@ -194,7 +194,7 @@
         <div class="modal-content">
 
             <div class="modal-header bg-navy text-white">
-                <h5 class="modal-title" id="bankModalLabel">Thêm câu hỏi</h5>
+                <h5 class="modal-title" id="bankModalLabel">@L["QB_AddQuestion"]</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
@@ -204,25 +204,25 @@
 
                     <div class="row">
                         <div class="col-md-8">
-                            <label class="sa-label">Nội dung câu hỏi <span class="text-danger">*</span></label>
+                            <label class="sa-label">@L["QB_QuestionContent"] <span class="text-danger">*</span></label>
                             <textarea id="f_content" class="sa-input" rows="3"
-                                      placeholder="Nhập nội dung câu hỏi..."></textarea>
+                                      placeholder="@L["QB_QuestionContent"]..."></textarea>
                         </div>
                         <div class="col-md-4">
-                            <label class="sa-label">Loại câu hỏi</label>
+                            <label class="sa-label">@L["QB_QuestionType"]</label>
                             <select id="f_type" class="sa-input" onchange="onTypeChange()">
-                                <option value="0">Một đáp án</option>
-                                <option value="1">Nhiều đáp án</option>
-                                <option value="2">Đúng / Sai</option>
+                                <option value="0">@L["QB_SingleChoice"]</option>
+                                <option value="1">@L["QB_MultiChoice"]</option>
+                                <option value="2">@L["QB_TrueFalse"]</option>
                             </select>
 
-                            <label class="sa-label mt-3">Điểm</label>
+                            <label class="sa-label mt-3">@L["QB_ColPoints"]</label>
                             <input type="number" id="f_points" class="sa-input"
                                    value="1" min="1" max="100" />
 
-                            <label class="sa-label mt-3">Tag / Chủ đề</label>
+                            <label class="sa-label mt-3">@L["QB_TagTopic"]</label>
                             <input type="text" id="f_tag" class="sa-input"
-                                   placeholder="vd: Chương 1, Đại số..."
+                                   placeholder="@L["QB_FilterTagPh"]"
                                    list="tagSuggestions" />
                             <datalist id="tagSuggestions">
                                 @foreach (var tag in allTags)
@@ -234,23 +234,23 @@
                     </div>
 
                     <div class="mt-3">
-                        <label class="sa-label">Giải thích đáp án (tuỳ chọn)</label>
+                        <label class="sa-label">@L["QB_Explanation"]</label>
                         <textarea id="f_explanation" class="sa-input" rows="2"
-                                  placeholder="Giải thích tại sao đáp án đúng..."></textarea>
+                                  placeholder="@L["QB_Explanation"]..."></textarea>
                     </div>
 
                     <hr />
 
                     <div class="d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0">Đáp án</h6>
+                        <h6 class="mb-0">@L["QB_Answers"]</h6>
                         <div>
                             <small class="text-muted me-3" id="optionsHint">
-                                Đánh dấu vào ô <strong>Đúng</strong> cho đáp án chính xác
+                                @L["QB_MarkCorrect"]
                             </small>
                             <button type="button" id="btnAddOpt"
                                     class="btn btn-sm btn-outline-primary"
                                     onclick="addOptionField()">
-                                <i class="bi bi-plus"></i> Thêm đáp án
+                                <i class="bi bi-plus"></i> @L["QB_AddAnswer"]
                             </button>
                         </div>
                     </div>
@@ -260,9 +260,9 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Huỷ</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="sa-btn sa-btn-primary" id="btnSave">
-                    <i class="bi bi-check-lg"></i> Lưu câu hỏi
+                    <i class="bi bi-check-lg"></i> @L["QB_SaveQuestion"]
                 </button>
             </div>
 
@@ -274,6 +274,20 @@
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
 
     <script>
+        var _lblModalAdd  = '@L["QB_ModalAddTitle"]';
+        var _lblModalEdit = '@L["QB_ModalEditTitle"]';
+        var _lblSave      = '@L["QB_SaveQuestion"]';
+        var _lblUpdate    = '@L["QB_Update"]';
+        var _lblCorrect   = '@L["QB_Correct"]';
+        var _lblAnswerPh  = '@L["QB_AnswerPlaceholder"]';
+        var _lblLoadErr   = '@L["QB_LoadError"]';
+        var _lblSaveFail  = '@L["QB_SaveFailed"]';
+        var _lblConnErr   = '@L["QB_ConnError"]';
+        var _lblDelConf   = '@L["QB_DeleteConfirm"]';
+        var _lblMarkCorr  = '@L["QB_MarkCorrect"]';
+        var _lblOptTrue   = '@L["QB_OptionTrue"]';
+        var _lblOptFalse  = '@L["QB_OptionFalse"]';
+
         let isBankEdit = false;
 
         function getToken() {
@@ -289,7 +303,6 @@
             });
         }
 
-        // ── gán lên window để onclick="" trong HTML gọi được ──────────
         window.filterTable = function () {
             const kw = $('#searchInput').val().toLowerCase().trim();
             let visible = 0;
@@ -312,16 +325,16 @@
 
             if (id === 0) {
                 isBankEdit = false;
-                $('#bankModalLabel').text('➕ Thêm câu hỏi vào ngân hàng');
-                $('#btnSave').html('<i class="bi bi-check-lg"></i> Lưu câu hỏi');
+                $('#bankModalLabel').text('➕ ' + _lblModalAdd);
+                $('#btnSave').html('<i class="bi bi-check-lg"></i> ' + _lblSave);
                 window.addOptionField();
                 window.addOptionField();
                 window.onTypeChange();
                 $('#bankModal').modal('show');
             } else {
                 isBankEdit = true;
-                $('#bankModalLabel').text('✏️ Sửa câu hỏi');
-                $('#btnSave').html('<i class="bi bi-check-lg"></i> Cập nhật');
+                $('#bankModalLabel').text('✏️ ' + _lblModalEdit);
+                $('#btnSave').html('<i class="bi bi-check-lg"></i> ' + _lblUpdate);
 
                 $.get('/QuestionBank/GetQuestion', { id })
                     .done(function (data) {
@@ -336,7 +349,7 @@
                         window.onTypeChange();
                         $('#bankModal').modal('show');
                     })
-                    .fail(() => showToast('Không tải được câu hỏi!', 'danger'));
+                    .fail(() => showToast(_lblLoadErr, 'danger'));
             }
         };
 
@@ -346,20 +359,16 @@
 
             if (isTF) {
                 $('#btnAddOpt').hide();
-                $('#optionsHint').html('Câu Đúng/Sai có cố định 2 đáp án.');
+                $('#optionsHint').html(_lblMarkCorr);
                 if (!isBankEdit && $('#optionsContainer .option-item').length === 0) {
-                    window.addOptionField('Đúng', true,  0);
-                    window.addOptionField('Sai',  false, 0);
+                    window.addOptionField(_lblOptTrue, true, 0);
+                    window.addOptionField(_lblOptFalse, false, 0);
                 }
                 $('#optionsContainer .option-correct')
                     .attr('type', 'radio').attr('name', 'tf_correct');
             } else {
                 $('#btnAddOpt').show();
-                $('#optionsHint').html(
-                    type === 1
-                        ? 'Đánh dấu vào ô <strong>Đúng</strong> cho TẤT CẢ đáp án chính xác'
-                        : 'Đánh dấu vào ô <strong>Đúng</strong> cho 1 đáp án chính xác'
-                );
+                $('#optionsHint').html(_lblMarkCorr);
                 $('#optionsContainer .option-correct')
                     .attr('type', 'checkbox').removeAttr('name');
             }
@@ -370,11 +379,11 @@
             const html = `
                 <div class="option-item input-group mb-2" data-option-id="${answerOptionId}">
                     <input type="text" class="form-control option-content"
-                           placeholder="Nội dung đáp án..." value="${safeContent}" />
+                           placeholder="${_lblAnswerPh}" value="${safeContent}" />
                     <div class="input-group-text">
                         <input type="checkbox" class="option-correct form-check-input mt-0 me-2"
                                ${isCorrect ? 'checked' : ''} />
-                        <span>Đúng</span>
+                        <span>${_lblCorrect}</span>
                     </div>
                     <button type="button" class="btn btn-outline-danger"
                             onclick="$(this).closest('.option-item').remove()">
@@ -385,7 +394,7 @@
         };
 
         window.deleteQuestion = function (id) {
-            if (!confirm('Xoá câu hỏi này khỏi ngân hàng?')) return;
+            if (!confirm(_lblDelConf)) return;
             $.ajax({
                 url: '/QuestionBank/Delete',
                 type: 'POST',
@@ -398,7 +407,7 @@
                         showToast(res.message, 'danger');
                     }
                 },
-                error: () => showToast('Lỗi kết nối!', 'danger')
+                error: () => showToast(_lblConnErr, 'danger')
             });
         };
 
@@ -446,10 +455,10 @@
                             showToast(res.message, 'success');
                             setTimeout(() => location.reload(), 700);
                         } else {
-                            showToast(res.message || 'Lưu thất bại', 'danger');
+                            showToast(res.message || _lblSaveFail, 'danger');
                         }
                     })
-                    .fail(() => showToast('Lỗi kết nối!', 'danger'));
+                    .fail(() => showToast(_lblConnErr, 'danger'));
             });
         });
     </script>

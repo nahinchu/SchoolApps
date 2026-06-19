@@ -1,18 +1,19 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Lesson>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 
 <div class="adm-table-wrap">
     <table class="adm-table adm-table-bordered">
         <thead>
             <tr>
                 <th style="width:36px;"></th>
-                <th class="text-center" style="width:60px;">STT</th>
-                <th>Tiêu đề bài học</th>
-                <th>Loại</th>
-                <th class="text-center">Thời lượng</th>
-                <th class="text-center">Trạng thái</th>
-                <th style="width:220px;">Thao tác</th>
+                <th class="text-center" style="width:60px;">#</th>
+                <th>@L["Les_ColTitle"]</th>
+                <th>@L["Les_ColType"]</th>
+                <th class="text-center">@L["Les_ColDuration"]</th>
+                <th class="text-center">@L["Les_ColStatus"]</th>
+                <th style="width:220px;">@L["Les_ColActions"]</th>
             </tr>
         </thead>
         <tbody id="lessonTableBody">
@@ -22,7 +23,7 @@
                 <tr>
                     <td colspan="7" style="text-align:center; padding:2.5rem; color:rgba(255,255,255,0.3);">
                         <i class="bi bi-journal-x" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
-                        Chưa có bài học nào trong chương này.
+                        @L["Les_NoLessons"]
                     </td>
                 </tr>
             }
@@ -39,7 +40,7 @@
                             <strong>@item.Title</strong>
                             @if (!string.IsNullOrEmpty(item.AttachmentPath))
                             {
-                                <a href="@item.AttachmentPath" target="_blank" class="ms-1" style="color:rgba(255,255,255,0.4);" title="Tệp đính kèm">
+                                <a href="@item.AttachmentPath" target="_blank" class="ms-1" style="color:rgba(255,255,255,0.4);" title="@L["Les_Attachment"]">
                                     <i class="bi bi-paperclip"></i>
                                 </a>
                             }
@@ -48,20 +49,20 @@
                             @switch (item.Type)
                             {
                                 case SchoolApp.Models.Enums.LessonType.Video:
-                                    <span class="adm-badge adm-badge-info"><i class="bi bi-camera-video"></i> Video</span>
+                                    <span class="adm-badge adm-badge-info"><i class="bi bi-camera-video"></i> @L["Les_TypeVideo"]</span>
                                     break;
                                 case SchoolApp.Models.Enums.LessonType.Text:
-                                    <span class="adm-badge adm-badge-success"><i class="bi bi-file-text"></i> Bài viết</span>
+                                    <span class="adm-badge adm-badge-success"><i class="bi bi-file-text"></i> @L["Les_BadgeText"]</span>
                                     break;
                                 case SchoolApp.Models.Enums.LessonType.Mixed:
-                                    <span class="adm-badge adm-badge-warning"><i class="bi bi-layers"></i> Hỗn hợp</span>
+                                    <span class="adm-badge adm-badge-warning"><i class="bi bi-layers"></i> @L["Les_BadgeMixed"]</span>
                                     break;
                             }
                         </td>
                         <td class="text-center">
                             @if (item.DurationMinutes > 0)
                             {
-                                <span>@item.DurationMinutes phút</span>
+                                <span>@item.DurationMinutes @L["Les_DurationUnit"]</span>
                             }
                             else
                             {
@@ -71,17 +72,17 @@
                         <td class="text-center">
                             @if (item.IsPublished)
                             {
-                                <span class="adm-badge adm-badge-success">Đang mở</span>
+                                <span class="adm-badge adm-badge-success">@L["Les_StatusOpen"]</span>
                             }
                             else
                             {
-                                <span class="adm-badge" style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.4);">Ẩn</span>
+                                <span class="adm-badge" style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.4);">@L["Les_StatusHidden"]</span>
                             }
                         </td>
                         <td style="white-space:nowrap;">
                             <button type="button" class="adm-btn adm-btn-warning adm-btn-sm me-1"
                                     onclick="openEditModal(@item.LessonId)">
-                                <i class="bi bi-pencil"></i> Sửa
+                                <i class="bi bi-pencil"></i> @L["Btn_Edit"]
                             </button>
                             <button type="button" class="adm-btn adm-btn-danger adm-btn-sm btn-delete-lesson me-1"
                                     data-id="@item.LessonId">
@@ -100,8 +101,8 @@
 </div>
 <div class="d-flex justify-content-between align-items-center mt-3">
     <span style="color:rgba(255,255,255,0.45); font-size:.82rem;">
-        Trang @Model.PageNumber / @Model.PageCount
-        (Tổng: @Model.TotalItemCount bài học)
+        @L["Les_Page"] @Model.PageNumber / @Model.PageCount
+        (@L["Adm_Total"]: @Model.TotalItemCount @L["Les_TotalLessons"])
     </span>
     @Html.PagedListPager(Model, page => Url.Action("Index", new {
     moduleId = ViewData["ModuleId"],

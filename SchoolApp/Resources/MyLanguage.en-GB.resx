@@ -235,6 +235,7 @@
   <data name="Btn_Delete" xml:space="preserve"><value>Delete</value></data>
   <data name="Btn_Edit" xml:space="preserve"><value>Edit</value></data>
   <data name="Btn_Add" xml:space="preserve"><value>Add</value></data>
+  <data name="Btn_Detail" xml:space="preserve"><value>Details</value></data>
   <data name="Btn_Export" xml:space="preserve"><value>Export Excel</value></data>
   <data name="Btn_Import" xml:space="preserve"><value>Import Excel</value></data>
   <data name="Course_AddNew" xml:space="preserve"><value>Add New Course</value></data>
@@ -328,4 +329,699 @@
   <data name="Adm_BadgePaid" xml:space="preserve"><value>✅ Paid</value></data>
   <data name="Adm_BadgePending" xml:space="preserve"><value>⏳ Pending</value></data>
   <data name="Adm_BadgeCancelled" xml:space="preserve"><value>❌ Cancelled</value></data>
+  <!-- QuestionBank -->
+  <data name="QB_Title" xml:space="preserve"><value>Question Bank</value></data>
+  <data name="QB_Sub" xml:space="preserve"><value>Manage shared questions for multiple assessments</value></data>
+  <data name="QB_SearchPlaceholder" xml:space="preserve"><value>Search question content...</value></data>
+  <data name="QB_TagAll" xml:space="preserve"><value>All</value></data>
+  <data name="QB_AddQuestion" xml:space="preserve"><value>Add question</value></data>
+  <data name="QB_TotalQuestions" xml:space="preserve"><value>Total questions</value></data>
+  <data name="QB_Tags" xml:space="preserve"><value>Topic / Tag</value></data>
+  <data name="QB_SingleChoice" xml:space="preserve"><value>Single choice</value></data>
+  <data name="QB_MultiChoice" xml:space="preserve"><value>Multiple choice</value></data>
+  <data name="QB_TrueFalse" xml:space="preserve"><value>True / False</value></data>
+  <data name="QB_ColContent" xml:space="preserve"><value>Question content</value></data>
+  <data name="QB_ColType" xml:space="preserve"><value>Type</value></data>
+  <data name="QB_ColPoints" xml:space="preserve"><value>Points</value></data>
+  <data name="QB_ColAnswers" xml:space="preserve"><value>Answers</value></data>
+  <data name="QB_NoQuestions" xml:space="preserve"><value>No questions in the bank yet</value></data>
+  <data name="QB_Showing" xml:space="preserve"><value>Showing</value></data>
+  <data name="QB_Questions" xml:space="preserve"><value>questions</value></data>
+  <data name="QB_HasExplanation" xml:space="preserve"><value>Has explanation</value></data>
+  <data name="QB_ModalAddTitle" xml:space="preserve"><value>Add question to bank</value></data>
+  <data name="QB_ModalEditTitle" xml:space="preserve"><value>Edit question</value></data>
+  <data name="QB_QuestionContent" xml:space="preserve"><value>Question content</value></data>
+  <data name="QB_QuestionType" xml:space="preserve"><value>Question type</value></data>
+  <data name="QB_TagTopic" xml:space="preserve"><value>Tag / Topic</value></data>
+  <data name="QB_Explanation" xml:space="preserve"><value>Answer explanation (optional)</value></data>
+  <data name="QB_Answers" xml:space="preserve"><value>Answers</value></data>
+  <data name="QB_MarkCorrect" xml:space="preserve"><value>Mark the Correct checkbox for the right answer</value></data>
+  <data name="QB_AddAnswer" xml:space="preserve"><value>Add answer</value></data>
+  <data name="QB_Correct" xml:space="preserve"><value>Correct</value></data>
+  <data name="QB_AnswerPlaceholder" xml:space="preserve"><value>Answer content...</value></data>
+  <data name="QB_SaveQuestion" xml:space="preserve"><value>Save question</value></data>
+  <data name="QB_Update" xml:space="preserve"><value>Update</value></data>
+  <data name="QB_SaveFailed" xml:space="preserve"><value>Save failed</value></data>
+  <data name="QB_DeleteConfirm" xml:space="preserve"><value>Delete this question from the bank?</value></data>
+  <data name="QB_LoadError" xml:space="preserve"><value>Failed to load question!</value></data>
+  <data name="QB_ConnError" xml:space="preserve"><value>Connection error!</value></data>
+  <data name="QB_OptionTrue" xml:space="preserve"><value>True</value></data>
+  <data name="QB_OptionFalse" xml:space="preserve"><value>False</value></data>
+  <!-- Quiz Manage -->
+  <data name="Qz_Title" xml:space="preserve"><value>Quiz Management</value></data>
+  <data name="Qz_Sub" xml:space="preserve"><value>Manage questions and quiz settings</value></data>
+  <data name="Qz_NoQuiz" xml:space="preserve"><value>No quiz found for this lesson</value></data>
+  <data name="Qz_CreateNew" xml:space="preserve"><value>Create new quiz</value></data>
+  <data name="Qz_QuestionCountSuffix" xml:space="preserve"><value>questions</value></data>
+  <data name="Qz_EditSettings" xml:space="preserve"><value>Edit settings</value></data>
+  <data name="Qz_DeleteQuiz" xml:space="preserve"><value>Delete quiz</value></data>
+  <data name="Qz_AddQuestion" xml:space="preserve"><value>Add new question</value></data>
+  <data name="Qz_AddFromBank" xml:space="preserve"><value>Add from bank</value></data>
+  <data name="Qz_DragHint" xml:space="preserve"><value>Drag and drop to reorder questions</value></data>
+  <data name="Qz_SettingsTitle" xml:space="preserve"><value>Quiz Settings</value></data>
+  <data name="Qz_QuizTitle" xml:space="preserve"><value>Quiz Title</value></data>
+  <data name="Qz_PassingScore" xml:space="preserve"><value>Passing Score (%)</value></data>
+  <data name="Qz_TimeLimit" xml:space="preserve"><value>Time Limit (minutes, 0 = unlimited)</value></data>
+  <data name="Qz_MaxAttempts" xml:space="preserve"><value>Max Attempts (0 = unlimited)</value></data>
+  <data name="Qz_IsPublished" xml:space="preserve"><value>Publish Quiz</value></data>
+  <data name="Qz_AllowRetry" xml:space="preserve"><value>Allow Retry</value></data>
+  <data name="Qz_ShowAnswers" xml:space="preserve"><value>Show Answers After Submission</value></data>
+  <data name="Qz_Description" xml:space="preserve"><value>Description / Instructions</value></data>
+  <data name="Qz_SaveQuiz" xml:space="preserve"><value>Save Quiz</value></data>
+  <data name="Qz_DeleteQuizConfirm" xml:space="preserve"><value>Delete this quiz? All questions will be deleted as well.</value></data>
+  <data name="Qz_BankTitle" xml:space="preserve"><value>Select Questions from Bank</value></data>
+  <data name="Qz_SearchQuestion" xml:space="preserve"><value>Search question content...</value></data>
+  <data name="Qz_AllTags" xml:space="preserve"><value>-- All tags --</value></data>
+  <data name="Qz_AllTypes" xml:space="preserve"><value>-- All types --</value></data>
+  <data name="Qz_ColAnswers" xml:space="preserve"><value>Answers</value></data>
+  <data name="Qz_NoQuestionsYet" xml:space="preserve"><value>No questions yet. Add your first question!</value></data>
+  <data name="Qz_DragTooltip" xml:space="preserve"><value>Drag to reorder</value></data>
+  <data name="Qz_SaveToBank" xml:space="preserve"><value>Save to question bank</value></data>
+  <data name="Qz_Loading" xml:space="preserve"><value>Loading...</value></data>
+  <data name="Qz_ShowingWord" xml:space="preserve"><value>Showing</value></data>
+  <data name="Qz_SelectedWord" xml:space="preserve"><value>Selected:</value></data>
+  <data name="Qz_BankCopyInfo" xml:space="preserve"><value>Questions will be copied into the quiz; the originals in the bank remain unchanged</value></data>
+  <data name="Qz_AnswerCountSuffix" xml:space="preserve"><value>answers</value></data>
+  <data name="Qz_ModalCreateQuiz" xml:space="preserve"><value>Create New Quiz</value></data>
+  <data name="Qz_ModalEditSettings" xml:space="preserve"><value>Edit Quiz Settings</value></data>
+  <data name="Qz_ModalAddQuestion" xml:space="preserve"><value>Add New Question</value></data>
+  <data name="Qz_ModalEditQuestion" xml:space="preserve"><value>Edit Question</value></data>
+  <data name="Qz_SaveFail" xml:space="preserve"><value>Save failed</value></data>
+  <data name="Qz_ConnError" xml:space="preserve"><value>Connection error!</value></data>
+  <data name="Qz_TFHint" xml:space="preserve"><value>True/False questions have exactly 2 options. Only one correct answer allowed.</value></data>
+  <data name="Qz_SingleHint" xml:space="preserve"><value>Tick the &lt;strong&gt;Correct&lt;/strong&gt; box for exactly 1 right answer</value></data>
+  <data name="Qz_MultiHint" xml:space="preserve"><value>Tick the &lt;strong&gt;Correct&lt;/strong&gt; box for ALL right answers</value></data>
+  <data name="Qz_AnswerHint" xml:space="preserve"><value>Tick the &lt;strong&gt;Correct&lt;/strong&gt; box for the right answer</value></data>
+  <data name="Qz_OptionPlaceholder" xml:space="preserve"><value>Answer content</value></data>
+  <data name="Qz_NeedQuizFirst" xml:space="preserve"><value>Please create a quiz before adding questions</value></data>
+  <data name="Qz_LoadQuizError" xml:space="preserve"><value>Failed to load quiz info!</value></data>
+  <data name="Qz_LoadQuestionError" xml:space="preserve"><value>Failed to load question info!</value></data>
+  <data name="Qz_NoBankLoaded" xml:space="preserve"><value>Failed to load question bank!</value></data>
+  <data name="Qz_NoSelected" xml:space="preserve"><value>No questions selected!</value></data>
+  <data name="Qz_ImportFail" xml:space="preserve"><value>Import failed!</value></data>
+  <data name="Qz_NeedQuizForBank" xml:space="preserve"><value>Please create a quiz first!</value></data>
+  <data name="Qz_SaveToBankConfirm" xml:space="preserve"><value>Save this question to the bank?</value></data>
+  <data name="Qz_NoMatchingQuestions" xml:space="preserve"><value>No matching questions found</value></data>
+  <data name="Qz_DeleteQuestionConfirm" xml:space="preserve"><value>Delete this question?</value></data>
+  <data name="Qz_QuestionAnswerCountSuffix" xml:space="preserve"><value>answers</value></data>
+  <!-- Enrollment -->
+  <data name="Enr_Title" xml:space="preserve"><value>Enrolment List</value></data>
+  <data name="Enr_Sub" xml:space="preserve"><value>Manage student enrolments</value></data>
+  <data name="Enr_SearchPlaceholder" xml:space="preserve"><value>Search by student name or course...</value></data>
+  <data name="Enr_StatusFilter" xml:space="preserve"><value>☰ Status</value></data>
+  <data name="Enr_StatusInProgress" xml:space="preserve"><value>▶ In progress</value></data>
+  <data name="Enr_StatusCompleted" xml:space="preserve"><value>✅ Completed</value></data>
+  <data name="Enr_StatusAll" xml:space="preserve"><value>All</value></data>
+  <data name="Enr_ManualEnroll" xml:space="preserve"><value>Manual enrolment</value></data>
+  <data name="Enr_SelectStudent" xml:space="preserve"><value>Student</value></data>
+  <data name="Enr_StudentSearchPlaceholder" xml:space="preserve"><value>Type student name or email...</value></data>
+  <data name="Enr_SelectCourse" xml:space="preserve"><value>Course</value></data>
+  <data name="Enr_SelectCoursePlaceholder" xml:space="preserve"><value>— Select course —</value></data>
+  <data name="Enr_Enroll" xml:space="preserve"><value>Enrol</value></data>
+  <data name="Enr_NoEnrollments" xml:space="preserve"><value>No enrolments</value></data>
+  <data name="Enr_BadgeCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="Enr_BadgeInProgress" xml:space="preserve"><value>In progress</value></data>
+  <data name="Enr_ColStudent" xml:space="preserve"><value>Student</value></data>
+  <data name="Enr_ColCourse" xml:space="preserve"><value>Course</value></data>
+  <data name="Enr_ColEnrollDate" xml:space="preserve"><value>Enrol date</value></data>
+  <data name="Enr_ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Enr_ColActions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Enr_Page" xml:space="preserve"><value>Page</value></data>
+  <data name="Enr_Enrollments" xml:space="preserve"><value>enrolments</value></data>
+  <data name="Enr_DeleteConfirm" xml:space="preserve"><value>Are you sure you want to delete this enrolment?</value></data>
+  <data name="Enr_NotFound" xml:space="preserve"><value>Student not found</value></data>
+  <data name="Enr_Selected" xml:space="preserve"><value>✔ Selected</value></data>
+  <data name="Enr_SelectStudentWarning" xml:space="preserve"><value>Please select a student.</value></data>
+  <data name="Enr_SelectCourseWarning" xml:space="preserve"><value>Please select a course.</value></data>
+  <data name="Enr_ConnError" xml:space="preserve"><value>Connection error.</value></data>
+  <!-- Student -->
+  <data name="Stu_Title" xml:space="preserve"><value>Student List</value></data>
+  <data name="Stu_Sub" xml:space="preserve"><value>Manage and monitor student information</value></data>
+  <data name="Stu_SearchPlaceholder" xml:space="preserve"><value>Search by name, email, phone...</value></data>
+  <data name="Stu_AddNew" xml:space="preserve"><value>Add student</value></data>
+  <data name="Stu_ModalAddTitle" xml:space="preserve"><value>Add new student</value></data>
+  <data name="Stu_ModalEditTitle" xml:space="preserve"><value>Edit student</value></data>
+  <data name="Stu_ModalDetailTitle" xml:space="preserve"><value>Student details</value></data>
+  <data name="Stu_DateOfBirth" xml:space="preserve"><value>Date of birth</value></data>
+  <data name="Stu_Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Stu_ColName" xml:space="preserve"><value>Full name</value></data>
+  <data name="Stu_ColPhone" xml:space="preserve"><value>Phone number</value></data>
+  <data name="Stu_ColDateOfBirth" xml:space="preserve"><value>Date of birth</value></data>
+  <data name="Stu_ColRegDate" xml:space="preserve"><value>Registration date</value></data>
+  <data name="Stu_ColActions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Stu_NoStudents" xml:space="preserve"><value>No students found</value></data>
+  <data name="Stu_Page" xml:space="preserve"><value>Page</value></data>
+  <data name="Stu_TotalStudents" xml:space="preserve"><value>students</value></data>
+  <data name="Stu_DeleteConfirm" xml:space="preserve"><value>Are you sure you want to delete this student?</value></data>
+  <data name="Stu_LoadDetailError" xml:space="preserve"><value>Failed to load student info!</value></data>
+  <data name="Stu_NoPermission" xml:space="preserve"><value>You don't have Admin permission!</value></data>
+  <data name="Stu_EnrolledCourses" xml:space="preserve"><value>Enrolled courses</value></data>
+  <data name="Stu_NoEnrollments" xml:space="preserve"><value>No courses enrolled yet</value></data>
+  <data name="Stu_ImportTitle" xml:space="preserve"><value>Import students from Excel</value></data>
+  <data name="Stu_SelectFile" xml:space="preserve"><value>Select Excel file (.xlsx)</value></data>
+  <data name="Stu_RegDate" xml:space="preserve"><value>Registration date</value></data>
+  <!-- Course modal -->
+  <data name="Crs_ModalAddTitle" xml:space="preserve"><value>Add new course</value></data>
+  <data name="Crs_ModalEditTitle" xml:space="preserve"><value>Edit course</value></data>
+  <data name="Crs_CourseName" xml:space="preserve"><value>Course name</value></data>
+  <data name="Crs_Level" xml:space="preserve"><value>Level</value></data>
+  <data name="Crs_Fee" xml:space="preserve"><value>Tuition fee (VND)</value></data>
+  <data name="Crs_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Crs_Thumbnail" xml:space="preserve"><value>Cover image</value></data>
+  <data name="Crs_IsActive" xml:space="preserve"><value>Open for enrolment</value></data>
+  <data name="Crs_ImportTitle" xml:space="preserve"><value>Import courses from Excel</value></data>
+  <data name="Crs_DeleteConfirm" xml:space="preserve"><value>Are you sure you want to delete this course?</value></data>
+  <data name="Crs_CourseNamePlaceholder" xml:space="preserve"><value>Enter course name (3–200 characters)</value></data>
+  <data name="Crs_ThumbnailHint" xml:space="preserve"><value>PNG / JPG / GIF / WEBP — max 5 MB</value></data>
+  <data name="Crs_DownloadTemplate" xml:space="preserve"><value>Download template (.xlsx)</value></data>
+  <data name="Crs_SelectFile" xml:space="preserve"><value>Select Excel file (.xlsx)</value></data>
+  <data name="Crs_LoadError" xml:space="preserve"><value>Failed to load course info!</value></data>
+  <data name="Crs_ToggleError" xml:space="preserve"><value>Error changing status!</value></data>
+  <data name="Crs_FileRequired" xml:space="preserve"><value>Please select an Excel file first.</value></data>
+  <data name="Crs_ImportNoData" xml:space="preserve"><value>No valid data to import.</value></data>
+  <data name="Crs_ImportAdded" xml:space="preserve"><value>Successfully added</value></data>
+  <data name="Crs_ImportCourseWord" xml:space="preserve"><value>courses.</value></data>
+  <data name="Crs_ImportSkippedWord" xml:space="preserve"><value>rows skipped:</value></data>
+  <data name="Crs_ImportRowPrefix" xml:space="preserve"><value>Row</value></data>
+  <data name="Crs_RegisterFreeConfirm" xml:space="preserve"><value>Are you sure you want to enrol in this free course?</value></data>
+  <data name="Adm_NoPermAdmin" xml:space="preserve"><value>You don't have Admin permission!</value></data>
+  <data name="Adm_NoPermManager" xml:space="preserve"><value>You don't have Manager permission!</value></data>
+  <data name="Les_OrderIndex" xml:space="preserve"><value>Order</value></data>
+  <data name="Les_VideoUrlPlaceholder" xml:space="preserve"><value>https://youtube.com/... or https://vimeo.com/...</value></data>
+  <data name="Les_VideoSupport" xml:space="preserve"><value>Supports: MP4, WebM, OGG, MOV. Max 500 MB.</value></data>
+  <data name="Les_AttachmentSupport" xml:space="preserve"><value>Supports: PDF, Word, Excel, PowerPoint, ZIP, MP4, images. Max 50 MB.</value></data>
+  <data name="Crs_ColCourseName" xml:space="preserve"><value>Course name</value></data>
+  <data name="Crs_ColLevel" xml:space="preserve"><value>Level</value></data>
+  <data name="Crs_ColFee" xml:space="preserve"><value>Fee</value></data>
+  <data name="Crs_ColEnrollments" xml:space="preserve"><value>Enrolments</value></data>
+  <data name="Crs_ColRating" xml:space="preserve"><value>Rating</value></data>
+  <data name="Crs_ModulesBtn" xml:space="preserve"><value>Chapters</value></data>
+  <data name="Crs_TotalCourses" xml:space="preserve"><value>courses</value></data>
+  <data name="Crs_ClosedBadge" xml:space="preserve"><value>CLOSED</value></data>
+  <data name="Crs_EnrolledBadge" xml:space="preserve"><value>Enrolled</value></data>
+  <data name="Crs_Credits" xml:space="preserve"><value>credits</value></data>
+  <data name="Crs_StatusOpen" xml:space="preserve"><value>Open</value></data>
+  <data name="Crs_StatusClosed" xml:space="preserve"><value>Closed</value></data>
+  <!-- Module -->
+  <data name="Mod_Title" xml:space="preserve"><value>Chapter Management</value></data>
+  <data name="Mod_Sub" xml:space="preserve"><value>Manage chapter structure within the course</value></data>
+  <data name="Mod_PageTitle" xml:space="preserve"><value>Chapters</value></data>
+  <data name="Mod_BackToCourses" xml:space="preserve"><value>Courses</value></data>
+  <data name="Mod_SearchPlaceholder" xml:space="preserve"><value>Search chapters...</value></data>
+  <data name="Mod_AddNew" xml:space="preserve"><value>Add new chapter</value></data>
+  <data name="Mod_ModalAddTitle" xml:space="preserve"><value>Add new chapter</value></data>
+  <data name="Mod_ModalEditTitle" xml:space="preserve"><value>Edit chapter</value></data>
+  <data name="Mod_ChapterName" xml:space="preserve"><value>Chapter name</value></data>
+  <data name="Mod_OrderIndex" xml:space="preserve"><value>Order</value></data>
+  <data name="Mod_Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Mod_IsPublished" xml:space="preserve"><value>Publish this chapter (visible to students)</value></data>
+  <data name="Mod_ColChapterName" xml:space="preserve"><value>Chapter name</value></data>
+  <data name="Mod_ColDescription" xml:space="preserve"><value>Description</value></data>
+  <data name="Mod_ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Mod_ColLessons" xml:space="preserve"><value>Lessons</value></data>
+  <data name="Mod_ColActions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Mod_NoChapters" xml:space="preserve"><value>No chapters in this course yet.</value></data>
+  <data name="Mod_StatusOpen" xml:space="preserve"><value>Open</value></data>
+  <data name="Mod_StatusHidden" xml:space="preserve"><value>Hidden</value></data>
+  <data name="Mod_NoDescription" xml:space="preserve"><value>No description</value></data>
+  <data name="Mod_Page" xml:space="preserve"><value>Page</value></data>
+  <data name="Mod_TotalChapters" xml:space="preserve"><value>chapters</value></data>
+  <data name="Mod_Lessons" xml:space="preserve"><value>Lessons</value></data>
+  <data name="Mod_LoadError" xml:space="preserve"><value>Failed to load chapter info!</value></data>
+  <data name="Mod_DeleteConfirm" xml:space="preserve"><value>Are you sure you want to delete this chapter? All lessons inside will also be deleted.</value></data>
+  <data name="Mod_DeleteError" xml:space="preserve"><value>An error occurred while deleting!</value></data>
+  <data name="Mod_ReorderSuccess" xml:space="preserve"><value>Chapter order updated!</value></data>
+  <data name="Mod_ReorderError" xml:space="preserve"><value>Error updating order!</value></data>
+  <!-- Lesson -->
+  <data name="Les_Title" xml:space="preserve"><value>Lesson Management</value></data>
+  <data name="Les_Sub" xml:space="preserve"><value>Manage lesson content within the chapter</value></data>
+  <data name="Les_PageTitle" xml:space="preserve"><value>Lessons</value></data>
+  <data name="Les_SearchPlaceholder" xml:space="preserve"><value>Search lessons...</value></data>
+  <data name="Les_AddNew" xml:space="preserve"><value>Add new lesson</value></data>
+  <data name="Les_ModalAddTitle" xml:space="preserve"><value>Add new lesson</value></data>
+  <data name="Les_ModalEditTitle" xml:space="preserve"><value>Edit lesson</value></data>
+  <data name="Les_LessonTitle" xml:space="preserve"><value>Title</value></data>
+  <data name="Les_LessonType" xml:space="preserve"><value>Lesson type</value></data>
+  <data name="Les_TypeVideo" xml:space="preserve"><value>Video</value></data>
+  <data name="Les_TypeText" xml:space="preserve"><value>Article</value></data>
+  <data name="Les_TypeMixed" xml:space="preserve"><value>Mixed</value></data>
+  <data name="Les_VideoLesson" xml:space="preserve"><value>Lesson video</value></data>
+  <data name="Les_EnterUrl" xml:space="preserve"><value>Enter URL</value></data>
+  <data name="Les_UploadVideo" xml:space="preserve"><value>Upload video</value></data>
+  <data name="Les_Duration" xml:space="preserve"><value>Duration (minutes)</value></data>
+  <data name="Les_Content" xml:space="preserve"><value>Article content</value></data>
+  <data name="Les_Attachment" xml:space="preserve"><value>Attachment</value></data>
+  <data name="Les_RemoveVideo" xml:space="preserve"><value>Remove uploaded video</value></data>
+  <data name="Les_RemoveAttachment" xml:space="preserve"><value>Remove attachment</value></data>
+  <data name="Les_CurrentFile" xml:space="preserve"><value>Current file:</value></data>
+  <data name="Les_IsPublished" xml:space="preserve"><value>Publish lesson (Students can view)</value></data>
+  <data name="Les_SaveLesson" xml:space="preserve"><value>Save lesson</value></data>
+  <data name="Les_Update" xml:space="preserve"><value>Update</value></data>
+  <data name="Les_ContentPlaceholder" xml:space="preserve"><value>Enter article content...</value></data>
+  <data name="Les_ColTitle" xml:space="preserve"><value>Lesson title</value></data>
+  <data name="Les_ColType" xml:space="preserve"><value>Type</value></data>
+  <data name="Les_ColDuration" xml:space="preserve"><value>Duration</value></data>
+  <data name="Les_ColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="Les_ColActions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Les_NoLessons" xml:space="preserve"><value>No lessons in this chapter yet.</value></data>
+  <data name="Les_StatusOpen" xml:space="preserve"><value>Open</value></data>
+  <data name="Les_StatusHidden" xml:space="preserve"><value>Hidden</value></data>
+  <data name="Les_BadgeText" xml:space="preserve"><value>Article</value></data>
+  <data name="Les_BadgeMixed" xml:space="preserve"><value>Mixed</value></data>
+  <data name="Les_DurationUnit" xml:space="preserve"><value>min</value></data>
+  <data name="Les_Page" xml:space="preserve"><value>Page</value></data>
+  <data name="Les_TotalLessons" xml:space="preserve"><value>lessons</value></data>
+  <data name="Les_Processing" xml:space="preserve"><value>Processing...</value></data>
+  <data name="Les_LoadError" xml:space="preserve"><value>Failed to load lesson info!</value></data>
+  <data name="Les_DeleteConfirm" xml:space="preserve"><value>Delete this lesson?</value></data>
+  <data name="Les_ReorderSuccess" xml:space="preserve"><value>Lesson order updated!</value></data>
+  <data name="Les_ReorderError" xml:space="preserve"><value>Error updating order!</value></data>
+  <!-- Quiz Take -->
+  <data name="Qt_Title" xml:space="preserve"><value>Take Quiz</value></data>
+  <data name="Qt_QuestionLabel" xml:space="preserve"><value>Question</value></data>
+  <data name="Qt_PointsUnit" xml:space="preserve"><value>pts</value></data>
+  <data name="Qt_MultiSelectHint" xml:space="preserve"><value>Select multiple answers</value></data>
+  <data name="Qt_AnsweredSuffix" xml:space="preserve"><value>answered</value></data>
+  <data name="Qt_DraftSaved" xml:space="preserve"><value>Draft saved</value></data>
+  <data name="Qt_ClearDraft" xml:space="preserve"><value>Clear draft</value></data>
+  <data name="Qt_Submit" xml:space="preserve"><value>Submit</value></data>
+  <data name="Qt_AttemptsLeft" xml:space="preserve"><value>attempts left</value></data>
+  <data name="Qt_Unlimited" xml:space="preserve"><value>Unlimited</value></data>
+  <data name="Qt_Passing" xml:space="preserve"><value>Pass:</value></data>
+  <data name="Qt_DraftRestoredSuffix" xml:space="preserve"><value>answers restored from draft</value></data>
+  <data name="Qt_ClearConfirm" xml:space="preserve"><value>Clear all selected answers?</value></data>
+  <data name="Qt_DraftCleared" xml:space="preserve"><value>Draft cleared</value></data>
+  <data name="Qt_TimeUp" xml:space="preserve"><value>Time's up! Auto-submitting...</value></data>
+  <data name="Qt_NoAnswers" xml:space="preserve"><value>You haven't answered any questions!</value></data>
+  <data name="Qt_UnansweredSuffix" xml:space="preserve"><value>question(s) unanswered. Submit anyway?</value></data>
+  <data name="Qt_SubmitConfirm" xml:space="preserve"><value>Are you sure you want to submit?</value></data>
+  <data name="Qt_Submitting" xml:space="preserve"><value>Submitting...</value></data>
+  <data name="Qt_ConnError" xml:space="preserve"><value>Connection error. Please try again.</value></data>
+  <data name="Qt_MinUnit" xml:space="preserve"><value>min</value></data>
+  <!-- Quiz Result / History -->
+  <data name="Qr_Title" xml:space="preserve"><value>Quiz Result</value></data>
+  <data name="Qr_CongratsLabel" xml:space="preserve"><value>Congratulations!</value></data>
+  <data name="Qr_CourseCompleted" xml:space="preserve"><value>You have completed the course!</value></data>
+  <data name="Qr_AllCompleted" xml:space="preserve"><value>All lessons and quizzes completed.</value></data>
+  <data name="Qr_MyCourses" xml:space="preserve"><value>My Courses</value></data>
+  <data name="Qr_Passed" xml:space="preserve"><value>Congratulations! You have passed.</value></data>
+  <data name="Qr_Failed" xml:space="preserve"><value>Did not meet the minimum score.</value></data>
+  <data name="Qr_Score" xml:space="preserve"><value>Score</value></data>
+  <data name="Qr_Percent" xml:space="preserve"><value>Percentage</value></data>
+  <data name="Qr_Required" xml:space="preserve"><value>Required</value></data>
+  <data name="Qr_AttemptNo" xml:space="preserve"><value>Attempt #</value></data>
+  <data name="Qr_StartedAt" xml:space="preserve"><value>Started:</value></data>
+  <data name="Qr_Duration" xml:space="preserve"><value>Duration:</value></data>
+  <data name="Qr_SecondsUnit" xml:space="preserve"><value>sec</value></data>
+  <data name="Qr_ViewHistory" xml:space="preserve"><value>View history</value></data>
+  <data name="Qr_Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="Qr_ReviewAnswers" xml:space="preserve"><value>Review answers</value></data>
+  <data name="Qr_BadgeCorrect" xml:space="preserve"><value>Correct</value></data>
+  <data name="Qr_BadgeWrong" xml:space="preserve"><value>Wrong</value></data>
+  <data name="Qr_CorrectAnswer" xml:space="preserve"><value>(correct answer)</value></data>
+  <data name="Qr_YourChoice" xml:space="preserve"><value>(your choice)</value></data>
+  <data name="Qr_Explanation" xml:space="preserve"><value>Explanation:</value></data>
+  <data name="Qr_NoAnswersShown" xml:space="preserve"><value>This quiz does not show answers after submission.</value></data>
+  <data name="Qr_HistoryTitle" xml:space="preserve"><value>Quiz History</value></data>
+  <data name="Qr_HistoryOf" xml:space="preserve"><value>History:</value></data>
+  <data name="Qr_NoAttempts" xml:space="preserve"><value>No attempts yet.</value></data>
+  <data name="Qr_StartQuiz" xml:space="preserve"><value>Start quiz</value></data>
+  <data name="Qr_ColAttempt" xml:space="preserve"><value>Attempt</value></data>
+  <data name="Qr_ColStarted" xml:space="preserve"><value>Started</value></data>
+  <data name="Qr_ColDuration" xml:space="preserve"><value>Duration</value></data>
+  <data name="Qr_ColScore" xml:space="preserve"><value>Score</value></data>
+  <data name="Qr_ColPercent" xml:space="preserve"><value>Percentage</value></data>
+  <data name="Qr_ColResult" xml:space="preserve"><value>Result</value></data>
+  <data name="Qr_Incomplete" xml:space="preserve"><value>Incomplete</value></data>
+  <data name="Qr_BadgePassed" xml:space="preserve"><value>Passed</value></data>
+  <data name="Qr_BadgeFailed" xml:space="preserve"><value>Not passed</value></data>
+  <data name="Qr_Done" xml:space="preserve"><value>Completed:</value></data>
+  <data name="Qr_AttemptsUnit" xml:space="preserve"><value>attempts</value></data>
+  <data name="Qr_Remaining" xml:space="preserve"><value>Remaining:</value></data>
+  <data name="Qr_Unlimited" xml:space="preserve"><value>Unlimited</value></data>
+  <!-- Learn / Course -->
+  <data name="Lrn_TitlePrefix" xml:space="preserve"><value>Learning —</value></data>
+  <data name="Lrn_Chapters" xml:space="preserve"><value>chapters</value></data>
+  <data name="Lrn_Lessons" xml:space="preserve"><value>lessons</value></data>
+  <data name="Lrn_MyCourses" xml:space="preserve"><value>← My Courses</value></data>
+  <data name="Lrn_CourseDetail" xml:space="preserve"><value>← Course Detail</value></data>
+  <data name="Lrn_Progress" xml:space="preserve"><value>Progress:</value></data>
+  <data name="Lrn_CompletedSuffix" xml:space="preserve"><value>lessons completed</value></data>
+  <data name="Lrn_PreviewNotice" xml:space="preserve"><value>Previewing Chapter 1 only.</value></data>
+  <data name="Lrn_EnrollToUnlock" xml:space="preserve"><value>Enrol to unlock all content</value></data>
+  <data name="Lrn_LessonLabel" xml:space="preserve"><value>LESSON</value></data>
+  <data name="Lrn_MinUnit" xml:space="preserve"><value>min</value></data>
+  <data name="Lrn_BadgeCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="Lrn_BadgeInProgress" xml:space="preserve"><value>In progress</value></data>
+  <data name="Lrn_NoVideoSupport" xml:space="preserve"><value>Your browser does not support video playback.</value></data>
+  <data name="Lrn_AttachmentLabel" xml:space="preserve"><value>Attachments</value></data>
+  <data name="Lrn_Download" xml:space="preserve"><value>Download</value></data>
+  <data name="Lrn_QuizLabel" xml:space="preserve"><value>QUIZ</value></data>
+  <data name="Lrn_BestScore" xml:space="preserve"><value>Best score:</value></data>
+  <data name="Lrn_QuestionSuffix" xml:space="preserve"><value>questions</value></data>
+  <data name="Lrn_Passing" xml:space="preserve"><value>Pass:</value></data>
+  <data name="Lrn_StartQuiz" xml:space="preserve"><value>Start quiz</value></data>
+  <data name="Lrn_RetryReview" xml:space="preserve"><value>Review / Retry</value></data>
+  <data name="Lrn_Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="Lrn_ViewHistory" xml:space="preserve"><value>View attempt history</value></data>
+  <data name="Lrn_PrevLesson" xml:space="preserve"><value>Previous</value></data>
+  <data name="Lrn_NextLesson" xml:space="preserve"><value>Next</value></data>
+  <data name="Lrn_MarkComplete" xml:space="preserve"><value>Mark as complete</value></data>
+  <data name="Lrn_AlreadyComplete" xml:space="preserve"><value>Completed</value></data>
+  <data name="Lrn_LoginToLearn" xml:space="preserve"><value>Log in to learn</value></data>
+  <data name="Lrn_EnrollToLearn" xml:space="preserve"><value>Enrol to learn</value></data>
+  <data name="Lrn_Processing" xml:space="preserve"><value>Processing...</value></data>
+  <data name="Lrn_ConnError" xml:space="preserve"><value>Connection error!</value></data>
+  <data name="Lrn_Error" xml:space="preserve"><value>Error!</value></data>
+  <data name="Lrn_PreviewSignupHint" xml:space="preserve"><value>Sign up to unlock the full course.</value></data>
+  <!-- Course Detail -->
+  <data name="Det_CourseLabel" xml:space="preserve"><value>Course</value></data>
+  <data name="Det_Closed" xml:space="preserve"><value>Closed for registration</value></data>
+  <data name="Det_Reviews" xml:space="preserve"><value>reviews</value></data>
+  <data name="Det_Students" xml:space="preserve"><value>students</value></data>
+  <data name="Det_Credits" xml:space="preserve"><value>credits</value></data>
+  <data name="Det_Chapters" xml:space="preserve"><value>chapters</value></data>
+  <data name="Det_Lessons" xml:space="preserve"><value>lessons</value></data>
+  <data name="Det_Updated" xml:space="preserve"><value>Updated</value></data>
+  <data name="Det_ContentTitle" xml:space="preserve"><value>Course Content</value></data>
+  <data name="Det_InfoTitle" xml:space="preserve"><value>Course Info</value></data>
+  <data name="Det_Level" xml:space="preserve"><value>Level:</value></data>
+  <data name="Det_LevelBasic" xml:space="preserve"><value>Basic</value></data>
+  <data name="Det_LevelIntermediate" xml:space="preserve"><value>Intermediate</value></data>
+  <data name="Det_LevelAdvanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="Det_CreditsLabel" xml:space="preserve"><value>Credits:</value></data>
+  <data name="Det_ChaptersLabel" xml:space="preserve"><value>Chapters:</value></data>
+  <data name="Det_LessonsLabel" xml:space="preserve"><value>Lessons:</value></data>
+  <data name="Det_Duration" xml:space="preserve"><value>Duration:</value></data>
+  <data name="Det_StudentsLabel" xml:space="preserve"><value>Students:</value></data>
+  <data name="Det_CreatedAt" xml:space="preserve"><value>Created:</value></data>
+  <data name="Det_UpdatedAt" xml:space="preserve"><value>Updated:</value></data>
+  <data name="Det_ReviewTitle" xml:space="preserve"><value>Course Reviews</value></data>
+  <data name="Det_ReviewPlaceholder" xml:space="preserve"><value>Share your experience...</value></data>
+  <data name="Det_ReviewYours" xml:space="preserve"><value>Your rating</value></data>
+  <data name="Det_NoReviews" xml:space="preserve"><value>No reviews yet...</value></data>
+  <data name="Det_Free" xml:space="preserve"><value>Free</value></data>
+  <data name="Det_Continue" xml:space="preserve"><value>Continue</value></data>
+  <data name="Det_EnrollPay" xml:space="preserve"><value>Enrol &amp; Pay</value></data>
+  <data name="Det_EnrollFree" xml:space="preserve"><value>Enrol for free</value></data>
+  <data name="Det_LoginToEnroll" xml:space="preserve"><value>Log in to enrol</value></data>
+  <data name="Det_CourseClosed" xml:space="preserve"><value>This course is closed for registration</value></data>
+  <data name="Det_BackToList" xml:space="preserve"><value>Back to list</value></data>
+  <data name="Det_EditCourse" xml:space="preserve"><value>Edit course</value></data>
+  <data name="Det_RatingDist" xml:space="preserve"><value>Rating distribution</value></data>
+  <data name="Det_BtnReview" xml:space="preserve"><value>Submit review</value></data>
+  <data name="Det_BtnReviewed" xml:space="preserve"><value>Reviewed</value></data>
+  <data name="Det_ConnError" xml:space="preserve"><value>Connection error!</value></data>
+  <!-- My Enrollments -->
+  <data name="MyEnr_Title" xml:space="preserve"><value>My Courses</value></data>
+  <data name="MyEnr_Welcome" xml:space="preserve"><value>Welcome</value></data>
+  <data name="MyEnr_WelcomeSub" xml:space="preserve"><value>your enrolled courses</value></data>
+  <data name="MyEnr_NoEnrollments" xml:space="preserve"><value>You haven't enrolled in any courses yet.</value></data>
+  <data name="MyEnr_Explore" xml:space="preserve"><value>Explore courses...</value></data>
+  <data name="MyEnr_ViewCourse" xml:space="preserve"><value>View course</value></data>
+  <data name="MyEnr_Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="MyEnr_All" xml:space="preserve"><value>All</value></data>
+  <data name="MyEnr_InProgress" xml:space="preserve"><value>In progress</value></data>
+  <data name="MyEnr_Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="MyEnr_StatsTitle" xml:space="preserve"><value>Statistics</value></data>
+  <data name="MyEnr_Enrolled" xml:space="preserve"><value>Enrolled</value></data>
+  <data name="MyEnr_CompletedStat" xml:space="preserve"><value>Completed</value></data>
+  <data name="MyEnr_InProgressStat" xml:space="preserve"><value>In progress</value></data>
+  <data name="MyEnr_OverallProgress" xml:space="preserve"><value>Overall progress</value></data>
+  <data name="MyEnr_CertBadge" xml:space="preserve"><value>Certificate</value></data>
+  <data name="MyEnr_ReviewedBadge" xml:space="preserve"><value>Reviewed</value></data>
+  <data name="MyEnr_ReviewBtn" xml:space="preserve"><value>Review</value></data>
+  <data name="MyEnr_GoBtn" xml:space="preserve"><value>Go</value></data>
+  <data name="MyEnr_Page" xml:space="preserve"><value>Page</value></data>
+  <data name="MyEnr_Total" xml:space="preserve"><value>Total:</value></data>
+  <data name="MyEnr_TotalSuffix" xml:space="preserve"><value>courses</value></data>
+  <data name="MyEnr_ReviewTitle" xml:space="preserve"><value>Review course</value></data>
+  <data name="MyEnr_RatingLabel" xml:space="preserve"><value>Rating</value></data>
+  <data name="MyEnr_ReviewComment" xml:space="preserve"><value>Comment (optional)</value></data>
+  <data name="MyEnr_Star1" xml:space="preserve"><value>Terrible</value></data>
+  <data name="MyEnr_Star2" xml:space="preserve"><value>Poor</value></data>
+  <data name="MyEnr_Star3" xml:space="preserve"><value>OK</value></data>
+  <data name="MyEnr_Star4" xml:space="preserve"><value>Good</value></data>
+  <data name="MyEnr_Star5" xml:space="preserve"><value>Excellent</value></data>
+  <data name="MyEnr_ConnError" xml:space="preserve"><value>Connection error!</value></data>
+  <data name="MyEnr_SubmitReview" xml:space="preserve"><value>Submit review</value></data>
+  <!-- Certificates -->
+  <data name="Cert_MyTitle" xml:space="preserve"><value>My Certificates</value></data>
+  <data name="Cert_MySub" xml:space="preserve"><value>Certificates you have earned.</value></data>
+  <data name="Cert_None" xml:space="preserve"><value>No certificates yet.</value></data>
+  <data name="Cert_CompleteToClaim" xml:space="preserve"><value>Complete a course to earn a certificate.</value></data>
+  <data name="Cert_Explore" xml:space="preserve"><value>Explore courses</value></data>
+  <data name="Cert_Count" xml:space="preserve"><value>certificates</value></data>
+  <data name="Cert_YouHave" xml:space="preserve"><value>You have</value></data>
+  <data name="Cert_IssuedOn" xml:space="preserve"><value>Issued on</value></data>
+  <data name="Cert_Download" xml:space="preserve"><value>Download PDF</value></data>
+  <data name="Cert_Verify" xml:space="preserve"><value>Verify</value></data>
+  <data name="Cert_VerifyTitle" xml:space="preserve"><value>Certificate Verification</value></data>
+  <data name="Cert_Valid" xml:space="preserve"><value>Certificate is valid</value></data>
+  <data name="Cert_IssuedBy" xml:space="preserve"><value>This certificate was issued by</value></data>
+  <data name="Cert_ColStudent" xml:space="preserve"><value>Student</value></data>
+  <data name="Cert_ColCourse" xml:space="preserve"><value>Course</value></data>
+  <data name="Cert_ColIssued" xml:space="preserve"><value>Issued on</value></data>
+  <data name="Cert_Invalid" xml:space="preserve"><value>Certificate not valid</value></data>
+  <data name="Cert_InvalidDesc" xml:space="preserve"><value>This certificate code does not exist or has been revoked.</value></data>
+  <data name="Cert_Home" xml:space="preserve"><value>Back to home</value></data>
+  <!-- Notifications -->
+  <data name="Notif_Title" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Notif_NewCount" xml:space="preserve"><value>new</value></data>
+  <data name="Notif_TotalCount" xml:space="preserve"><value>notifications</value></data>
+  <data name="Notif_MarkAllRead" xml:space="preserve"><value>Mark all as read</value></data>
+  <data name="Notif_None" xml:space="preserve"><value>No notifications yet.</value></data>
+  <data name="Notif_ViewDetail" xml:space="preserve"><value>View detail</value></data>
+  <data name="Notif_Processing" xml:space="preserve"><value>Processing...</value></data>
+  <!-- Profile / Edit Profile -->
+  <data name="Prof_Title" xml:space="preserve"><value>Edit Profile</value></data>
+  <data name="Prof_RoleAdmin" xml:space="preserve"><value>Administrator</value></data>
+  <data name="Prof_RoleTeacher" xml:space="preserve"><value>Teacher</value></data>
+  <data name="Prof_RoleStudent" xml:space="preserve"><value>Student</value></data>
+  <data name="Prof_Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Prof_PersonalInfo" xml:space="preserve"><value>Personal Info</value></data>
+  <data name="Prof_ChangePassword" xml:space="preserve"><value>Change Password</value></data>
+  <data name="Prof_Learning" xml:space="preserve"><value>Learning</value></data>
+  <data name="Prof_MyCourses" xml:space="preserve"><value>My Courses</value></data>
+  <data name="Prof_MyCerts" xml:space="preserve"><value>Certificates</value></data>
+  <data name="Prof_Progress" xml:space="preserve"><value>Progress</value></data>
+  <data name="Prof_Logout" xml:space="preserve"><value>Log out</value></data>
+  <data name="Prof_Fullname" xml:space="preserve"><value>Full name</value></data>
+  <data name="Prof_Phone" xml:space="preserve"><value>Phone number</value></data>
+  <data name="Prof_DOB" xml:space="preserve"><value>Date of birth</value></data>
+  <data name="Prof_Address" xml:space="preserve"><value>Address</value></data>
+  <data name="Prof_CurrentPwd" xml:space="preserve"><value>Current password</value></data>
+  <data name="Prof_NewPwd" xml:space="preserve"><value>New password</value></data>
+  <data name="Prof_ConfirmPwd" xml:space="preserve"><value>Confirm new password</value></data>
+  <data name="Prof_SaveInfo" xml:space="preserve"><value>Save info</value></data>
+  <data name="Prof_SavePwd" xml:space="preserve"><value>Change password</value></data>
+  <data name="Prof_ConnError" xml:space="preserve"><value>Connection error!</value></data>
+  <!-- Forgot Password / OTP -->
+  <data name="Fp_Title" xml:space="preserve"><value>Forgot password</value></data>
+  <data name="Fp_Back" xml:space="preserve"><value>Remember it? Log in.</value></data>
+  <data name="Fp_Heading" xml:space="preserve"><value>Forgot password.</value></data>
+  <data name="Fp_SubHeading" xml:space="preserve"><value>Enter your registered email.</value></data>
+  <data name="Fp_Email" xml:space="preserve"><value>Email address</value></data>
+  <data name="Fp_EmailPh" xml:space="preserve"><value>Enter your registered email...</value></data>
+  <data name="Fp_SendOtp" xml:space="preserve"><value>SEND OTP CODE</value></data>
+  <data name="Fp_OtpNote" xml:space="preserve"><value>The OTP code is valid for 10 minutes.</value></data>
+  <!-- OTP Verification -->
+  <data name="Otp_Title" xml:space="preserve"><value>Verify Email</value></data>
+  <data name="Otp_Heading" xml:space="preserve"><value>Verify Email.</value></data>
+  <data name="Otp_Instruction" xml:space="preserve"><value>Enter the 6-digit OTP code sent to</value></data>
+  <data name="Otp_Label" xml:space="preserve"><value>OTP Code</value></data>
+  <data name="Otp_Verify" xml:space="preserve"><value>VERIFY</value></data>
+  <data name="Otp_Resend" xml:space="preserve"><value>Resend OTP</value></data>
+  <data name="Otp_BackToLogin" xml:space="preserve"><value>← Back to login</value></data>
+  <!-- Reset Password -->
+  <data name="Rst_Title" xml:space="preserve"><value>Reset Password</value></data>
+  <data name="Rst_Heading" xml:space="preserve"><value>Reset Password.</value></data>
+  <data name="Rst_NewPwd" xml:space="preserve"><value>New password</value></data>
+  <data name="Rst_ConfirmPwd" xml:space="preserve"><value>Confirm new password</value></data>
+  <data name="Rst_Submit" xml:space="preserve"><value>RESET PASSWORD</value></data>
+  <!-- Home -->
+  <data name="Home_Title" xml:space="preserve"><value>Home</value></data>
+  <data name="Home_ManageContent" xml:space="preserve"><value>Manage content</value></data>
+  <data name="Home_ManageAccounts" xml:space="preserve"><value>Manage accounts</value></data>
+  <data name="Home_Quizzes" xml:space="preserve"><value>Quizzes</value></data>
+  <data name="Home_QuizQuestions" xml:space="preserve"><value>Quiz &amp; Questions</value></data>
+  <data name="Home_AccessControl" xml:space="preserve"><value>Access control</value></data>
+  <data name="Otp_TitleForgot" xml:space="preserve"><value>Enter OTP</value></data>
+  <data name="Otp_HeadingForgot" xml:space="preserve"><value>Enter OTP.</value></data>
+  <data name="Otp_SubForgot" xml:space="preserve"><value>OTP code sent to</value></data>
+  <data name="Otp_ConfirmBtn" xml:space="preserve"><value>CONFIRM</value></data>
+  <data name="Otp_BackToForgot" xml:space="preserve"><value>← Back</value></data>
+  <data name="Rst_SubHeading" xml:space="preserve"><value>Set a new password for your account.</value></data>
+  <data name="Rst_HeadingAlt" xml:space="preserve"><value>New password.</value></data>
+  <data name="Rst_NewPwdPh" xml:space="preserve"><value>At least 6 characters...</value></data>
+  <data name="Rst_ConfirmPwdPh" xml:space="preserve"><value>Re-enter password...</value></data>
+  <data name="Prof_NotUpdated" xml:space="preserve"><value>Not yet updated</value></data>
+  <data name="Prof_AvatarHint" xml:space="preserve"><value>Click photo to change</value></data>
+  <data name="Prof_BasicInfo" xml:space="preserve"><value>Basic info</value></data>
+  <data name="Prof_PersonalInfoSub" xml:space="preserve"><value>Update your name, contact and address</value></data>
+  <data name="Prof_SecurityCard" xml:space="preserve"><value>Account security</value></data>
+  <data name="Prof_PwdSectionSub" xml:space="preserve"><value>Use a strong password to secure your account</value></data>
+  <data name="Prof_SaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Prof_UpdatePwd" xml:space="preserve"><value>Update password</value></data>
+  <data name="Prof_AvatarError" xml:space="preserve"><value>Error uploading photo, please try again.</value></data>
+  <data name="Prof_RoleManager" xml:space="preserve"><value>Manager</value></data>
+  <data name="Lrn_PreviewModeLogin" xml:space="preserve"><value>Preview mode — Log in or register to learn fully</value></data>
+  <data name="Lrn_PreviewBannerBold" xml:space="preserve"><value>Previewing Chapter 1.</value></data>
+  <data name="Lrn_PreviewBannerSub" xml:space="preserve"><value>Sign up to do quizzes, track progress and view the full course.</value></data>
+  <data name="Lrn_ViewCourse" xml:space="preserve"><value>View course</value></data>
+  <data name="Lrn_LoginToLearnDesc" xml:space="preserve"><value>You need to log in to view lesson content for this course:</value></data>
+  <data name="Lrn_LoginNow" xml:space="preserve"><value>Log in now</value></data>
+  <data name="Lrn_CreateAccount" xml:space="preserve"><value>Create account</value></data>
+  <data name="Lrn_EnrollToLearnDesc" xml:space="preserve"><value>Enrol to unlock all content.</value></data>
+  <data name="Lrn_EnrollCourse" xml:space="preserve"><value>Enrol in a course</value></data>
+  <data name="Lrn_NoLessons" xml:space="preserve"><value>This course has no lessons yet</value></data>
+  <data name="Lrn_NoLessonsSub" xml:space="preserve"><value>Please check back after the instructor updates the content.</value></data>
+  <data name="Lrn_TypeText" xml:space="preserve"><value>Article</value></data>
+  <data name="Lrn_TypeMixed" xml:space="preserve"><value>Video + Article</value></data>
+  <data name="Lrn_NoContent" xml:space="preserve"><value>This lesson has no content yet</value></data>
+  <data name="Lrn_QuizPassed" xml:space="preserve"><value>PASSED</value></data>
+  <data name="Lrn_QuizFailed" xml:space="preserve"><value>NOT PASSED</value></data>
+  <data name="Lrn_AttemptNo" xml:space="preserve"><value>Attempt</value></data>
+  <data name="Lrn_PreviewProgress" xml:space="preserve"><value>Sign up to track your progress</value></data>
+  <data name="Lrn_QuizToComplete" xml:space="preserve"><value>Complete the quiz to finish this lesson</value></data>
+  <data name="Lrn_Congrats" xml:space="preserve"><value>Congratulations!</value></data>
+  <data name="Lrn_CourseCompletedSub" xml:space="preserve"><value>All lessons and quizzes have been completed!</value></data>
+  <data name="Lrn_ContinueWatching" xml:space="preserve"><value>Continue watching</value></data>
+  <data name="Lrn_QuizModalQuestions" xml:space="preserve"><value>Questions</value></data>
+  <data name="Lrn_QuizModalPassing" xml:space="preserve"><value>Passing score</value></data>
+  <data name="Lrn_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Lrn_QuizBtnStart" xml:space="preserve"><value>Start</value></data>
+  <data name="Lrn_QuizBtnRetry" xml:space="preserve"><value>Retry</value></data>
+  <data name="Lrn_QuizNotePass" xml:space="preserve"><value>You passed this quiz. You can retry to improve your score.</value></data>
+  <data name="Lrn_QuizNoteRetry" xml:space="preserve"><value>You did not pass. Retry to complete the lesson.</value></data>
+  <data name="Lrn_QuizNoteStart" xml:space="preserve"><value>Read the lesson carefully before starting the quiz.</value></data>
+  <data name="MyEnr_NoneCompleted" xml:space="preserve"><value>You haven't completed any courses yet.</value></data>
+  <data name="MyEnr_NoneInProgress" xml:space="preserve"><value>No courses currently in progress.</value></data>
+  <data name="MyEnr_CertTitle" xml:space="preserve"><value>Download PDF certificate</value></data>
+  <data name="MyEnr_ViewAgain" xml:space="preserve"><value>Review</value></data>
+  <data name="MyEnr_GoLearn" xml:space="preserve"><value>Continue</value></data>
+  <data name="MyEnr_CommentPh" xml:space="preserve"><value>Share your experience…</value></data>
+  <data name="MyEnr_SelectStars" xml:space="preserve"><value>Please select a star rating</value></data>
+  <data name="Det_Anonymous" xml:space="preserve"><value>Anonymous</value></data>
+  <data name="Det_ShareExp" xml:space="preserve"><value>Share your experience</value></data>
+  <data name="Det_LevelStat" xml:space="preserve"><value>Level</value></data>
+  <data name="Det_ChaptersStat" xml:space="preserve"><value>Chapters</value></data>
+  <data name="Det_LessonsStat" xml:space="preserve"><value>Lessons</value></data>
+  <data name="Det_StudentsStat" xml:space="preserve"><value>Students</value></data>
+  <data name="Det_RatingLabel" xml:space="preserve"><value>Rating</value></data>
+  <data name="Det_PeopleUnit" xml:space="preserve"><value>people</value></data>
+  <data name="Det_ChaptersUnit" xml:space="preserve"><value>chapters</value></data>
+  <data name="Det_LessonsUnit" xml:space="preserve"><value>lessons</value></data>
+  <data name="Det_ConfirmEnroll" xml:space="preserve"><value>Are you sure you want to enrol in this free course?</value></data>
+  <data name="Det_SelectStars" xml:space="preserve"><value>Please select a star rating</value></data>
+  <data name="Det_ConfirmDelete" xml:space="preserve"><value>Delete this review?</value></data>
+  <data name="Pay_Title" xml:space="preserve"><value>Confirm Payment</value></data>
+  <data name="Pay_Heading" xml:space="preserve"><value>Confirm Registration &amp; Payment</value></data>
+  <data name="Pay_CourseLabel" xml:space="preserve"><value>Course</value></data>
+  <data name="Pay_Fee" xml:space="preserve"><value>Fee</value></data>
+  <data name="Pay_PayBtn" xml:space="preserve"><value>Pay via PayOS</value></data>
+  <data name="Pay_Cancel" xml:space="preserve"><value>Cancel, go back</value></data>
+  <data name="Pay_Processing" xml:space="preserve"><value>Processing...</value></data>
+  <data name="Pay_Error" xml:space="preserve"><value>An error occurred</value></data>
+  <data name="Pay_ConnError" xml:space="preserve"><value>Cannot connect. Please try again.</value></data>
+  <data name="Pay_SuccessTitle" xml:space="preserve"><value>Payment Successful</value></data>
+  <data name="Pay_SuccessHeading" xml:space="preserve"><value>Payment Successful!</value></data>
+  <data name="Pay_SuccessSub" xml:space="preserve"><value>You have successfully enrolled in the course.</value></data>
+  <data name="Pay_Amount" xml:space="preserve"><value>Amount</value></data>
+  <data name="Pay_OrderCode" xml:space="preserve"><value>Transaction ID</value></data>
+  <data name="Pay_PaidAt" xml:space="preserve"><value>Time</value></data>
+  <data name="Pay_MyCourses" xml:space="preserve"><value>View my courses</value></data>
+  <data name="Mda_Chapter" xml:space="preserve"><value>Chapter</value></data>
+  <data name="Mda_PreviewLabel" xml:space="preserve"><value>PREVIEW</value></data>
+  <data name="Mda_LessonsUnit" xml:space="preserve"><value>lessons</value></data>
+  <data name="Mda_EnrollToView" xml:space="preserve"><value>Enrol to view content</value></data>
+  <data name="Mda_NoLessons" xml:space="preserve"><value>This chapter has no lessons yet</value></data>
+  <data name="Mda_Unpublished" xml:space="preserve"><value>Draft</value></data>
+  <data name="Mda_PreviewBtn" xml:space="preserve"><value>Preview</value></data>
+  <data name="Mda_Points" xml:space="preserve"><value>pts</value></data>
+  <data name="Mda_Passed" xml:space="preserve"><value>Passed</value></data>
+  <data name="Mda_FailedNeed" xml:space="preserve"><value>Failed — need</value></data>
+  <data name="Mda_PassShort" xml:space="preserve"><value>Pass</value></data>
+  <data name="Mda_NoContent" xml:space="preserve"><value>This course has no content yet</value></data>
+  <data name="Trnd_Title" xml:space="preserve"><value>Trending Courses</value></data>
+  <data name="Trnd_ViewAll" xml:space="preserve"><value>View all</value></data>
+  <data name="Nav_MetaDesc" xml:space="preserve"><value>SchoolApp – Modern learning management platform</value></data>
+  <data name="Nav_AdminBarAdmin" xml:space="preserve"><value>You are logged in as &lt;strong&gt;System Administrator&lt;/strong&gt;</value></data>
+  <data name="Nav_AdminBarDashboard" xml:space="preserve"><value>Go to Dashboard</value></data>
+  <data name="Nav_AdminBarManager" xml:space="preserve"><value>You are logged in as &lt;strong&gt;Content Manager&lt;/strong&gt;</value></data>
+  <data name="Nav_OpenMenu" xml:space="preserve"><value>Open menu</value></data>
+  <data name="Nav_MainNav" xml:space="preserve"><value>Main navigation</value></data>
+  <data name="Nav_AccountMenu" xml:space="preserve"><value>Account</value></data>
+  <data name="Nav_Hello" xml:space="preserve"><value>Hello</value></data>
+  <data name="Nav_BrandAria" xml:space="preserve"><value>SchoolApp - Home</value></data>
+  <data name="Nav_FooterAddress" xml:space="preserve"><value>Da Nang, Vietnam</value></data>
+  <data name="Nav_NoNotifications" xml:space="preserve"><value>No notifications</value></data>
+  <data name="Adm_Loading" xml:space="preserve"><value>Loading...</value></data>
+  <data name="Btn_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Err_AjaxPrefix" xml:space="preserve"><value>Error: </value></data>
+  <data name="Err_ServerPrefix" xml:space="preserve"><value>Server error: </value></data>
+  <data name="Err_NoPermission" xml:space="preserve"><value>No permission</value></data>
+  <data name="Err_Connection" xml:space="preserve"><value>Connection error</value></data>
+  <data name="Err_Generic" xml:space="preserve"><value>An error occurred</value></data>
+  <data name="Prof_AvatarTitle" xml:space="preserve"><value>Click to change avatar</value></data>
+  <data name="Prof_FullNamePh" xml:space="preserve"><value>Full Name</value></data>
+  <data name="Prof_AddressPh" xml:space="preserve"><value>123 Main St, City</value></data>
+  <data name="Prof_CurrentPwdPh" xml:space="preserve"><value>Enter current password</value></data>
+  <data name="Prof_NewPwdPh" xml:space="preserve"><value>At least 6 characters</value></data>
+  <data name="Prof_ConfirmPwdPh" xml:space="preserve"><value>Re-enter new password</value></data>
+  <data name="QB_FilterTagPh" xml:space="preserve"><value>e.g. Chapter 1, Algebra...</value></data>
+  <data name="Home_GifAlt" xml:space="preserve"><value>Learning</value></data>
+  <data name="Register_GifAlt" xml:space="preserve"><value>Registration illustration</value></data>
+  <data name="Login_GifAlt" xml:space="preserve"><value>Learning illustration</value></data>
+  <data name="Crs_CreateTitle" xml:space="preserve"><value>Add Course</value></data>
+  <data name="Crs_CreateHeading" xml:space="preserve"><value>Add New Course</value></data>
+  <data name="Crs_DescriptionPh" xml:space="preserve"><value>Course description (max 1000 characters)...</value></data>
+  <data name="Crs_EditTitle" xml:space="preserve"><value>Edit Course</value></data>
+  <data name="Crs_EditHeading" xml:space="preserve"><value>Edit Course</value></data>
+  <data name="Stu_CreateTitle" xml:space="preserve"><value>Add Student</value></data>
+  <data name="Stu_CreateHeading" xml:space="preserve"><value>Add New Student</value></data>
+  <data name="Stu_DetailsTitle" xml:space="preserve"><value>Student Details</value></data>
+  <data name="Stu_DetailsHeading" xml:space="preserve"><value>Student Information</value></data>
+  <data name="Stu_CoursesEnrolled" xml:space="preserve"><value>Enrolled Courses</value></data>
+  <data name="Stu_EditTitle" xml:space="preserve"><value>Edit Student</value></data>
+  <data name="Stu_EditHeading" xml:space="preserve"><value>Update Student Information</value></data>
+  <data name="Enr_DetailsTitle" xml:space="preserve"><value>Enrollment Details</value></data>
+  <data name="Enr_DetailsHeading" xml:space="preserve"><value>Enrollment Information</value></data>
+  <data name="Enr_ColStudentEmail" xml:space="preserve"><value>Student Email</value></data>
+  <data name="Enr_ColCredits" xml:space="preserve"><value>Credits</value></data>
+  <data name="Enr_ColFee" xml:space="preserve"><value>Tuition Fee</value></data>
+  <data name="Enr_ColNotes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Enr_FeeVND" xml:space="preserve"><value> VND</value></data>
+  <data name="Enr_BackToList" xml:space="preserve"><value>Back to list</value></data>
+  <data name="Enr_EditTitle" xml:space="preserve"><value>Edit Notes</value></data>
+  <data name="Enr_EditHeading" xml:space="preserve"><value>Edit Enrollment Notes</value></data>
+  <data name="Enr_CreateTitle" xml:space="preserve"><value>Add Enrollment</value></data>
+  <data name="Enr_CreateHeading" xml:space="preserve"><value>Register for Course</value></data>
+  <data name="Enr_SelectStudentOption" xml:space="preserve"><value>-- Select Student --</value></data>
+  <data name="Enr_SelectCourseOption" xml:space="preserve"><value>-- Select Course --</value></data>
+  <data name="Stu_FullNamePlaceholder" xml:space="preserve"><value>Enter full name (2–100 characters)</value></data>
+  <data name="Stu_PasswordPlaceholder" xml:space="preserve"><value>At least 6 characters</value></data>
+  <data name="Stu_PhonePlaceholder" xml:space="preserve"><value>9–15 characters</value></data>
+  <data name="Stu_AddressPlaceholder" xml:space="preserve"><value>Enter address...</value></data>
+  <data name="Stu_Loading" xml:space="preserve"><value>Loading...</value></data>
+  <data name="Stu_ImportDefaultPwd" xml:space="preserve"><value>Default password will be &lt;strong&gt;SchoolApp@123&lt;/strong&gt;.</value></data>
+  <data name="Stu_DownloadTemplate" xml:space="preserve"><value>Download template (.xlsx)</value></data>
+  <data name="Stu_ImportBtn" xml:space="preserve"><value>Import</value></data>
+  <data name="Stu_ImportSelectFile" xml:space="preserve"><value>Please select an Excel file first.</value></data>
+  <data name="Stu_ImportProcessing" xml:space="preserve"><value>Processing...</value></data>
+  <data name="Stu_ImportAdded" xml:space="preserve"><value>Added successfully</value></data>
+  <data name="Stu_ImportStudentWord" xml:space="preserve"><value>students.</value></data>
+  <data name="Stu_ImportSkippedWord" xml:space="preserve"><value>rows skipped:</value></data>
+  <data name="Stu_ImportRowPrefix" xml:space="preserve"><value>Row</value></data>
+  <data name="Stu_ImportNoData" xml:space="preserve"><value>No valid data was imported.</value></data>
+  <data name="Stu_AjaxError" xml:space="preserve"><value>Error: </value></data>
+  <data name="Stu_LoadDataError" xml:space="preserve"><value>Failed to load data: </value></data>
+  <data name="Stu_ServerError" xml:space="preserve"><value>Server error: </value></data>
+  <data name="Login_PageTitle" xml:space="preserve"><value>Sign In</value></data>
+  <data name="Login_EmailPlaceholder" xml:space="preserve"><value>Enter your email address...</value></data>
+  <data name="Login_PasswordPlaceholder" xml:space="preserve"><value>Enter your password...</value></data>
+  <data name="Register_PageTitle" xml:space="preserve"><value>Create Account</value></data>
+  <data name="Register_EmailLabel" xml:space="preserve"><value>Email Address</value></data>
+  <data name="Register_TermsAnd" xml:space="preserve"><value>and</value></data>
+  <data name="Register_TermsOf" xml:space="preserve"><value>of SchoolApp.</value></data>
 </root>
