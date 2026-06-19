@@ -1,18 +1,18 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Module>
 
 @{
-    ViewData["Title"] = "Quản lý Chương";
+    ViewData["Title"] = L["Mod_Title"].Value;
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var courseId = ViewData["CourseId"] != null ? (int)ViewData["CourseId"] : 0;
-    var courseName = ViewData["CourseName"] as string ?? "Khóa học";
+    var courseName = ViewData["CourseName"] as string ?? "";
 }
 
 <div class="adm-page-header">
     <div>
-        <div class="adm-page-title">📖 Chương học — <span>@courseName</span></div>
-        <div class="adm-page-sub">Quản lý cấu trúc chương học trong khóa</div>
+        <div class="adm-page-title">📖 @L["Mod_PageTitle"] — <span>@courseName</span></div>
+        <div class="adm-page-sub">@L["Mod_Sub"]</div>
     </div>
 </div>
 
@@ -20,7 +20,7 @@
 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:1.5rem; flex-wrap:wrap;">
     <a asp-controller="Course" asp-action="Index"
        class="adm-btn" style="background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.12);">
-        <i class="bi bi-arrow-left me-1"></i> Khóa học
+        <i class="bi bi-arrow-left me-1"></i> @L["Mod_BackToCourses"]
     </a>
 
     <form id="searchForm" method="get" style="flex:1; max-width:440px; display:flex; gap:0;">
@@ -28,17 +28,17 @@
         <div style="position:relative; flex:1;">
             <i class="bi bi-search" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="adm-input" placeholder="Tìm chương..."
+                   class="adm-input" placeholder="@L["Mod_SearchPlaceholder"]"
                    style="padding-left:34px; border-radius:8px 0 0 8px;" />
         </div>
         <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">
-            Tìm
+            @L["Course_SearchBtn"]
         </button>
     </form>
 
     <button type="button" class="adm-btn adm-btn-primary" data-bs-toggle="modal" data-bs-target="#moduleModal"
             onclick="openCreateModal()">
-        <i class="bi bi-plus-circle me-1"></i> Thêm chương mới
+        <i class="bi bi-plus-circle me-1"></i> @L["Mod_AddNew"]
     </button>
 </div>
 
@@ -55,9 +55,9 @@
         <div class="modal-content" style="border:none; border-radius:var(--radius-md); overflow:hidden; box-shadow:var(--shadow-lg);">
             <div class="modal-header" style="background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); padding:1.25rem 1.5rem; border:none;">
                 <h5 id="moduleModalLabel" style="font-family:var(--font-display); font-size:1.15rem; font-weight:600; color:var(--gold-light); margin:0;">
-                    Thêm chương mới
+                    @L["Mod_ModalAddTitle"]
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body" style="padding:1.5rem; background:var(--white);">
@@ -70,14 +70,14 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="sa-form-group">
-                                <label class="sa-label" for="Title">Tên chương <span style="color:var(--danger)">*</span></label>
-                                <input type="text" id="Title" name="Title" class="sa-input" placeholder="Nhập tên chương" />
+                                <label class="sa-label" for="Title">@L["Mod_ChapterName"] <span style="color:var(--danger)">*</span></label>
+                                <input type="text" id="Title" name="Title" class="sa-input" placeholder="@L["Mod_ChapterName"]" />
                                 <div class="invalid-feedback" id="err-Title"></div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="sa-form-group">
-                                <label class="sa-label" for="OrderIndex">Thứ tự</label>
+                                <label class="sa-label" for="OrderIndex">@L["Mod_OrderIndex"]</label>
                                 <input type="number" id="OrderIndex" name="OrderIndex" class="sa-input" min="0" value="0" />
                                 <div class="invalid-feedback" id="err-OrderIndex"></div>
                             </div>
@@ -85,23 +85,23 @@
                     </div>
 
                     <div class="sa-form-group">
-                        <label class="sa-label" for="Description">Mô tả</label>
+                        <label class="sa-label" for="Description">@L["Mod_Description"]</label>
                         <textarea id="Description" name="Description" class="sa-input" rows="4"
-                                  placeholder="Mô tả ngắn gọn về chương..."></textarea>
+                                  placeholder="@L["Mod_Description"]..."></textarea>
                         <div class="invalid-feedback" id="err-Description"></div>
                     </div>
 
                     <div class="form-check form-switch">
                         <input type="checkbox" id="IsPublished" name="IsPublished" value="true" class="form-check-input" checked />
-                        <label for="IsPublished" class="form-check-label">Công bố chương này (học viên có thể thấy)</label>
+                        <label for="IsPublished" class="form-check-label">@L["Mod_IsPublished"]</label>
                     </div>
                 </form>
             </div>
 
             <div class="modal-footer" style="padding:1rem 1.5rem; background:var(--off-white); border-top:1px solid var(--smoke);">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="sa-btn sa-btn-primary" id="btnSaveModule">
-                    <i class="bi bi-check-lg"></i> <span class="btn-text">Lưu</span>
+                    <i class="bi bi-check-lg"></i> <span class="btn-text">@L["Btn_Save"]</span>
                 </button>
             </div>
         </div>
@@ -115,6 +115,17 @@
     <script>
         var isEditMode = false;
         var currentCourseId = @courseId;
+        var _modModalAdd    = '➕ @L["Mod_ModalAddTitle"]';
+        var _modModalEdit   = '✏️ @L["Mod_ModalEditTitle"]';
+        var _modSave        = '@L["Btn_Save"]';
+        var _modUpdate      = '@L["Btn_Update"]';
+        var _modLoadErr     = '@L["Mod_LoadError"]';
+        var _modDelConf     = '@L["Mod_DeleteConfirm"]';
+        var _modDelErr      = '@L["Mod_DeleteError"]';
+        var _modNoPermAdmin = '@L["Adm_NoPermAdmin"]';
+        var _modReorderOk   = '@L["Mod_ReorderSuccess"]';
+        var _modReorderErr  = '@L["Mod_ReorderError"]';
+        var _errAjaxPrefix  = '@L["Err_AjaxPrefix"]';
 
         function clearErrors() {
             $('#modalResult').html('');
@@ -124,8 +135,8 @@
 
         function openCreateModal() {
             isEditMode = false;
-            $('#moduleModalLabel').text('➕ Thêm chương mới');
-            $('#btnSaveModule .btn-text').text('Lưu');
+            $('#moduleModalLabel').text(_modModalAdd);
+            $('#btnSaveModule .btn-text').text(_modSave);
             $('#moduleForm')[0].reset();
             $('#ModuleId').val(0);
             $('#CourseId').val(currentCourseId);
@@ -135,8 +146,8 @@
 
         function openEditModal(id) {
             isEditMode = true;
-            $('#moduleModalLabel').text('✏️ Sửa chương');
-            $('#btnSaveModule .btn-text').text('Cập nhật');
+            $('#moduleModalLabel').text(_modModalEdit);
+            $('#btnSaveModule .btn-text').text(_modUpdate);
             clearErrors();
 
             $.get('@Url.Action("GetModule", "Module")/' + id, function (data) {
@@ -148,14 +159,13 @@
                 $('#CourseId').val(data.courseId);
                 $('#moduleModal').modal('show');
             }).fail(function () {
-                showToast('Không thể tải thông tin chương!', 'danger');
+                showToast(_modLoadErr, 'danger');
             });
         }
 
         $(function () {
             initSortable();
 
-            // Lưu Module (Create & Edit)
             $('#btnSaveModule').on('click', function () {
                 clearErrors();
                 var url = isEditMode
@@ -184,27 +194,24 @@
                         }
                     },
                     error: function (xhr) {
-                        showToast('Lỗi: ' + (xhr.status === 403 ? 'Bạn không có quyền Admin!' : xhr.statusText), 'danger');
+                        showToast(xhr.status === 403 ? _modNoPermAdmin : (_errAjaxPrefix + xhr.statusText), 'danger');
                     }
                 });
             });
 
-            // Tìm kiếm
             $('#searchForm').on('submit', function (e) {
                 e.preventDefault();
                 loadModules(1);
             });
 
-            // Phân trang AJAX
             $(document).on('click', '.ajax-page-link', function (e) {
                 e.preventDefault();
                 var match = $(this).attr('href').match(/page=(\d+)/);
                 loadModules(match ? parseInt(match[1]) : 1);
             });
 
-            // Xóa Module
             $(document).on('click', '.btn-delete-module', function () {
-                if (!confirm('Bạn có chắc muốn xóa chương này? Tất cả bài học bên trong cũng sẽ bị xóa.')) return;
+                if (!confirm(_modDelConf)) return;
 
                 var id = $(this).data('id');
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
@@ -222,12 +229,11 @@
                         }
                     },
                     error: function () {
-                        showToast('Có lỗi xảy ra khi xóa!', 'danger');
+                        showToast(_modDelErr, 'danger');
                     }
                 });
             });
 
-            // Drag-drop reorder
             function initSortable() {
                 var tbody = document.getElementById('moduleTableBody');
                 if (!tbody) return;
@@ -245,15 +251,14 @@
                             headers: { 'RequestVerificationToken': token },
                             data: JSON.stringify({ ids: ids }),
                             success: function(res) {
-                                if (res.success) showToast('Đã cập nhật thứ tự chương!', 'success');
+                                if (res.success) showToast(_modReorderOk, 'success');
                             },
-                            error: function() { showToast('Lỗi khi cập nhật thứ tự!', 'danger'); }
+                            error: function() { showToast(_modReorderErr, 'danger'); }
                         });
                     }
                 });
             }
 
-            // Hàm load bảng
             window.loadModules = function(page) {
                 var searchTerm = $('#searchForm input[name="searchTerm"]').val();
                 $.ajax({
@@ -272,7 +277,6 @@
                 });
             };
 
-            // Toast notification
             window.showToast = function (message, type) {
                 var cls = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
                 var icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';

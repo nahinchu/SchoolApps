@@ -1,10 +1,16 @@
-﻿@{
+﻿@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
+@{
     var _role = Context.Session.GetString("Role") ?? "";
     var _name = Context.Session.GetString("StudentName") ?? "User";
     var _initials = _name.Length > 0 ? _name[0].ToString().ToUpper() : "U";
 
     var _ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
     var _action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    var _currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+    var _nextCulture = _currentCulture == "vi-VN" ? "en-GB" : "vi-VN";
+    var _flagSrc = _currentCulture == "vi-VN" ? "https://flagcdn.com/w40/vn.png" : "https://flagcdn.com/w40/gb.png";
+    var _langCode = _currentCulture == "vi-VN" ? "VI" : "EN";
 
     bool IsActive(string controller, string action = "")
     {
@@ -46,6 +52,23 @@
         <div class="adm-topbar-spacer"></div>
 
         <div class="adm-topbar-actions">
+            <!-- Language switcher -->
+            <form asp-controller="Language" asp-action="SetLanguage" method="post" style="margin:0;">
+                <input type="hidden" name="culture" value="@_nextCulture" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                <button type="submit"
+                        title="@L["SelectLanguage"]"
+                        style="background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.15);
+                               cursor:pointer; display:flex; align-items:center; gap:.4rem;
+                               padding:.28rem .65rem; border-radius:20px; transition:background .2s, border-color .2s;"
+                        onmouseenter="this.style.background='rgba(201,168,76,.18)'; this.style.borderColor='rgba(201,168,76,.6)';"
+                        onmouseleave="this.style.background='rgba(255,255,255,.06)'; this.style.borderColor='rgba(255,255,255,.15)';">
+                    <img src="@_flagSrc" alt="@_langCode"
+                         style="width:20px; height:14px; object-fit:cover; border-radius:2px; box-shadow:0 1px 3px rgba(0,0,0,.4);" />
+                    <span style="font-size:.72rem; font-weight:700; color:rgba(255,255,255,.85); letter-spacing:.5px;">@_langCode</span>
+                </button>
+            </form>
+
             <!-- User dropdown -->
             <div class="dropdown">
                 <button class="adm-user-btn dropdown-toggle" data-bs-toggle="dropdown"
@@ -56,12 +79,11 @@
                         <div class="adm-user-role">
                             @if (_role == "Admin")
                             {
-                                <text><i class="bi bi-shield-fill-check"></i> Quản trị viên</text>
+                                <text><i class="bi bi-shield-fill-check"></i> @L["Nav_AdminRole"]</text>
                             }
                             else
                             {
-
-                                <text><i class="bi bi-person-gear"></i> Quản lý</text>
+                                <text><i class="bi bi-person-gear"></i> @L["Nav_ManagerRole"]</text>
                             }
                         </div>
                     </div>
@@ -74,7 +96,7 @@
                             <div>
                                 <div style="font-weight:600;font-size:.85rem;color:#fff;">@_name</div>
                                 <div style="font-size:.72rem;color:var(--adm-gold);">
-                                    @(_role == "Admin" ? "Quản trị hệ thống" : "Quản lý nội dung")
+                                    @(_role == "Admin" ? L["Nav_AdminRole"].Value : L["Nav_ManagerRole"].Value)
                                 </div>
                             </div>
                         </div>
@@ -82,13 +104,13 @@
                     <li><hr class="dropdown-divider" style="border-color:var(--adm-border);margin:4px 0;"></li>
                     <li>
                         <a class="dropdown-item" asp-controller="Account" asp-action="EditProfile">
-                            <i class="bi bi-person-gear"></i> Sửa profile
+                            <i class="bi bi-person-gear"></i> @L["Nav_EditProfile"]
                         </a>
                     </li>
                     <li><hr class="dropdown-divider" style="border-color:var(--adm-border);margin:4px 0;"></li>
                     <li>
                         <a class="dropdown-item danger" asp-controller="Account" asp-action="Logout">
-                            <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                            <i class="bi bi-box-arrow-right"></i> @L["Nav_Logout"]
                         </a>
                     </li>
                 </ul>
@@ -104,7 +126,7 @@
             <div class="adm-sidebar-inner">
 
                 <!-- TỔNG QUAN -->
-                <div class="adm-nav-label">Tổng quan</div>
+                <div class="adm-nav-label">@L["Adm_Overview"]</div>
                 <a class="adm-nav-link @(IsActive("Admin", "Dashboard") ? "active" : "")"
                    asp-controller="Admin" asp-action="Dashboard" title="Dashboard">
                     <i class="bi bi-speedometer2 adm-nav-icon"></i>
@@ -114,45 +136,45 @@
                 <hr class="adm-nav-divider" />
 
                 <!-- QUẢN LÝ NỘI DUNG -->
-                <div class="adm-nav-label">Quản lý</div>
+                <div class="adm-nav-label">@L["Footer_Manage"]</div>
 
                 <a class="adm-nav-link @(IsActive("Course") ? "active" : "")"
-                   asp-controller="Course" asp-action="Index" title="Khóa học">
+                   asp-controller="Course" asp-action="Index" title="@L["AdminCourses"]">
                     <i class="bi bi-book adm-nav-icon"></i>
-                    <span class="adm-nav-text">Khóa học</span>
+                    <span class="adm-nav-text">@L["AdminCourses"]</span>
                 </a>
 
                 <a class="adm-nav-link @(IsActive("Student") ? "active" : "")"
-                   asp-controller="Student" asp-action="Index" title="Học viên">
+                   asp-controller="Student" asp-action="Index" title="@L["AdminStudents"]">
                     <i class="bi bi-people adm-nav-icon"></i>
-                    <span class="adm-nav-text">Học viên</span>
+                    <span class="adm-nav-text">@L["AdminStudents"]</span>
                 </a>
 
                 <a class="adm-nav-link @(IsActive("Enrollment") ? "active" : "")"
-                   asp-controller="Enrollment" asp-action="Index" title="Đăng ký học">
+                   asp-controller="Enrollment" asp-action="Index" title="@L["AdminEnrollments"]">
                     <i class="bi bi-journal-check adm-nav-icon"></i>
-                    <span class="adm-nav-text">Đăng ký học</span>
+                    <span class="adm-nav-text">@L["AdminEnrollments"]</span>
                 </a>
 
                 <a class="adm-nav-link @(IsActive("QuestionBank") ? "active" : "")"
-                   asp-controller="QuestionBank" asp-action="Index" title="Ngân hàng câu hỏi">
+                   asp-controller="QuestionBank" asp-action="Index" title="@L["AdminQuestionBank"]">
                     <i class="bi bi-bank adm-nav-icon"></i>
-                    <span class="adm-nav-text">Ngân hàng câu hỏi</span>
+                    <span class="adm-nav-text">@L["AdminQuestionBank"]</span>
                 </a>
 
                 @if (_role == "Admin")
                 {
                     <hr class="adm-nav-divider" />
-                    <div class="adm-nav-label">Hệ thống</div>
+                    <div class="adm-nav-label">@L["Footer_System"]</div>
                     <a class="adm-nav-link @(IsActive("Admin", "Payments") ? "active" : "")"
-                       asp-controller="Admin" asp-action="Payments" title="Lịch sử thanh toán">
+                       asp-controller="Admin" asp-action="Payments" title="@L["Adm_PaymentHistory"]">
                         <i class="bi bi-credit-card adm-nav-icon"></i>
-                        <span class="adm-nav-text">Lịch sử thanh toán</span>
+                        <span class="adm-nav-text">@L["Adm_PaymentHistory"]</span>
                     </a>
                     <a class="adm-nav-link @(IsActive("Admin", "Managers") ? "active" : "")"
-                       asp-controller="Admin" asp-action="Managers" title="Quản lý Manager">
+                       asp-controller="Admin" asp-action="Managers" title="@L["Nav_ManageManagers"]">
                         <i class="bi bi-person-gear adm-nav-icon"></i>
-                        <span class="adm-nav-text">Quản lý Manager</span>
+                        <span class="adm-nav-text">@L["Nav_ManageManagers"]</span>
                     </a>
                 }
 

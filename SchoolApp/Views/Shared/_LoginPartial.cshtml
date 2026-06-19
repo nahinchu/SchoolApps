@@ -1,9 +1,10 @@
-﻿@if (Context.Session.GetString("StudentName") != null)
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
+@if (Context.Session.GetString("StudentName") != null)
 {
-    <span>Xin chào @Context.Session.GetString("StudentName")</span>
-    <a asp-controller="Account" asp-action="Logout">Đăng xuất</a>
+    <span>@L["Nav_Hello"] @Context.Session.GetString("StudentName")</span>
+    <a asp-controller="Account" asp-action="Logout">@L["Nav_Logout"]</a>
 }
 else
 {
-    <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+    <a asp-controller="Account" asp-action="Login">@L["Nav_LoginBtn"]</a>
 }

@@ -2,13 +2,13 @@
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Enrollment>
 @{
-    ViewData["Title"] = "Danh sách đăng ký";
+    ViewData["Title"] = L["Enr_Title"].Value;
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var statusVal = ViewData["Status"]?.ToString() ?? "";
     var statusLabel = statusVal switch {
-        "completed"  => "✅ Hoàn thành",
-        "inprogress" => "▶ Đang học",
-        _            => "☰ Trạng thái"
+        "completed"  => L["Enr_StatusCompleted"].Value,
+        "inprogress" => L["Enr_StatusInProgress"].Value,
+        _            => L["Enr_StatusFilter"].Value
     };
     var filterActive = !string.IsNullOrEmpty(statusVal);
 }
@@ -16,8 +16,8 @@
 <!-- ==================== PAGE HEADER ==================== -->
 <div class="adm-page-header">
     <div>
-        <div class="adm-page-title">📋 Danh sách <span>Đăng ký học</span></div>
-        <div class="adm-page-sub">Quản lý đăng ký học viên</div>
+        <div class="adm-page-title">📋 @L["Enr_Title"]</div>
+        <div class="adm-page-sub">@L["Enr_Sub"]</div>
     </div>
 </div>
 
@@ -28,10 +28,10 @@
         <div style="position:relative; min-width:200px; max-width:380px; flex:1; display:flex;">
             <i class="bi bi-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem; z-index:1;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="adm-input" placeholder="Tìm theo tên học viên hoặc khóa học..."
+                   class="adm-input" placeholder="@L["Enr_SearchPlaceholder"]"
                    style="padding-left:36px; border-radius:8px 0 0 8px; flex:1;" />
             <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">
-                Tìm
+                @L["Course_SearchBtn"]
             </button>
         </div>
 
@@ -48,19 +48,19 @@
                 <li>
                     <a class="dropdown-item @(statusVal == "" ? "active" : "")"
                        href="javascript:void(0)" onclick="setStatus('')">
-                        <i class="bi bi-list-ul me-2"></i> Tất cả
+                        <i class="bi bi-list-ul me-2"></i> @L["Enr_StatusAll"]
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item @(statusVal == "inprogress" ? "active" : "")"
                        href="javascript:void(0)" onclick="setStatus('inprogress')">
-                        <i class="bi bi-play-circle me-2" style="color:#42a5f5;"></i> Đang học
+                        <i class="bi bi-play-circle me-2" style="color:#42a5f5;"></i> @L["Enr_BadgeInProgress"]
                     </a>
                 </li>
                 <li>
                     <a class="dropdown-item @(statusVal == "completed" ? "active" : "")"
                        href="javascript:void(0)" onclick="setStatus('completed')">
-                        <i class="bi bi-check-circle-fill me-2" style="color:#4caf50;"></i> Hoàn thành
+                        <i class="bi bi-check-circle-fill me-2" style="color:#4caf50;"></i> @L["Enr_BadgeCompleted"]
                     </a>
                 </li>
             </ul>
@@ -71,7 +71,7 @@
 <!-- Nút ghi danh thủ công -->
 <div style="display:flex; justify-content:flex-end; margin-bottom:1rem;">
     <button type="button" class="adm-btn adm-btn-primary" data-bs-toggle="modal" data-bs-target="#enrollManualModal">
-        <i class="bi bi-person-plus-fill me-1"></i> Ghi danh thủ công
+        <i class="bi bi-person-plus-fill me-1"></i> @L["Enr_ManualEnroll"]
     </button>
 </div>
 
@@ -86,30 +86,30 @@
         <div class="modal-content" style="border:none; border-radius:12px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,.5);">
             <div class="modal-header" style="background:linear-gradient(135deg,#0d1b2e,#1a2f4e); border:none; padding:1.25rem 1.5rem;">
                 <h5 class="modal-title" style="color:#c9a84c; font-weight:600;">
-                    <i class="bi bi-person-plus-fill me-2"></i>Ghi danh thủ công
+                    <i class="bi bi-person-plus-fill me-2"></i>@L["Enr_ManualEnroll"]
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" style="padding:1.5rem; background:#fff;">
                 <div id="enrollResult"></div>
                 <div class="mb-3">
-                    <label class="sa-label">Học viên <span class="text-danger">*</span></label>
-                    <input type="text" id="studentSearch" class="sa-input" placeholder="Gõ tên hoặc email học viên..." autocomplete="off" />
+                    <label class="sa-label">@L["Enr_SelectStudent"] <span class="text-danger">*</span></label>
+                    <input type="text" id="studentSearch" class="sa-input" placeholder="@L["Enr_StudentSearchPlaceholder"]" autocomplete="off" />
                     <input type="hidden" id="selectedUserId" />
                     <div id="studentSuggestions" style="background:#fff; border:1px solid #ddd; border-radius:6px; max-height:180px; overflow-y:auto; display:none; position:absolute; z-index:9999; width:calc(100% - 3rem);"></div>
                     <small class="text-muted" id="selectedStudentLabel"></small>
                 </div>
                 <div class="mb-3">
-                    <label class="sa-label">Khóa học <span class="text-danger">*</span></label>
+                    <label class="sa-label">@L["Enr_SelectCourse"] <span class="text-danger">*</span></label>
                     <select id="selectedCourseId" class="sa-input">
-                        <option value="">— Chọn khóa học —</option>
+                        <option value="">@L["Enr_SelectCoursePlaceholder"]</option>
                     </select>
                 </div>
             </div>
             <div class="modal-footer" style="background:#f8f9fa; border-top:1px solid #e9ecef; padding:1rem 1.5rem;">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="sa-btn sa-btn-primary" id="btnEnrollSave">
-                    <i class="bi bi-check-lg me-1"></i> Ghi danh
+                    <i class="bi bi-check-lg me-1"></i> @L["Enr_Enroll"]
                 </button>
             </div>
         </div>
@@ -119,28 +119,34 @@
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
     <script>
+        var _enrNotFound   = '@L["Enr_NotFound"]';
+        var _enrSelected   = '@L["Enr_Selected"]';
+        var _enrStudentWar = '@L["Enr_SelectStudentWarning"]';
+        var _enrCourseWar  = '@L["Enr_SelectCourseWarning"]';
+        var _enrConnErr    = '@L["Enr_ConnError"]';
+        var _enrDelConf    = '@L["Enr_DeleteConfirm"]';
+        var _enrAjaxError  = '@L["Stu_AjaxError"]';
+        var _enrLoadErr    = '@L["Stu_LoadDataError"]';
+
         function setStatus(val) {
             $('#statusInput').val(val);
             loadEnrollments(1);
         }
 
         $(function () {
-            // ====== TÌM KIẾM ======
             $('#searchForm').on('submit', function (e) {
                 e.preventDefault();
                 loadEnrollments(1);
             });
 
-            // ====== PHÂN TRANG ======
             $(document).on('click', '.ajax-page-link', function (e) {
                 e.preventDefault();
                 var match = $(this).attr('href').match(/page=(\d+)/);
                 loadEnrollments(match ? match[1] : 1);
             });
 
-            // ====== XÓA ======
             $(document).on('click', '.btn-delete-enrollment', function () {
-                if (!confirm('Bạn có chắc muốn xóa đăng ký này?')) return;
+                if (!confirm(_enrDelConf)) return;
                 var id = $(this).data('id');
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
                 $.ajax({
@@ -152,13 +158,11 @@
                         else { showToast(res.message, 'danger'); }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 403) showToast('Bạn không có quyền!', 'danger');
-                        else showToast('Lỗi: ' + xhr.statusText, 'danger');
+                        showToast(_enrAjaxError + xhr.statusText, 'danger');
                     }
                 });
             });
 
-            // ====== LOAD BẢNG ======
             function loadEnrollments(page) {
                 var searchTerm = $('#searchForm input[name="searchTerm"]').val();
                 var status     = $('#statusInput').val();
@@ -171,12 +175,11 @@
                         $('#enrollmentTableContainer').html(html);
                     },
                     error: function (xhr) {
-                        showToast('Lỗi tải dữ liệu: ' + xhr.statusText, 'danger');
+                        showToast(_enrLoadErr + xhr.statusText, 'danger');
                     }
                 });
             }
 
-                // ====== GHI DANH THỦ CÔNG ======
             var searchTimer;
             $('#studentSearch').on('input', function () {
                 clearTimeout(searchTimer);
@@ -188,7 +191,7 @@
                     $.get('@Url.Action("SearchStudents", "Enrollment")', { q: q }, function (data) {
                         var $box = $('#studentSuggestions').empty().show();
                         if (!data.length) {
-                            $box.html('<div style="padding:8px 12px; color:#555; font-size:.9rem;">Không tìm thấy học viên</div>');
+                            $box.html('<div style="padding:8px 12px; color:#555; font-size:.9rem;">' + _enrNotFound + '</div>');
                             return;
                         }
                         data.forEach(function (u) {
@@ -199,7 +202,7 @@
                                 .on('click', function () {
                                     $('#selectedUserId').val(u.userId);
                                     $('#studentSearch').val(u.label);
-                                    $('#selectedStudentLabel').text('✔ Đã chọn').css('color', '#198754');
+                                    $('#selectedStudentLabel').text(_enrSelected).css('color', '#198754');
                                     $('#studentSuggestions').hide();
                                 })
                                 .appendTo($box);
@@ -220,12 +223,8 @@
                 $('#selectedStudentLabel').text('');
                 $('#studentSuggestions').hide();
                 if ($('#selectedCourseId option').length <= 1) {
-                    $.get('@Url.Action("Index", "Course")', { pageSize: 200 }, function () {}).always(function () {
-                        // Load courses via a simple API
-                    });
-                    // Load danh sách khóa học
                     $.get('/Course/GetActiveCourses', function (data) {
-                        var $sel = $('#selectedCourseId').empty().append('<option value="">— Chọn khóa học —</option>');
+                        var $sel = $('#selectedCourseId').empty().append('<option value="">@L["Enr_SelectCoursePlaceholder"]</option>');
                         (data || []).forEach(function (c) {
                             $sel.append($('<option>').val(c.courseId).text(c.courseName));
                         });
@@ -236,8 +235,8 @@
             $('#btnEnrollSave').on('click', function () {
                 var userId = $('#selectedUserId').val();
                 var courseId = $('#selectedCourseId').val();
-                if (!userId) { $('#enrollResult').html('<div class="alert alert-warning py-2">Vui lòng chọn học viên.</div>'); return; }
-                if (!courseId) { $('#enrollResult').html('<div class="alert alert-warning py-2">Vui lòng chọn khóa học.</div>'); return; }
+                if (!userId) { $('#enrollResult').html('<div class="alert alert-warning py-2">' + _enrStudentWar + '</div>'); return; }
+                if (!courseId) { $('#enrollResult').html('<div class="alert alert-warning py-2">' + _enrCourseWar + '</div>'); return; }
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
                 $.ajax({
                     url: '@Url.Action("EnrollManual", "Enrollment")',
@@ -253,12 +252,11 @@
                         }
                     },
                     error: function () {
-                        $('#enrollResult').html('<div class="alert alert-danger py-2">Lỗi kết nối.</div>');
+                        $('#enrollResult').html('<div class="alert alert-danger py-2">' + _enrConnErr + '</div>');
                     }
                 });
             });
 
-            // ====== TOAST ======
             window.showToast = function (message, type) {
                 var cls  = type === 'success' ? 'sa-alert-success' : 'sa-alert-danger';
                 var icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-circle-fill';

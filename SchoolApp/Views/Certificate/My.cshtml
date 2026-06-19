@@ -1,6 +1,6 @@
 @model List<SchoolApp.Models.Certificate>
 @{
-    ViewData["Title"] = "Chứng chỉ của tôi";
+    ViewData["Title"] = L["Cert_MyTitle"].Value;
 }
 
 <style>
@@ -128,9 +128,9 @@
     <div>
         <h1 class="sa-page-title">
             <i class="bi bi-patch-check-fill" style="color:#c9a84c"></i>
-            Chứng chỉ của tôi
+            @L["Cert_MyTitle"]
         </h1>
-        <p class="sa-page-subtitle">Các chứng chỉ bạn đã đạt được sau khi hoàn thành khóa học</p>
+        <p class="sa-page-subtitle">@L["Cert_MySub"]</p>
     </div>
 </div>
 
@@ -138,14 +138,14 @@
 {
     <div class="empty-state">
         <div class="empty-icon">🎓</div>
-        <h4 style="color:#fff;">Chưa có chứng chỉ nào</h4>
-        <p>Hoàn thành khóa học để nhận chứng chỉ của bạn.</p>
-        <a asp-controller="Course" asp-action="Index" class="sa-btn sa-btn-primary">Khám phá khóa học</a>
+        <h4 style="color:#fff;">@L["Cert_None"]</h4>
+        <p>@L["Cert_CompleteToClaim"]</p>
+        <a asp-controller="Course" asp-action="Index" class="sa-btn sa-btn-primary">@L["Cert_Explore"]</a>
     </div>
 }
 else
 {
-    <p style="color:#8090a0;">Bạn có <strong style="color:#c9a84c;">@Model.Count</strong> chứng chỉ</p>
+    <p style="color:#8090a0;">@L["Cert_YouHave"] <strong style="color:#c9a84c;">@Model.Count</strong> @L["Cert_Count"]</p>
     <div class="cert-grid">
         @foreach (var cert in Model)
         {
@@ -154,7 +154,7 @@ else
                 <div class="cert-course-name">@cert.Course?.CourseName</div>
                 <div class="cert-meta">
                     <i class="bi bi-calendar3"></i>
-                    Cấp ngày @cert.IssuedDate.ToString("dd/MM/yyyy")
+                    @L["Cert_IssuedOn"] @cert.IssuedDate.ToString("dd/MM/yyyy")
                 </div>
                 <div class="cert-code">
                     <i class="bi bi-shield-check"></i> @cert.CertificateCode
@@ -162,11 +162,11 @@ else
                 <div class="cert-actions">
                     <a href="@Url.Action("Download", "Certificate", new { id = cert.CertificateId })"
                        class="cert-btn-download" target="_blank">
-                        <i class="bi bi-download"></i> Tải PDF
+                        <i class="bi bi-download"></i> @L["Cert_Download"]
                     </a>
                     <a href="@Url.Action("Verify", "Certificate", new { code = cert.CertificateCode })"
                        class="cert-btn-verify" target="_blank">
-                        <i class="bi bi-box-arrow-up-right"></i> Verify
+                        <i class="bi bi-box-arrow-up-right"></i> @L["Cert_Verify"]
                     </a>
                 </div>
             </div>

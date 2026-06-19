@@ -1,6 +1,6 @@
 @model SchoolApp.DTOs.VerifyEmailViewModel
 @{
-    ViewData["Title"] = "Xác thực Email";
+    ViewData["Title"] = L["Otp_Title"].Value;
 }
 
 @section Styles {
@@ -48,7 +48,7 @@
     <div class="auth-left">
         <div class="auth-deco" style="width:380px;height:380px;top:-140px;left:-140px;background:rgba(255,255,255,0.10);"></div>
         <div class="auth-deco" style="width:280px;height:280px;bottom:-90px;right:-90px;background:rgba(255,255,255,0.08);"></div>
-        <img src="~/images/Register.gif" alt="Xác thực email"
+        <img src="~/images/Register.gif" alt="@L["Otp_Title"]"
              style="width:80%; max-width:320px; object-fit:contain; position:relative; z-index:1;
                     filter: drop-shadow(0 12px 32px rgba(0,0,0,0.18));" />
     </div>
@@ -62,9 +62,9 @@
         </div>
 
         <div class="auth-form-wrapper">
-            <h1 class="auth-title">Xác thực Email.</h1>
+            <h1 class="auth-title">@L["Otp_Heading"]</h1>
             <p class="auth-subtitle">
-                Nhập mã OTP 6 chữ số đã được gửi đến
+                @L["Otp_Instruction"]
                 <strong style="color:#333;">@Model.Email</strong>
             </p>
 
@@ -81,7 +81,7 @@
                 <input type="hidden" asp-for="Email" />
 
                 <div class="auth-form-group">
-                    <label class="auth-label" asp-for="Otp">Mã OTP</label>
+                    <label class="auth-label" asp-for="Otp">@L["Otp_Label"]</label>
                     <input class="auth-input otp-input" asp-for="Otp"
                            type="text" maxlength="6" placeholder="• • • • • •"
                            autocomplete="one-time-code" inputmode="numeric"
@@ -89,7 +89,7 @@
                     <span asp-validation-for="Otp" class="auth-field-error"></span>
                 </div>
 
-                <button type="submit" class="auth-btn" style="margin-bottom:.75rem;">XÁC THỰC</button>
+                <button type="submit" class="auth-btn" style="margin-bottom:.75rem;">@L["Otp_Verify"]</button>
             </form>
 
             <form asp-action="ResendOtp" method="post" style="margin-top:.5rem;">
@@ -99,13 +99,13 @@
                 <button type="submit" style="width:100%;background:transparent;border:1.5px solid #e0e0e0;border-radius:8px;padding:11px;font-size:.78rem;font-weight:600;color:#888;cursor:pointer;transition:border-color .2s,color .2s;"
                         onmouseover="this.style.borderColor='#c9a84c';this.style.color='#c9a84c'"
                         onmouseout="this.style.borderColor='#e0e0e0';this.style.color='#888'">
-                    <i class="bi bi-arrow-clockwise"></i> Gửi lại mã OTP
+                    <i class="bi bi-arrow-clockwise"></i> @L["Otp_Resend"]
                 </button>
             </form>
 
             <p style="text-align:center;margin-top:1.25rem;font-size:.8rem;color:#aaa;">
                 <a asp-controller="Account" asp-action="Login" style="color:var(--gold);font-weight:600;text-decoration:none;">
-                    ← Quay lại đăng nhập
+                    @L["Otp_BackToLogin"]
                 </a>
             </p>
         </div>
@@ -115,7 +115,6 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Chỉ cho nhập số
         document.getElementById('@Html.IdFor(m => m.Otp)').addEventListener('input', function () {
             this.value = this.value.replace(/\D/g, '').slice(0, 6);
         });

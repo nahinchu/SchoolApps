@@ -1,6 +1,6 @@
 ﻿@model SchoolApp.Models.RegisterViewModel
 @{
-    ViewData["Title"] = "Đăng ký tài khoản";
+    ViewData["Title"] = L["Register_PageTitle"].Value;
 }
 
 @section Styles {
@@ -314,7 +314,7 @@
         <div class="auth-deco" style="width:160px;height:160px;top:42%;left:-55px;background:transparent;border:1px solid rgba(255,255,255,0.18);"></div>
 
         <!-- Illustration image — thay file tại wwwroot/images/Welcome.gif để đổi ảnh -->
-        <img src="~/images/Register.gif" alt="Minh hoạ đăng ký"
+        <img src="~/images/Register.gif" alt="@L["Register_GifAlt"]"
              style="width:80%; max-width:340px; object-fit:contain; position:relative; z-index:1;
                     filter: drop-shadow(0 12px 32px rgba(0,0,0,0.18));" />
     </div>
@@ -356,7 +356,7 @@
 
                 <!-- Email -->
                 <div class="auth-form-group">
-                    <label class="auth-label" asp-for="Email">Địa chỉ Email</label>
+                    <label class="auth-label" asp-for="Email">@L["Register_EmailLabel"]</label>
                     <input class="auth-input" asp-for="Email"
                            type="email" placeholder="example@email.com"
                            autocomplete="email" />
@@ -400,7 +400,7 @@
                     <input type="checkbox" id="terms" required />
                     <label for="terms">
                         @L["Register_Terms"] <a href="#">@L["Register_TermsService"]</a>
-                        và <a href="#">@L["Register_TermsPrivacy"]</a> của SchoolApp.
+                        @L["Register_TermsAnd"] <a href="#">@L["Register_TermsPrivacy"]</a> @L["Register_TermsOf"]
                     </label>
                 </div>
 

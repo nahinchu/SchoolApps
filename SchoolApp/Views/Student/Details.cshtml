@@ -1,43 +1,43 @@
-﻿@model SchoolApp.Models.User
+@model SchoolApp.Models.User
 @{
-    ViewData["Title"] = "Chi tiết học viên";
+    ViewData["Title"] = L["Stu_DetailsTitle"].Value;
 }
 
-<h2>Thông tin học viên</h2>
+<h2>@L["Stu_DetailsHeading"]</h2>
 <hr />
 
 <dl class="row">
-    <dt class="col-sm-3">Họ và tên</dt>
+    <dt class="col-sm-3">@L["Stu_ColName"]</dt>
     <dd class="col-sm-9">@Model.FullName</dd>
 
     <dt class="col-sm-3">Email</dt>
     <dd class="col-sm-9">@Model.Email</dd>
 
-    <dt class="col-sm-3">Số điện thoại</dt>
+    <dt class="col-sm-3">@L["Stu_ColPhone"]</dt>
     <dd class="col-sm-9">@Model.Phone</dd>
 
-    <dt class="col-sm-3">Ngày sinh</dt>
+    <dt class="col-sm-3">@L["Stu_ColDateOfBirth"]</dt>
     <dd class="col-sm-9">@Model.DateOfBirth?.ToString("dd/MM/yyyy")</dd>
 
-    <dt class="col-sm-3">Địa chỉ</dt>
+    <dt class="col-sm-3">@L["Stu_Address"]</dt>
     <dd class="col-sm-9">@Model.Address</dd>
 
-    <dt class="col-sm-3">Ngày đăng ký</dt>
+    <dt class="col-sm-3">@L["Stu_RegDate"]</dt>
     <dd class="col-sm-9">@Model.RegisteredDate.ToString("dd/MM/yyyy HH:mm")</dd>
 </dl>
 
-<h4 class="mt-4">Khóa học đã đăng ký</h4>
+<h4 class="mt-4">@L["Stu_CoursesEnrolled"]</h4>
 <table class="table table-bordered">
     <thead class="table-light">
         <tr>
-            <th>Khóa học</th>
-            <th>Ngày đăng ký</th>
+            <th>@L["Enr_ColCourse"]</th>
+            <th>@L["Enr_ColEnrollDate"]</th>
         </tr>
     </thead>
     <tbody>
         @if (Model.Enrollments == null || !Model.Enrollments.Any())
         {
-            <tr><td colspan="3" class="text-center">Chưa đăng ký khóa học nào</td></tr>
+            <tr><td colspan="3" class="text-center">@L["Stu_NoEnrollments"]</td></tr>
         }
         else
         {
@@ -52,4 +52,4 @@
     </tbody>
 </table>
 
-<a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+<a asp-action="Index" class="btn btn-secondary">@L["Enr_BackToList"]</a>

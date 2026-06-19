@@ -1,16 +1,16 @@
 @using SchoolApp.Models
 @inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 @{
-    ViewData["Title"] = "Trang chủ";
+    ViewData["Title"] = L["Home_Title"].Value;
     var role = Context.Session.GetString("Role");
     var userName = Context.Session.GetString("UserName");
     var trendingCourses = ViewBag.TrendingCourses as List<Course> ?? new List<Course>();
 
     string LevelLabel(CourseLevel l) => l switch
     {
-        CourseLevel.Basic => "Cơ bản",
-        CourseLevel.Intermediate => "Trung cấp",
-        CourseLevel.Advanced => "Nâng cao",
+        CourseLevel.Basic => L["Det_LevelBasic"].Value,
+        CourseLevel.Intermediate => L["Det_LevelIntermediate"].Value,
+        CourseLevel.Advanced => L["Det_LevelAdvanced"].Value,
         _ => l.ToString()
     };
     string LevelColor(CourseLevel l) => l switch
@@ -81,22 +81,22 @@
     <div class="sa-dash-stats">
         <div class="sa-dash-stat-item">
             <div class="sa-dash-stat-num">@L["AdminCourses"]</div>
-            <div class="sa-dash-stat-label">Quản lý nội dung</div>
+            <div class="sa-dash-stat-label">@L["Home_ManageContent"]</div>
         </div>
         <div class="sa-dash-stat-divider"></div>
         <div class="sa-dash-stat-item">
             <div class="sa-dash-stat-num">@L["AdminStudents"]</div>
-            <div class="sa-dash-stat-label">Quản lý tài khoản</div>
+            <div class="sa-dash-stat-label">@L["Home_ManageAccounts"]</div>
         </div>
         <div class="sa-dash-stat-divider"></div>
         <div class="sa-dash-stat-item">
-            <div class="sa-dash-stat-num">Bài kiểm tra</div>
-            <div class="sa-dash-stat-label">Quiz & câu hỏi</div>
+            <div class="sa-dash-stat-num">@L["Home_Quizzes"]</div>
+            <div class="sa-dash-stat-label">@L["Home_QuizQuestions"]</div>
         </div>
         <div class="sa-dash-stat-divider"></div>
         <div class="sa-dash-stat-item">
             <div class="sa-dash-stat-num">@L["AdminEnrollments"]</div>
-            <div class="sa-dash-stat-label">Phân quyền truy cập</div>
+            <div class="sa-dash-stat-label">@L["Home_AccessControl"]</div>
         </div>
     </div>
 }
@@ -126,7 +126,7 @@ else if (role == "Student")
         </div>
 
         <div style="flex:1; min-width:240px; display:flex; justify-content:center;">
-            <img src="~/images/Studying.gif" alt="Học tập" class="home-gif" />
+            <img src="~/images/Studying.gif" alt="@L["Home_GifAlt"]" class="home-gif" />
         </div>
 
     </div>

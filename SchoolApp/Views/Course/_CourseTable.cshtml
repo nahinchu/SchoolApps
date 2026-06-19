@@ -1,22 +1,23 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @using SchoolApp.Models
 @model IPagedList<SchoolApp.Models.Course>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 
 @{
     string LevelLabel(CourseLevel l) => l switch
     {
-        CourseLevel.Basic => "Cơ bản",
-        CourseLevel.Intermediate => "Trung cấp",
-        CourseLevel.Advanced => "Nâng cao",
-        _ => l.ToString()
+        CourseLevel.Basic        => L["Level_Basic"].Value,
+        CourseLevel.Intermediate => L["Level_Intermediate"].Value,
+        CourseLevel.Advanced     => L["Level_Advanced"].Value,
+        _                        => l.ToString()
     };
     string LevelColor(CourseLevel l) => l switch
     {
-        CourseLevel.Basic => "#4caf50",
+        CourseLevel.Basic        => "#4caf50",
         CourseLevel.Intermediate => "#ff9800",
-        CourseLevel.Advanced => "#e53935",
-        _ => "#888"
+        CourseLevel.Advanced     => "#e53935",
+        _                        => "#888"
     };
 }
 
@@ -41,13 +42,13 @@
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Tên khóa học</th>
-                    <th class="text-center">Cấp độ</th>
-                    <th class="text-end">Học phí</th>
-                    <th class="text-center">Đăng ký</th>
-                    <th class="text-center">Đánh giá</th>
-                    <th class="text-center">Trạng thái</th>
-                    <th class="text-center">Thao tác</th>
+                    <th>@L["Crs_ColCourseName"]</th>
+                    <th class="text-center">@L["Crs_ColLevel"]</th>
+                    <th class="text-end">@L["Crs_ColFee"]</th>
+                    <th class="text-center">@L["Crs_ColEnrollments"]</th>
+                    <th class="text-center">@L["Crs_ColRating"]</th>
+                    <th class="text-center">@L["Mod_ColStatus"]</th>
+                    <th class="text-center">@L["Mod_ColActions"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,7 +57,7 @@
                     <tr>
                         <td colspan="8" style="text-align:center; color:rgba(255,255,255,0.3); padding:2rem;">
                             <i class="bi bi-inbox" style="font-size:1.5rem; display:block; margin-bottom:.4rem;"></i>
-                            Không có khóa học nào
+                            @L["Course_NoResults"]
                         </td>
                     </tr>
                 }
@@ -108,7 +109,7 @@
                                     var cnt = enrollmentCounts.GetValueOrDefault(item.CourseId, 0);
                                 }
                                 <span style="font-weight:600; color:rgba(255,255,255,.8);">@cnt</span>
-                                <small style="color:rgba(255,255,255,.3); font-size:.7rem; display:block;">học viên</small>
+                                <small style="color:rgba(255,255,255,.3); font-size:.7rem; display:block;">@L["Course_Students"]</small>
                             </td>
                             <td class="text-center">
                                 @{
@@ -130,13 +131,13 @@
                                         data-id="@item.CourseId"
                                         style="@(item.IsActive ? "background:rgba(76,175,80,.18); color:#4caf50; border:1px solid #4caf5055;" : "background:rgba(229,57,53,.18); color:#e53935; border:1px solid #e5393555;")">
                                     <i class="bi @(item.IsActive ? "bi-toggle-on" : "bi-toggle-off")"></i>
-                                    @(item.IsActive ? "Đang mở" : "Đã đóng")
+                                    @(item.IsActive ? L["Crs_StatusOpen"] : L["Crs_StatusClosed"])
                                 </button>
                             </td>
                             <td class="text-center" style="white-space:nowrap;">
                                 <button type="button" class="adm-btn adm-btn-warning adm-btn-sm"
                                         onclick="openEditModal(@item.CourseId)">
-                                    <i class="bi bi-pencil"></i> Sửa
+                                    <i class="bi bi-pencil"></i> @L["Btn_Edit"]
                                 </button>
                                 @if (isAdmin)
                                 {
@@ -147,7 +148,7 @@
                                 }
                                 <a asp-controller="Module" asp-action="Index" asp-route-courseId="@item.CourseId"
                                    class="adm-btn adm-btn-info adm-btn-sm">
-                                    <i class="bi bi-folder2"></i> Chương
+                                    <i class="bi bi-folder2"></i> @L["Crs_ModulesBtn"]
                                 </a>
                             </td>
                         </tr>
@@ -160,8 +161,8 @@
 
     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap:wrap; gap:.5rem;">
         <span style="font-size:.8rem; color:rgba(255,255,255,.4);">
-            Trang @Model.PageNumber / @Model.PageCount
-            &nbsp;·&nbsp; Tổng <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> khóa học
+            @L["Mod_Page"] @Model.PageNumber / @Model.PageCount
+            &nbsp;·&nbsp; @L["Adm_Total"] <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> @L["Crs_TotalCourses"]
         </span>
         @Html.PagedListPager(Model,
         page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"] }),
@@ -175,7 +176,7 @@
 }
 else
 {
-    <!-- ===== STUDENT / GUEST: CARD GRID 3 CỘT ===== -->
+    <!-- ===== STUDENT / GUEST: CARD GRID ===== -->
     <style>
         .ci-grid {
             display: grid;
@@ -370,7 +371,7 @@ else
     {
         <div style="text-align:center; padding:4rem 1rem; color:var(--text-light);">
             <i class="bi bi-inbox" style="font-size:3rem; display:block; margin-bottom:.75rem;"></i>
-            <p style="font-size:1rem; margin:0; color:var(--text-mid);">Không tìm thấy khóa học nào</p>
+            <p style="font-size:1rem; margin:0; color:var(--text-mid);">@L["Course_NoResults"]</p>
         </div>
     }
     else
@@ -396,11 +397,11 @@ else
                         }
                         @if (!item.IsActive)
                         {
-                            <span class="ci-closed-badge">ĐÃ ĐÓNG</span>
+                            <span class="ci-closed-badge">@L["Crs_ClosedBadge"]</span>
                         }
                         @if (isEnrolled)
                         {
-                            <span class="ci-enrolled-badge"><i class="bi bi-check-lg"></i> Đã đăng ký</span>
+                            <span class="ci-enrolled-badge"><i class="bi bi-check-lg"></i> @L["Crs_EnrolledBadge"]</span>
                         }
                     </div>
 
@@ -417,7 +418,7 @@ else
                                 @LevelLabel(item.Level)
                             </span>
                             <span class="ci-credits">
-                                <i class="bi bi-journal-bookmark me-1"></i>@item.Credits tín chỉ
+                                <i class="bi bi-journal-bookmark me-1"></i>@item.Credits @L["Crs_Credits"]
                             </span>
                         </div>
                     </div>
@@ -426,7 +427,7 @@ else
                     <div class="ci-footer">
                         @if (item.Fee == 0)
                         {
-                            <span class="ci-price-free">Miễn phí</span>
+                            <span class="ci-price-free">@L["Course_Free"]</span>
                         }
                         else
                         {
@@ -435,7 +436,7 @@ else
                             </span>
                         }
                         <span class="ci-cta">
-                            Xem chi tiết <i class="bi bi-arrow-right"></i>
+                            @L["Course_ViewDetail"] <i class="bi bi-arrow-right"></i>
                         </span>
                     </div>
                 </a>
@@ -445,8 +446,8 @@ else
         <!-- Phân trang -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; flex-wrap:wrap; gap:.5rem;">
             <span style="font-size:.8rem; color:var(--text-light);">
-                Trang @Model.PageNumber / @Model.PageCount
-                &nbsp;·&nbsp; Tổng <strong style="color:var(--text-dark);">@Model.TotalItemCount</strong> khóa học
+                @L["Mod_Page"] @Model.PageNumber / @Model.PageCount
+                &nbsp;·&nbsp; @L["Adm_Total"] <strong style="color:var(--text-dark);">@Model.TotalItemCount</strong> @L["Crs_TotalCourses"]
             </span>
             @Html.PagedListPager(Model,
             page => Url.Action("Index", new { page, searchTerm = ViewData["SearchTerm"], level = ViewData["Level"], sort = ViewData["Sort"] }),

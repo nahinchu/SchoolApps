@@ -1,6 +1,6 @@
 @model List<SchoolApp.Models.Notification>
 @{
-    ViewData["Title"] = "Thông báo";
+    ViewData["Title"] = L["Notif_Title"].Value;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var unreadCount = Model.Count(n => !n.IsRead);
 }
@@ -8,23 +8,23 @@
 <div style="max-width:720px; margin:2rem auto;">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:.75rem;">
         <h2 style="color:var(--gold-light); margin:0;">
-            <i class="bi bi-bell-fill"></i> Thông báo
+            <i class="bi bi-bell-fill"></i> @L["Notif_Title"]
             @if (unreadCount > 0)
             {
                 <span style="display:inline-block; margin-left:.4rem; padding:.1rem .5rem; background:var(--gold); color:#0d1b2a; border-radius:20px; font-size:.65rem; font-weight:800; vertical-align:middle;">
-                    @unreadCount mới
+                    @unreadCount @L["Notif_NewCount"]
                 </span>
             }
         </h2>
         <div style="display:flex; align-items:center; gap:.5rem;">
-            <span style="font-size:.85rem; color:rgba(255,255,255,.45);">@Model.Count thông báo</span>
+            <span style="font-size:.85rem; color:rgba(255,255,255,.45);">@Model.Count @L["Notif_TotalCount"]</span>
             @if (unreadCount > 0)
             {
                 <button id="btnMarkAllRead" style="
                     padding:.35rem .85rem; border-radius:var(--radius-sm); border:1px solid rgba(201,168,76,.4);
                     background:rgba(201,168,76,.1); color:var(--gold-light); font-size:.8rem; font-weight:600;
                     cursor:pointer; transition:all .2s;">
-                    <i class="bi bi-check2-all me-1"></i> Đánh dấu tất cả đã đọc
+                    <i class="bi bi-check2-all me-1"></i> @L["Notif_MarkAllRead"]
                 </button>
             }
         </div>
@@ -36,7 +36,7 @@
     {
         <div style="text-align:center; padding:4rem 2rem; background:var(--navy-light); border-radius:16px; border:1px solid rgba(255,255,255,.08);">
             <i class="bi bi-bell-slash" style="font-size:3rem; color:rgba(255,255,255,.2); display:block; margin-bottom:1rem;"></i>
-            <p style="color:rgba(255,255,255,.4); margin:0;">Bạn chưa có thông báo nào</p>
+            <p style="color:rgba(255,255,255,.4); margin:0;">@L["Notif_None"]</p>
         </div>
     }
     else
@@ -71,7 +71,7 @@
                                 @if (!string.IsNullOrEmpty(n.Link))
                                 {
                                     <a href="@n.Link" style="font-size:.8rem; color:var(--gold-light); text-decoration:none;">
-                                        Xem chi tiết <i class="bi bi-arrow-right"></i>
+                                        @L["Notif_ViewDetail"] <i class="bi bi-arrow-right"></i>
                                     </a>
                                 }
                             </div>
@@ -85,20 +85,21 @@
 
 @section Scripts {
     <script>
+        var _notifProcessing = '<span class="spinner-border spinner-border-sm me-1"></span> @L["Notif_Processing"]';
+        var _notifMarkAllRead = '<i class="bi bi-check2-all me-1"></i> @L["Notif_MarkAllRead"]';
+
         $('#btnMarkAllRead').on('click', function () {
             var btn = $(this);
             var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
-            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...');
+            btn.prop('disabled', true).html(_notifProcessing);
             $.ajax({
                 url: '@Url.Action("MarkAllRead", "Notification")',
                 type: 'POST',
                 data: { __RequestVerificationToken: token },
                 success: function (res) {
                     if (res.success) {
-                        // Xoá badge "mới" và ẩn button
                         btn.closest('div').find('span[style*="font-size:.65rem"]').remove();
                         btn.remove();
-                        // Cập nhật visual: xoá gold border + dot indicator
                         $('#notifList > div').each(function () {
                             $(this).css({ 'border': '1px solid rgba(255,255,255,.08)', 'box-shadow': 'none' });
                             $(this).find('span[style*="border-radius:50%"]').remove();
@@ -110,7 +111,7 @@
                     }
                 },
                 error: function () {
-                    btn.prop('disabled', false).html('<i class="bi bi-check2-all me-1"></i> Đánh dấu tất cả đã đọc');
+                    btn.prop('disabled', false).html(_notifMarkAllRead);
                 }
             });
         });

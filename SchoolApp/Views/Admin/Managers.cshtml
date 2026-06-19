@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<SchoolApp.Models.User>
 @{
-    ViewData["Title"] = "Quản lý Manager";
+    ViewData["Title"] = L["Nav_ManageManagers"];
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -91,19 +91,19 @@
 <!-- ── PAGE HEADER ─────────────────────────────────────────── -->
 <div class="adm-page-header">
     <div>
-        <div class="adm-page-title">Quản lý <span>Manager</span></div>
-        <div class="adm-page-sub">Tạo và quản lý tài khoản quản lý nội dung hệ thống</div>
+        <div class="adm-page-title">@L["Footer_Manage"] <span>Manager</span></div>
+        <div class="adm-page-sub">@L["Adm_ManagerSub"]</div>
     </div>
 </div>
 
 <!-- ── FORM TẠO MANAGER ────────────────────────────────────── -->
 <div class="adm-card">
-    <div class="adm-card-title"><i class="bi bi-person-plus-fill"></i> Tạo tài khoản Manager mới</div>
+    <div class="adm-card-title"><i class="bi bi-person-plus-fill"></i> @L["Adm_CreateManagerTitle"]</div>
     <form asp-action="CreateManager" asp-controller="Admin" method="post">
         @Html.AntiForgeryToken()
         <div class="adm-form-grid">
             <div class="adm-form-group">
-                <label class="adm-form-label">Họ và tên *</label>
+                <label class="adm-form-label">@L["Adm_FullName"] *</label>
                 <input name="FullName" class="adm-input" placeholder="Nguyễn Văn A" required minlength="2" maxlength="100" />
             </div>
             <div class="adm-form-group">
@@ -111,16 +111,16 @@
                 <input name="Email" type="email" class="adm-input" placeholder="manager@school.vn" required maxlength="150" />
             </div>
             <div class="adm-form-group">
-                <label class="adm-form-label">Mật khẩu *</label>
-                <input name="Password" type="password" class="adm-input" placeholder="Tối thiểu 6 ký tự" required minlength="6" />
+                <label class="adm-form-label">@L["Adm_Password"] *</label>
+                <input name="Password" type="password" class="adm-input" placeholder="@L["Register_PasswordPlaceholder"]" required minlength="6" />
             </div>
             <div class="adm-form-group">
-                <label class="adm-form-label">Số điện thoại</label>
+                <label class="adm-form-label">@L["Adm_Phone"]</label>
                 <input name="Phone" class="adm-input" placeholder="0901234567" maxlength="15" />
             </div>
             <div class="adm-form-group full" style="align-items:flex-start;">
                 <button type="submit" class="adm-btn-create">
-                    <i class="bi bi-plus-circle"></i> Tạo tài khoản Manager
+                    <i class="bi bi-plus-circle"></i> @L["Adm_CreateManagerBtn"]
                 </button>
             </div>
         </div>
@@ -131,14 +131,14 @@
 <div class="adm-card">
     <div class="adm-card-title">
         <i class="bi bi-people-fill"></i>
-        Danh sách Manager (@Model.Count() tài khoản)
+        @L["Adm_ManagerListTitle"] (@Model.Count() @L["Adm_Accounts"])
     </div>
 
     @if (!Model.Any())
     {
         <div class="adm-empty">
             <i class="bi bi-person-x" style="font-size:2.5rem;display:block;margin-bottom:8px;"></i>
-            Chưa có tài khoản Manager nào.
+            @L["Adm_NoManagers"]
         </div>
     }
     else
@@ -148,11 +148,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Họ và tên</th>
+                        <th>@L["Adm_FullName"]</th>
                         <th>Email</th>
-                        <th>Số điện thoại</th>
-                        <th>Ngày tạo</th>
-                        <th>Thao tác</th>
+                        <th>@L["Adm_Phone"]</th>
+                        <th>@L["Adm_ColCreatedDate"]</th>
+                        <th>@L["Adm_ColActions"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -170,14 +170,14 @@
                             <td style="white-space:nowrap;">
                                 <button type="button" class="adm-btn-edit"
                                         onclick="openEditModal(@m.UserId)">
-                                    <i class="bi bi-pencil"></i> Sửa
+                                    <i class="bi bi-pencil"></i> @L["Btn_Edit"]
                                 </button>
                                 <form asp-action="DeleteManager" asp-controller="Admin" method="post" style="display:inline;"
-                                      onsubmit="return confirm('Xóa tài khoản Manager @m.FullName?')">
+                                      onsubmit="return confirm('@L["Adm_DeleteConfirm"] @m.FullName?')">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="id" value="@m.UserId" />
                                     <button type="submit" class="adm-btn-del">
-                                        <i class="bi bi-trash"></i> Xóa
+                                        <i class="bi bi-trash"></i> @L["Btn_Delete"]
                                     </button>
                                 </form>
                             </td>
@@ -196,7 +196,7 @@
         <div class="modal-content" style="background:#0d1b2a; border:1px solid rgba(255,255,255,.1); border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.5);">
             <div class="modal-header" style="background:linear-gradient(135deg,#14233d,#1e3356); border-bottom:1px solid rgba(255,255,255,.08); padding:1.25rem 1.5rem;">
                 <h5 style="font-size:1.05rem; font-weight:700; color:#c9a84c; margin:0;">
-                    <i class="bi bi-pencil-square me-2"></i>Sửa thông tin Manager
+                    <i class="bi bi-pencil-square me-2"></i>@L["Adm_EditManagerTitle"]
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -207,18 +207,18 @@
                     <input type="hidden" id="editUserId" name="userId" />
                     <div class="adm-form-grid">
                         <div class="adm-form-group full">
-                            <label class="adm-form-label">Email (không thể thay đổi)</label>
+                            <label class="adm-form-label">@L["Adm_EmailReadOnly"]</label>
                             <input id="editEmail" class="adm-input" readonly
                                    style="background:rgba(255,255,255,.04); color:rgba(255,255,255,.4); cursor:default;" />
                         </div>
                         <div class="adm-form-group full">
-                            <label class="adm-form-label">Họ và tên *</label>
+                            <label class="adm-form-label">@L["Adm_FullName"] *</label>
                             <input id="editFullName" name="fullName" class="adm-input"
                                    placeholder="Nguyễn Văn A" maxlength="100" />
                             <div id="err-fullName" style="color:#f85149; font-size:.75rem; margin-top:.25rem;"></div>
                         </div>
                         <div class="adm-form-group full">
-                            <label class="adm-form-label">Số điện thoại</label>
+                            <label class="adm-form-label">@L["Adm_Phone"]</label>
                             <input id="editPhone" name="phone" class="adm-input"
                                    placeholder="0901234567" maxlength="15" />
                         </div>
@@ -228,10 +228,10 @@
             <div class="modal-footer" style="border-top:1px solid rgba(255,255,255,.08); padding:1rem 1.5rem; background:rgba(255,255,255,.02);">
                 <button type="button" class="adm-btn adm-btn-sm" data-bs-dismiss="modal"
                         style="background:rgba(255,255,255,.07); color:rgba(255,255,255,.6); border:1px solid rgba(255,255,255,.12);">
-                    Hủy
+                    @L["Btn_Cancel"]
                 </button>
                 <button type="button" id="btnSaveManager" class="adm-btn-create" style="margin-top:0;">
-                    <i class="bi bi-check-lg me-1"></i> Lưu
+                    <i class="bi bi-check-lg me-1"></i> @L["Btn_Save"]
                 </button>
             </div>
         </div>
@@ -241,11 +241,12 @@
 @section Scripts {
     <form id="antiForgeryForm">@Html.AntiForgeryToken()</form>
     <script>
+        var _admLoading = '@L["Adm_Loading"]';
         function openEditModal(id) {
             $('#editManagerResult').html('');
             $('#err-fullName').text('');
             $('#editFullName').val('');
-            $('#editEmail').val('Đang tải...');
+            $('#editEmail').val(_admLoading);
             $('#editPhone').val('');
             $('#editManagerModal').modal('show');
 
@@ -256,7 +257,7 @@
                 $('#editPhone').val(data.phone);
             }).fail(function () {
                 $('#editManagerModal').modal('hide');
-                alert('Không thể tải thông tin Manager!');
+                alert('@L["Adm_LoadError"]');
             });
         }
 
@@ -267,11 +268,11 @@
 
             var fullName = $('#editFullName').val().trim();
             if (fullName.length < 2) {
-                $('#err-fullName').text('Họ và tên phải có ít nhất 2 ký tự.');
+                $('#err-fullName').text('@L["Adm_FullNameMin"]');
                 return;
             }
 
-            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...');
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span> @L["Adm_Saving"]');
 
             var token = $('input[name="__RequestVerificationToken"]').first().val();
             $.ajax({
@@ -284,10 +285,9 @@
                     __RequestVerificationToken: token
                 },
                 success: function (res) {
-                    btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> Lưu');
+                    btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> @L["Btn_Save"]');
                     if (res.success) {
                         $('#editManagerModal').modal('hide');
-                        // Reload trang để cập nhật bảng
                         location.reload();
                     } else {
                         $('#editManagerResult').html(
@@ -297,8 +297,8 @@
                     }
                 },
                 error: function () {
-                    btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> Lưu');
-                    alert('Lỗi server. Vui lòng thử lại.');
+                    btn.prop('disabled', false).html('<i class="bi bi-check-lg me-1"></i> @L["Btn_Save"]');
+                    alert('@L["Adm_ServerError"]');
                 }
             });
         });

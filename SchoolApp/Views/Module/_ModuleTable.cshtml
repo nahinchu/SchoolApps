@@ -1,18 +1,19 @@
-﻿@using X.PagedList
+@using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Module>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 
 <div class="adm-table-wrap">
     <table class="adm-table adm-table-bordered">
         <thead>
             <tr>
                 <th style="width:36px;"></th>
-                <th class="text-center" style="width:60px;">STT</th>
-                <th>Tên chương</th>
-                <th>Mô tả</th>
-                <th class="text-center">Trạng thái</th>
-                <th class="text-center" style="width:110px;">Bài học</th>
-                <th style="width:260px;">Thao tác</th>
+                <th class="text-center" style="width:60px;">#</th>
+                <th>@L["Mod_ColChapterName"]</th>
+                <th>@L["Mod_ColDescription"]</th>
+                <th class="text-center">@L["Mod_ColStatus"]</th>
+                <th class="text-center" style="width:110px;">@L["Mod_ColLessons"]</th>
+                <th style="width:260px;">@L["Mod_ColActions"]</th>
             </tr>
         </thead>
         <tbody id="moduleTableBody">
@@ -22,7 +23,7 @@
                 <tr>
                     <td colspan="7" style="text-align:center; padding:2.5rem; color:rgba(255,255,255,0.3);">
                         <i class="bi bi-folder-x" style="font-size:2rem; display:block; margin-bottom:.5rem;"></i>
-                        Chưa có chương nào trong khóa học này.
+                        @L["Mod_NoChapters"]
                     </td>
                 </tr>
             }
@@ -43,24 +44,24 @@
                             }
                             else
                             {
-                                <span style="color:rgba(255,255,255,0.25); font-style:italic; font-size:.82rem;">Không có mô tả</span>
+                                <span style="color:rgba(255,255,255,0.25); font-style:italic; font-size:.82rem;">@L["Mod_NoDescription"]</span>
                             }
                         </td>
                         <td class="text-center">
                             @if (item.IsPublished)
                             {
-                                <span class="adm-badge adm-badge-success">Đang mở</span>
+                                <span class="adm-badge adm-badge-success">@L["Mod_StatusOpen"]</span>
                             }
                             else
                             {
-                                <span class="adm-badge" style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.4);">Ẩn</span>
+                                <span class="adm-badge" style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.4);">@L["Mod_StatusHidden"]</span>
                             }
                         </td>
                         <td class="text-center" style="font-weight:700;">@item.Lessons.Count</td>
                         <td style="white-space:nowrap;">
                             <button type="button" class="adm-btn adm-btn-warning adm-btn-sm me-1"
                                     onclick="openEditModal(@item.ModuleId)">
-                                <i class="bi bi-pencil"></i> Sửa
+                                <i class="bi bi-pencil"></i> @L["Btn_Edit"]
                             </button>
                             <button type="button" class="adm-btn adm-btn-danger adm-btn-sm me-1 btn-delete-module"
                                     data-id="@item.ModuleId">
@@ -68,7 +69,7 @@
                             </button>
                             <a asp-controller="Lesson" asp-action="Index" asp-route-moduleId="@item.ModuleId"
                                class="adm-btn adm-btn-info adm-btn-sm">
-                                <i class="bi bi-list-ul"></i> Bài học
+                                <i class="bi bi-list-ul"></i> @L["Mod_Lessons"]
                             </a>
                         </td>
                     </tr>
@@ -79,8 +80,8 @@
 </div>
 <div class="d-flex justify-content-between align-items-center mt-3">
     <span style="color:rgba(255,255,255,0.45); font-size:.82rem;">
-        Trang @Model.PageNumber / @Model.PageCount
-        (Tổng: @Model.TotalItemCount chương)
+        @L["Mod_Page"] @Model.PageNumber / @Model.PageCount
+        (@L["Adm_Total"]: @Model.TotalItemCount @L["Mod_TotalChapters"])
     </span>
     @Html.PagedListPager(Model, page => Url.Action("Index", new {
     courseId = ViewData["CourseId"],

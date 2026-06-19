@@ -3,7 +3,7 @@
 @model Quiz
 
 @{
-    ViewData["Title"] = "Làm bài kiểm tra";
+    ViewData["Title"] = L["Qt_Title"].Value;
     int attemptCount = (int)(ViewData["AttemptCount"] ?? 0);
     int attemptsRemaining = (int)(ViewData["AttemptsRemaining"] ?? -1);
 }
@@ -281,19 +281,19 @@
                 <div class="qt-header-desc">@Model.Description</div>
             }
             <div class="qt-meta">
-                <span><i class="bi bi-list-check"></i>@Model.Questions.Count câu hỏi</span>
+                <span><i class="bi bi-list-check"></i>@Model.Questions.Count @L["Lrn_QuestionSuffix"]</span>
                 @if (Model.TimeLimitMinutes > 0)
                 {
-                    <span><i class="bi bi-clock"></i>@Model.TimeLimitMinutes phút</span>
+                    <span><i class="bi bi-clock"></i>@Model.TimeLimitMinutes @L["Qt_MinUnit"]</span>
                 }
-                <span><i class="bi bi-trophy"></i>Đạt: @Model.PassingScore%</span>
+                <span><i class="bi bi-trophy"></i>@L["Qt_Passing"] @Model.PassingScore%</span>
                 @if (attemptsRemaining > 0)
                 {
-                    <span><i class="bi bi-arrow-repeat"></i>Còn @attemptsRemaining lượt</span>
+                    <span><i class="bi bi-arrow-repeat"></i>@L["Adm_Remaining"] @attemptsRemaining @L["Qt_AttemptsLeft"]</span>
                 }
                 else if (attemptsRemaining == -1 && Model.AllowRetry)
                 {
-                    <span><i class="bi bi-arrow-repeat"></i>Không giới hạn lượt</span>
+                    <span><i class="bi bi-arrow-repeat"></i>@L["Qt_Unlimited"]</span>
                 }
             </div>
         </div>
@@ -315,13 +315,13 @@
             var inputType = isMulti ? "checkbox" : "radio";
 
             <div class="qt-question question-block" data-question-id="@q.QuestionId" data-question-type="@((int)q.Type)">
-                <div class="qt-q-num">Câu @q.OrderIndex</div>
+                <div class="qt-q-num">@L["Qt_QuestionLabel"] @q.OrderIndex</div>
                 <div class="qt-q-content">@q.Content</div>
                 <div class="qt-q-badges">
-                    <span class="qt-badge qt-badge-pts"><i class="bi bi-star-fill"></i>@q.Points điểm</span>
+                    <span class="qt-badge qt-badge-pts"><i class="bi bi-star-fill"></i>@q.Points @L["Qt_PointsUnit"]</span>
                     @if (isMulti)
                     {
-                        <span class="qt-badge qt-badge-multi"><i class="bi bi-check2-all"></i>Chọn nhiều đáp án</span>
+                        <span class="qt-badge qt-badge-multi"><i class="bi bi-check2-all"></i>@L["Qt_MultiSelectHint"]</span>
                     }
                 </div>
 
@@ -345,17 +345,17 @@
 @* ---- Sticky footer ---- *@
 <div class="qt-footer">
     <div class="qt-progress-text">
-        <strong id="answeredCount">0</strong> / @Model.Questions.Count câu đã trả lời
+        <strong id="answeredCount">0</strong> / @Model.Questions.Count @L["Qt_AnsweredSuffix"]
         <span id="autosaveStatus" class="qt-autosave ms-3">
-            <i class="bi bi-cloud-check"></i> Đã lưu nháp
+            <i class="bi bi-cloud-check"></i> @L["Qt_DraftSaved"]
         </span>
     </div>
     <div style="display:flex; gap:.6rem; align-items:center;">
         <button type="button" class="qt-btn-clear" onclick="clearDraft()">
-            <i class="bi bi-eraser"></i> Xoá nháp
+            <i class="bi bi-eraser"></i> @L["Qt_ClearDraft"]
         </button>
         <button type="button" id="btnSubmitQuiz" class="qt-btn-submit" onclick="submitQuiz(@Model.QuizId)">
-            <i class="bi bi-check-circle-fill"></i> Nộp bài
+            <i class="bi bi-check-circle-fill"></i> @L["Qt_Submit"]
         </button>
     </div>
 </div>
@@ -367,6 +367,17 @@
         const TOTAL_QUESTIONS = @Model.Questions.Count;
         const DRAFT_KEY = `quiz_draft_${QUIZ_ID}`;
         const START_KEY = `quiz_start_${QUIZ_ID}`;
+
+        var _qtNoAnswers        = '@L["Qt_NoAnswers"]';
+        var _qtUnansweredSuffix = '@L["Qt_UnansweredSuffix"]';
+        var _qtSubmitConfirm    = '@L["Qt_SubmitConfirm"]';
+        var _qtSubmitting       = '<span class="spinner-border spinner-border-sm"></span> @L["Qt_Submitting"]';
+        var _qtSubmitBtn        = '<i class="bi bi-check-circle-fill"></i> @L["Qt_Submit"]';
+        var _qtConnError        = '@L["Qt_ConnError"]';
+        var _qtTimeUp           = '@L["Qt_TimeUp"]';
+        var _qtClearConfirm     = '@L["Qt_ClearConfirm"]';
+        var _qtDraftCleared     = '@L["Qt_DraftCleared"]';
+        var _qtDraftSuffix      = '@L["Qt_DraftRestoredSuffix"]';
 
         let submitted = false;
         let timerInterval = null;
@@ -463,19 +474,19 @@
                     });
                 });
                 if (restored > 0) {
-                    showToast('Đã khôi phục ' + restored + ' đáp án từ lần làm trước', 'success');
+                    showToast(restored + ' ' + _qtDraftSuffix, 'success');
                     updateAnsweredCount();
                 }
             } catch (e) {}
         }
 
         function clearDraft() {
-            if (!confirm('Xoá toàn bộ đáp án đã chọn?')) return;
+            if (!confirm(_qtClearConfirm)) return;
             document.querySelectorAll('.quiz-option').forEach(function (i) { i.checked = false; });
             document.querySelectorAll('.qt-option').forEach(function (l) { l.classList.remove('selected'); });
             localStorage.removeItem(DRAFT_KEY);
             updateAnsweredCount();
-            showToast('Đã xoá nháp', 'success');
+            showToast(_qtDraftCleared, 'success');
         }
 
         // ---- Timer ----
@@ -498,7 +509,7 @@
                     disp.textContent = '00:00';
                     box.className = 'qt-timer danger';
                     if (!submitted) {
-                        showToast('Hết giờ! Đang tự động nộp bài...', 'danger');
+                        showToast(_qtTimeUp, 'danger');
                         setTimeout(function () { submitQuiz(QUIZ_ID, true); }, 1200);
                     }
                     return;
@@ -522,18 +533,18 @@
             const answeredCount = Object.keys(answers).length;
 
             if (!autoSubmit) {
-                if (answeredCount === 0) { showToast('Bạn chưa trả lời câu nào!', 'danger'); return; }
+                if (answeredCount === 0) { showToast(_qtNoAnswers, 'danger'); return; }
                 const unanswered = TOTAL_QUESTIONS - answeredCount;
                 const msg = unanswered > 0
-                    ? 'Bạn còn ' + unanswered + ' câu chưa trả lời. Nộp bài ngay?'
-                    : 'Bạn chắc chắn muốn nộp bài?';
+                    ? unanswered + ' ' + _qtUnansweredSuffix
+                    : _qtSubmitConfirm;
                 if (!confirm(msg)) return;
             }
 
             submitted = true;
             const btn = document.getElementById('btnSubmitQuiz');
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang nộp...';
+            btn.innerHTML = _qtSubmitting;
 
             fetch('@Url.Action("SubmitQuiz", "Quiz")', {
                 method: 'POST',
@@ -553,15 +564,15 @@
                 } else {
                     submitted = false;
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Nộp bài';
-                    showToast(res.message || 'Có lỗi xảy ra', 'danger');
+                    btn.innerHTML = _qtSubmitBtn;
+                    showToast(res.message || _qtConnError, 'danger');
                 }
             })
             .catch(function () {
                 submitted = false;
                 btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-check-circle-fill"></i> Nộp bài';
-                showToast('Lỗi kết nối khi nộp bài. Vui lòng thử lại.', 'danger');
+                btn.innerHTML = _qtSubmitBtn;
+                showToast(_qtConnError, 'danger');
             });
         }
 

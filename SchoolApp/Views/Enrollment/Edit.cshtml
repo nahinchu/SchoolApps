@@ -1,18 +1,18 @@
-﻿@model SchoolApp.Models.Enrollment
+@model SchoolApp.Models.Enrollment
 @{
-    ViewData["Title"] = "Sửa ghi chú";
+    ViewData["Title"] = L["Enr_EditTitle"].Value;
 }
 
-<h2>Sửa ghi chú đăng ký</h2>
+<h2>@L["Enr_EditHeading"]</h2>
 <hr />
 
 <div class="row">
     <div class="col-md-8">
         <div class="card mb-3">
             <div class="card-body">
-                <p><strong>Học viên:</strong> @Model.User?.FullName</p>
-                <p><strong>Khóa học:</strong> @Model.Course?.CourseName</p>
-                <p class="mb-0"><strong>Ngày đăng ký:</strong> @Model.EnrollDate.ToString("dd/MM/yyyy")</p>
+                <p><strong>@L["Enr_ColStudent"]:</strong> @Model.User?.FullName</p>
+                <p><strong>@L["Enr_ColCourse"]:</strong> @Model.Course?.CourseName</p>
+                <p class="mb-0"><strong>@L["Enr_ColEnrollDate"]:</strong> @Model.EnrollDate.ToString("dd/MM/yyyy")</p>
             </div>
         </div>
 
@@ -30,8 +30,8 @@
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-success">Lưu</button>
-            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            <button type="submit" class="btn btn-success">@L["Btn_Save"]</button>
+            <a asp-action="Index" class="btn btn-secondary">@L["Btn_Cancel"]</a>
         </form>
     </div>
 </div>

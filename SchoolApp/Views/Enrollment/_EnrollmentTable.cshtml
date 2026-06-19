@@ -1,6 +1,7 @@
 @using X.PagedList
 @using X.PagedList.Mvc.Core
 @model IPagedList<SchoolApp.Models.Enrollment>
+@inject Microsoft.Extensions.Localization.IStringLocalizer<SchoolApp.Resources.MyLanguage> L
 @{
     var searchTerm = ViewData["SearchTerm"] as string;
     var status = ViewData["Status"] as string ?? "";
@@ -11,11 +12,11 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Học viên</th>
-                <th>Khóa học</th>
-                <th>Ngày đăng ký</th>
-                <th class="text-center">Trạng thái</th>
-                <th class="text-center">Thao tác</th>
+                <th>@L["Enr_ColStudent"]</th>
+                <th>@L["Enr_ColCourse"]</th>
+                <th>@L["Enr_ColEnrollDate"]</th>
+                <th class="text-center">@L["Enr_ColStatus"]</th>
+                <th class="text-center">@L["Enr_ColActions"]</th>
             </tr>
         </thead>
         <tbody>
@@ -24,7 +25,7 @@
                 <tr>
                     <td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:2rem;">
                         <i class="bi bi-inbox" style="font-size:1.5rem; display:block; margin-bottom:.4rem;"></i>
-                        Không có đăng ký nào
+                        @L["Enr_NoEnrollments"]
                     </td>
                 </tr>
             }
@@ -45,7 +46,7 @@
                             @if (e.IsCompleted)
                             {
                                 <span style="display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; background:rgba(76,175,80,.18); color:#4caf50; border:1px solid rgba(76,175,80,.4);">
-                                    <i class="bi bi-check-circle-fill"></i> Hoàn thành
+                                    <i class="bi bi-check-circle-fill"></i> @L["Enr_BadgeCompleted"]
                                 </span>
                                 @if (e.CompletedAt.HasValue)
                                 {
@@ -57,7 +58,7 @@
                             else
                             {
                                 <span style="display:inline-flex; align-items:center; gap:.3rem; padding:.2rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; background:rgba(33,150,243,.15); color:#42a5f5; border:1px solid rgba(33,150,243,.35);">
-                                    <i class="bi bi-play-circle"></i> Đang học
+                                    <i class="bi bi-play-circle"></i> @L["Enr_BadgeInProgress"]
                                 </span>
                             }
                         </td>
@@ -65,7 +66,7 @@
                             <button type="button"
                                     class="adm-btn adm-btn-danger adm-btn-sm btn-delete-enrollment"
                                     data-id="@e.EnrollmentId">
-                                <i class="bi bi-trash"></i> Xóa
+                                <i class="bi bi-trash"></i> @L["Btn_Delete"]
                             </button>
                         </td>
                     </tr>
@@ -78,8 +79,8 @@
 
 <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1rem; flex-wrap:wrap; gap:.5rem;">
     <span style="font-size:.8rem; color:rgba(255,255,255,.4);">
-        Trang @Model.PageNumber / @Model.PageCount
-        &nbsp;·&nbsp; Tổng <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> đăng ký
+        @L["Enr_Page"] @Model.PageNumber / @Model.PageCount
+        &nbsp;·&nbsp; @L["Adm_Total"] <strong style="color:rgba(255,255,255,.6);">@Model.TotalItemCount</strong> @L["Enr_Enrollments"]
     </span>
     @Html.PagedListPager(Model,
     page => Url.Action("Index", new { page, searchTerm, status }),

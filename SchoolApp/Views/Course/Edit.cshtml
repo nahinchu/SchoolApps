@@ -1,6 +1,6 @@
-﻿@model SchoolApp.Models.Course
+@model SchoolApp.Models.Course
 @{
-    ViewData["Title"] = "Sửa khóa học";
+    ViewData["Title"] = L["Crs_EditTitle"].Value;
 }
 
 <style>
@@ -20,7 +20,7 @@
 </style>
 
 <div class="container mt-4" style="max-width:700px">
-    <h2 class="mb-4">✏️ Sửa khóa học</h2>
+    <h2 class="mb-4">✏️ @L["Crs_EditHeading"]</h2>
 
     <form asp-action="Edit" method="post">
         @Html.AntiForgeryToken()
@@ -33,7 +33,7 @@
                 <span class="required-star">*</span>
             </label>
             <input asp-for="CourseName" class="form-control"
-                   placeholder="Nhập tên khóa học (3–200 ký tự)" />
+                   placeholder="@L["Crs_CourseNamePlaceholder"]" />
             <span asp-validation-for="CourseName" class="field-validation-error"></span>
         </div>
 
@@ -42,7 +42,7 @@
                 @Html.DisplayNameFor(m => m.Description)
             </label>
             <textarea asp-for="Description" class="form-control" rows="3"
-                      placeholder="Mô tả khóa học (tối đa 1000 ký tự)..."></textarea>
+                      placeholder="@L["Crs_DescriptionPh"]"></textarea>
             <span asp-validation-for="Description" class="field-validation-error"></span>
         </div>
 
@@ -76,8 +76,8 @@
         </div>
 
         <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">💾 Cập nhật</button>
-            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            <button type="submit" class="btn btn-primary">💾 @L["Btn_Update"]</button>
+            <a asp-action="Index" class="btn btn-secondary">@L["Btn_Cancel"]</a>
         </div>
     </form>
 </div>

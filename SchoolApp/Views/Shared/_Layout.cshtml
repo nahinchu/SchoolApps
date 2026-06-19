@@ -3,14 +3,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SchoolApp – Nền tảng quản lý học tập hiện đại" />
+    <meta name="description" content="@L["Nav_MetaDesc"]" />
     <title>@ViewData["Title"] - SchoolApp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
     <link href="~/css/Schoolapp.css" rel="stylesheet" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
@@ -22,32 +21,32 @@
     {
         <div class="sa-admin-bar">
             <i class="bi bi-shield-fill-check"></i>
-            Bạn đang đăng nhập với quyền <strong>Quản trị hệ thống</strong>
-            — <a href="/Admin/Dashboard" style="color:#c9a84c;">Vào Dashboard</a>
+            @Html.Raw(L["Nav_AdminBarAdmin"])
+            — <a href="/Admin/Dashboard" style="color:#c9a84c;">@L["Nav_AdminBarDashboard"]</a>
         </div>
     }
     else if (_topRole == "Manager")
     {
         <div class="sa-admin-bar" style="background:linear-gradient(135deg,#1a3a52,#0d2b3e);">
             <i class="bi bi-person-gear"></i>
-            Bạn đang đăng nhập với quyền <strong>Quản lý nội dung</strong>
+            @Html.Raw(L["Nav_AdminBarManager"])
         </div>
     }
     <header class="sa-header" id="sa-header">
         <div class="container">
-            <a class="sa-brand" asp-controller="Home" asp-action="Index" aria-label="SchoolApp - Trang chủ">
+            <a class="sa-brand" asp-controller="Home" asp-action="Index" aria-label="@L["Nav_BrandAria"]">
                 <div class="sa-brand-icon">🎓</div>
                 <span class="sa-brand-name">School<span>App</span></span>
             </a>
 
-            <button class="sa-toggler" id="sa-toggler" aria-label="Mở menu" aria-expanded="false">
+            <button class="sa-toggler" id="sa-toggler" aria-label="@L["Nav_OpenMenu"]" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
 
             <div class="sa-nav-container" id="sa-nav-container">
-                <ul class="sa-nav" role="navigation" aria-label="Điều hướng chính">
+                <ul class="sa-nav" role="navigation" aria-label="@L["Nav_MainNav"]">
                     <li>
                         <a class="sa-nav-link" asp-controller="Course" asp-action="Index">
                             <i class="bi bi-book nav-icon"></i>
@@ -109,7 +108,7 @@
                     }
                 </ul>
 
-                <ul class="sa-user-section" aria-label="Tài khoản">
+                <ul class="sa-user-section" aria-label="@L["Nav_AccountMenu"]">
                     @{
                         var _currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
                         var _langFlags = new Dictionary<string, (string Flag, string Label)>
@@ -451,7 +450,7 @@
                             </li>
                             <li>
                                 <a href="#">
-                                    <i class="bi bi-geo-alt"></i> TP.Đà Nẵng, Việt Nam
+                                    <i class="bi bi-geo-alt"></i> @L["Nav_FooterAddress"]
                                 </a>
                             </li>
                         </ul>
@@ -528,6 +527,7 @@
         <form id="notifCsrfForm" style="display:none;">@Html.AntiForgeryToken()</form>
 
         <script>
+        var _noNotifications = '@L["Nav_NoNotifications"]';
         function getCsrfToken() {
             return document.querySelector('#notifCsrfForm input[name="__RequestVerificationToken"]')?.value ?? '';
         }
@@ -541,7 +541,7 @@
                 var list = document.getElementById('notifList');
                 if (!list) return;
                 if (!data.items || data.items.length === 0) {
-                    list.innerHTML = '<div style="padding:2rem; text-align:center; color:rgba(255,255,255,.35); font-size:.84rem;">Không có thông báo</div>';
+                    list.innerHTML = '<div style="padding:2rem; text-align:center; color:rgba(255,255,255,.35); font-size:.84rem;">' + _noNotifications + '</div>';
                     return;
                 }
                 list.innerHTML = data.items.map(function(n) {

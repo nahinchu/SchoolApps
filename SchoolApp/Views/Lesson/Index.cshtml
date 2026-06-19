@@ -1,20 +1,18 @@
-﻿@using X.PagedList
+@using X.PagedList
 @model IPagedList<SchoolApp.Models.Lesson>
 
 @{
-    ViewData["Title"] = "Quản lý Bài học";
+    ViewData["Title"] = L["Les_Title"].Value;
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var moduleId = ViewData["ModuleId"] != null ? (int)ViewData["ModuleId"] : 0;
-    var moduleName = ViewData["ModuleName"] as string ?? "Chương học";
+    var moduleName = ViewData["ModuleName"] as string ?? "";
     var courseId = ViewData["CourseId"] != null ? (int)ViewData["CourseId"] : 0;
 }
 
 @* ============================================================
-   ✅ FIX: Toggle "Công bố bài học" hiển thị xanh khi bật, xám khi tắt
-   (override custom CSS đang style nó màu đỏ trong scope toàn cục)
+   Fix: Toggle "Publish lesson" shows green when on, grey when off
    ============================================================ *@
 <style>
-    /* Quill editor inside modal */
     #lessonModal .ql-toolbar.ql-snow {
         border-radius: 6px 6px 0 0;
         background: #f8f9fa;
@@ -61,8 +59,8 @@
 
 <div class="adm-page-header">
     <div>
-        <div class="adm-page-title">📝 Bài học — <span>@moduleName</span></div>
-        <div class="adm-page-sub">Quản lý nội dung bài học trong chương</div>
+        <div class="adm-page-title">📝 @L["Les_PageTitle"] — <span>@moduleName</span></div>
+        <div class="adm-page-sub">@L["Les_Sub"]</div>
     </div>
 </div>
 
@@ -72,15 +70,15 @@
         <div style="position:relative; flex:1;">
             <i class="bi bi-search" style="position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--adm-text-dim); font-size:.85rem;"></i>
             <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]"
-                   class="adm-input" placeholder="Tìm bài học..."
+                   class="adm-input" placeholder="@L["Les_SearchPlaceholder"]"
                    style="padding-left:34px; border-radius:8px 0 0 8px;" />
         </div>
-        <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">Tìm</button>
+        <button type="submit" class="adm-btn adm-btn-primary" style="border-radius:0 8px 8px 0; padding:9px 18px; font-weight:600;">@L["Course_SearchBtn"]</button>
     </form>
 
     <button type="button" class="adm-btn adm-btn-primary" data-bs-toggle="modal" data-bs-target="#lessonModal"
             onclick="openCreateModal()">
-        <i class="bi bi-plus-circle me-1"></i> Thêm bài học mới
+        <i class="bi bi-plus-circle me-1"></i> @L["Les_AddNew"]
     </button>
 </div>
 
@@ -96,7 +94,7 @@
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%); color: var(--gold-light);">
-                <h5 id="lessonModalLabel">Thêm bài học mới</h5>
+                <h5 id="lessonModalLabel">@L["Les_ModalAddTitle"]</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -108,40 +106,40 @@
 
                     <div class="row">
                         <div class="col-md-8">
-                            <label class="sa-label">Tiêu đề <span style="color:red">*</span></label>
+                            <label class="sa-label">@L["Les_LessonTitle"] <span style="color:red">*</span></label>
                             <input type="text" id="Title" name="Title" class="sa-input" />
                             <div class="invalid-feedback" id="err-Title"></div>
                         </div>
                         <div class="col-md-4">
-                            <label class="sa-label">Loại bài học</label>
+                            <label class="sa-label">@L["Les_LessonType"]</label>
                             <select id="Type" name="Type" class="sa-input">
-                                <option value="0">Video</option>
-                                <option value="1">Bài viết</option>
-                                <option value="2">Kết hợp</option>
+                                <option value="0">@L["Les_TypeVideo"]</option>
+                                <option value="1">@L["Les_TypeText"]</option>
+                                <option value="2">@L["Les_TypeMixed"]</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <label class="sa-label">Video bài học</label>
+                            <label class="sa-label">@L["Les_VideoLesson"]</label>
                             <div class="btn-group w-100 mb-2" role="group">
                                 <input type="radio" class="btn-check" name="VideoInputMode" id="modeUrl" value="url" autocomplete="off" checked>
                                 <label class="btn btn-outline-secondary btn-sm" for="modeUrl">
-                                    <i class="bi bi-link-45deg"></i> Nhập URL
+                                    <i class="bi bi-link-45deg"></i> @L["Les_EnterUrl"]
                                 </label>
                                 <input type="radio" class="btn-check" name="VideoInputMode" id="modeFile" value="file" autocomplete="off">
                                 <label class="btn btn-outline-secondary btn-sm" for="modeFile">
-                                    <i class="bi bi-cloud-upload"></i> Upload video
+                                    <i class="bi bi-cloud-upload"></i> @L["Les_UploadVideo"]
                                 </label>
                             </div>
                             <div id="videoUrlSection">
-                                <input type="url" id="VideoUrl" name="VideoUrl" class="sa-input" placeholder="https://youtube.com/... hoặc https://vimeo.com/..." />
+                                <input type="url" id="VideoUrl" name="VideoUrl" class="sa-input" placeholder="@L["Les_VideoUrlPlaceholder"]" />
                             </div>
                             <div id="videoFileSection" style="display:none;">
                                 <input type="file" id="VideoFile" name="VideoFile" class="sa-input"
                                        accept=".mp4,.webm,.ogg,.mov" />
-                                <div class="form-text text-muted">Hỗ trợ: MP4, WebM, OGG, MOV. Tối đa 500MB.</div>
+                                <div class="form-text text-muted">@L["Les_VideoSupport"]</div>
                                 <div id="currentVideo" class="mt-2 p-2 bg-light border rounded" style="display:none;">
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-file-earmark-play-fill text-primary fs-5"></i>
@@ -149,54 +147,54 @@
                                     </div>
                                     <div class="form-check mt-1">
                                         <input type="checkbox" id="RemoveVideo" name="RemoveVideo" value="true" class="form-check-input" />
-                                        <label class="form-check-label text-danger small" for="RemoveVideo">Xóa video đã upload</label>
+                                        <label class="form-check-label text-danger small" for="RemoveVideo">@L["Les_RemoveVideo"]</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="sa-label">Thời lượng (phút)</label>
+                            <label class="sa-label">@L["Les_Duration"]</label>
                             <input type="number" id="DurationMinutes" name="DurationMinutes" class="sa-input" min="0" value="0" />
                         </div>
                         <div class="col-md-3">
-                            <label class="sa-label">Thứ tự</label>
+                            <label class="sa-label">@L["Les_OrderIndex"]</label>
                             <input type="number" id="OrderIndex" name="OrderIndex" class="sa-input" min="0" value="0" />
                         </div>
                     </div>
 
                     <div class="sa-form-group mt-3">
-                        <label class="sa-label">Nội dung bài viết</label>
+                        <label class="sa-label">@L["Les_Content"]</label>
                         <div id="quillEditor" style="height:260px; background:#fff; border-radius:0 0 6px 6px;"></div>
                         <textarea id="HtmlContent" name="HtmlContent" style="display:none;"></textarea>
                     </div>
 
                     <div class="sa-form-group mt-3">
-                        <label class="sa-label">Tệp đính kèm</label>
+                        <label class="sa-label">@L["Les_Attachment"]</label>
                         <input type="file" id="AttachmentFile" name="AttachmentFile" class="sa-input"
                                accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar,.mp4,.png,.jpg,.jpeg,.gif" />
-                        <div class="form-text text-muted">Hỗ trợ: PDF, Word, Excel, PowerPoint, ZIP, MP4, ảnh. Tối đa 50MB.</div>
+                        <div class="form-text text-muted">@L["Les_AttachmentSupport"]</div>
                         <div id="currentAttachment" class="mt-2" style="display:none;">
-                            <span class="text-muted">File hiện tại: </span>
+                            <span class="text-muted">@L["Les_CurrentFile"] </span>
                             <a id="currentAttachmentLink" href="#" target="_blank" class="text-primary fw-bold">
                                 <i class="bi bi-paperclip"></i> <span id="currentAttachmentName"></span>
                             </a>
                             <div class="form-check mt-1">
                                 <input type="checkbox" id="RemoveAttachment" name="RemoveAttachment" value="true" class="form-check-input" />
-                                <label class="form-check-label text-danger" for="RemoveAttachment">Xóa tệp đính kèm</label>
+                                <label class="form-check-label text-danger" for="RemoveAttachment">@L["Les_RemoveAttachment"]</label>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-check form-switch mt-3">
                         <input type="checkbox" id="IsPublished" name="IsPublished" value="true" class="form-check-input" checked />
-                        <label class="form-check-label" for="IsPublished">Công bố bài học (Học viên có thể xem)</label>
+                        <label class="form-check-label" for="IsPublished">@L["Les_IsPublished"]</label>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="sa-btn sa-btn-outline" data-bs-dismiss="modal">@L["Btn_Cancel"]</button>
                 <button type="button" class="sa-btn sa-btn-primary" id="btnSaveLesson">
-                    <i class="bi bi-check-lg"></i> <span class="btn-text">Lưu bài học</span>
+                    <i class="bi bi-check-lg"></i> <span class="btn-text">@L["Les_SaveLesson"]</span>
                 </button>
             </div>
         </div>
@@ -212,10 +210,24 @@
     <script>
         var isEditMode = false;
         var currentModuleId = @moduleId;
+        var _lesModalAdd    = '➕ @L["Les_ModalAddTitle"]';
+        var _lesModalEdit   = '✏️ @L["Les_ModalEditTitle"]';
+        var _lesSave        = '@L["Les_SaveLesson"]';
+        var _lesUpdate      = '@L["Les_Update"]';
+        var _lesProcessing  = '@L["Les_Processing"]';
+        var _lesLoadErr     = '@L["Les_LoadError"]';
+        var _lesDelConf     = '@L["Les_DeleteConfirm"]';
+        var _lesReorderOk   = '@L["Les_ReorderSuccess"]';
+        var _lesReorderErr  = '@L["Les_ReorderError"]';
+        var _lesContentPh   = '@L["Les_ContentPlaceholder"]';
+        var _errAjaxPrefix  = '@L["Err_AjaxPrefix"]';
+        var _errNoPermission = '@L["Err_NoPermission"]';
+        var _errConnection  = '@L["Err_Connection"]';
+        var _errGeneric     = '@L["Err_Generic"]';
 
         var quill = new Quill('#quillEditor', {
             theme: 'snow',
-            placeholder: 'Nhập nội dung bài viết...',
+            placeholder: _lesContentPh,
             modules: {
                 toolbar: [
                     [{ header: [1, 2, 3, false] }],
@@ -247,8 +259,8 @@
 
         function openCreateModal() {
             isEditMode = false;
-            $('#lessonModalLabel').text('➕ Thêm bài học mới');
-            $('#btnSaveLesson .btn-text').text('Lưu');
+            $('#lessonModalLabel').text(_lesModalAdd);
+            $('#btnSaveLesson .btn-text').text(_lesSave);
             $('#lessonForm')[0].reset();
             $('#LessonId').val(0);
             $('#ModuleId').val(currentModuleId);
@@ -264,8 +276,8 @@
 
         function openEditModal(id) {
             isEditMode = true;
-            $('#lessonModalLabel').text('✏️ Sửa bài học');
-            $('#btnSaveLesson .btn-text').text('Cập nhật');
+            $('#lessonModalLabel').text(_lesModalEdit);
+            $('#btnSaveLesson .btn-text').text(_lesUpdate);
             clearErrors();
 
             $.get('@Url.Action("GetLesson", "Lesson")/' + id, function (data) {
@@ -306,7 +318,7 @@
 
                 $('#lessonModal').modal('show');
             }).fail(function () {
-                showToast('Không thể tải thông tin bài học!', 'danger');
+                showToast(_lesLoadErr, 'danger');
             });
         }
 
@@ -324,7 +336,7 @@
                     formData.set('IsPublished', 'true');
                 }
 
-                $btn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> <span class="btn-text">Đang xử lý...</span>');
+                $btn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> <span class="btn-text">' + _lesProcessing + '</span>');
 
                 $.ajax({
                     url: url,
@@ -343,14 +355,14 @@
                                 $('#err-' + field).text(messages.join(', '));
                             });
                         } else {
-                            showToast(res.message || 'Đã xảy ra lỗi', 'danger');
+                            showToast(res.message || _errGeneric, 'danger');
                         }
                     },
                     error: function (xhr) {
-                        showToast('Lỗi: ' + (xhr.status === 403 ? 'Không có quyền' : 'Kết nối'), 'danger');
+                        showToast(_errAjaxPrefix + (xhr.status === 403 ? _errNoPermission : _errConnection), 'danger');
                     },
                     complete: function () {
-                        var label = isEditMode ? 'Cập nhật' : 'Lưu';
+                        var label = isEditMode ? _lesUpdate : _lesSave;
                         $btn.prop('disabled', false).html('<i class="bi bi-check-lg"></i> <span class="btn-text">' + label + '</span>');
                     }
                 });
@@ -369,7 +381,7 @@
             });
 
             $(document).on('click', '.btn-delete-lesson', function () {
-                if (!confirm('Xóa bài học này?')) return;
+                if (!confirm(_lesDelConf)) return;
                 var id = $(this).data('id');
                 var token = $('#antiForgeryForm input[name="__RequestVerificationToken"]').val();
 
@@ -405,9 +417,9 @@
                             headers: { 'RequestVerificationToken': token },
                             data: JSON.stringify({ ids: ids }),
                             success: function(res) {
-                                if (res.success) showToast('Đã cập nhật thứ tự bài học!', 'success');
+                                if (res.success) showToast(_lesReorderOk, 'success');
                             },
-                            error: function() { showToast('Lỗi khi cập nhật thứ tự!', 'danger'); }
+                            error: function() { showToast(_lesReorderErr, 'danger'); }
                         });
                     }
                 });
