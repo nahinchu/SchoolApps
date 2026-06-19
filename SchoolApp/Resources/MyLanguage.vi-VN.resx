@@ -260,4 +260,72 @@
   <data name="Footer_Rights" xml:space="preserve"><value>Bảo lưu mọi quyền.</value></data>
   <data name="Footer_Tagline" xml:space="preserve"><value>Kiến thức là hành trình, không phải đích đến.</value></data>
   <data name="Btn_CloseAlert" xml:space="preserve"><value>Đóng</value></data>
+  <!-- Admin Layout -->
+  <data name="Adm_Overview" xml:space="preserve"><value>Tổng quan</value></data>
+  <data name="Adm_PaymentHistory" xml:space="preserve"><value>Lịch sử thanh toán</value></data>
+  <!-- Admin Dashboard -->
+  <data name="Adm_DashboardTitle" xml:space="preserve"><value>Dashboard Hệ thống</value></data>
+  <data name="Adm_DashboardSub" xml:space="preserve"><value>Tổng quan toàn bộ hoạt động</value></data>
+  <data name="Adm_StatStudentSub" xml:space="preserve"><value>Tài khoản Student</value></data>
+  <data name="Adm_StatManagerSub" xml:space="preserve"><value>Tài khoản quản lý</value></data>
+  <data name="Adm_StatTotalCourses" xml:space="preserve"><value>Tổng số khóa học</value></data>
+  <data name="Adm_StatEnrollments" xml:space="preserve"><value>Đăng ký</value></data>
+  <data name="Adm_StatEnrollmentSub" xml:space="preserve"><value>Lượt đăng ký học</value></data>
+  <data name="Adm_StatRevenue" xml:space="preserve"><value>Doanh thu</value></data>
+  <data name="Adm_StatRevenueSub" xml:space="preserve"><value>Thanh toán thành công</value></data>
+  <data name="Adm_ChartNewStudents" xml:space="preserve"><value>Học viên đăng ký mới (12 tháng)</value></data>
+  <data name="Adm_ChartRevenue" xml:space="preserve"><value>Doanh thu theo tháng</value></data>
+  <data name="Adm_ChartTopCourses" xml:space="preserve"><value>Top khóa học phổ biến</value></data>
+  <data name="Adm_ChartPaymentStatus" xml:space="preserve"><value>Trạng thái thanh toán</value></data>
+  <data name="Adm_RecentEnrollments" xml:space="preserve"><value>Đăng ký học gần nhất</value></data>
+  <data name="Adm_ColEnrollDate" xml:space="preserve"><value>Ngày đăng ký</value></data>
+  <data name="Adm_NoData" xml:space="preserve"><value>Chưa có dữ liệu</value></data>
+  <data name="Adm_RecentPayments" xml:space="preserve"><value>Thanh toán gần nhất</value></data>
+  <data name="Adm_ColAmount" xml:space="preserve"><value>Số tiền</value></data>
+  <data name="Adm_ColStatus" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="Adm_ColTime" xml:space="preserve"><value>Thời gian</value></data>
+  <data name="Adm_ChartLabelStudents" xml:space="preserve"><value>Học viên mới</value></data>
+  <data name="Adm_ChartLabelRevenue" xml:space="preserve"><value>Doanh thu (₫)</value></data>
+  <data name="Adm_ChartLabelEnrollments" xml:space="preserve"><value>Lượt đăng ký</value></data>
+  <!-- Admin Managers -->
+  <data name="Adm_ManagerSub" xml:space="preserve"><value>Tạo và quản lý tài khoản quản lý nội dung hệ thống</value></data>
+  <data name="Adm_CreateManagerTitle" xml:space="preserve"><value>Tạo tài khoản Manager mới</value></data>
+  <data name="Adm_FullName" xml:space="preserve"><value>Họ và tên</value></data>
+  <data name="Adm_Password" xml:space="preserve"><value>Mật khẩu</value></data>
+  <data name="Adm_Phone" xml:space="preserve"><value>Số điện thoại</value></data>
+  <data name="Adm_CreateManagerBtn" xml:space="preserve"><value>Tạo tài khoản Manager</value></data>
+  <data name="Adm_ManagerListTitle" xml:space="preserve"><value>Danh sách Manager</value></data>
+  <data name="Adm_Accounts" xml:space="preserve"><value>tài khoản</value></data>
+  <data name="Adm_NoManagers" xml:space="preserve"><value>Chưa có tài khoản Manager nào.</value></data>
+  <data name="Adm_ColCreatedDate" xml:space="preserve"><value>Ngày tạo</value></data>
+  <data name="Adm_ColActions" xml:space="preserve"><value>Thao tác</value></data>
+  <data name="Adm_EditManagerTitle" xml:space="preserve"><value>Sửa thông tin Manager</value></data>
+  <data name="Adm_EmailReadOnly" xml:space="preserve"><value>Email (không thể thay đổi)</value></data>
+  <data name="Adm_FullNameMin" xml:space="preserve"><value>Họ và tên phải có ít nhất 2 ký tự.</value></data>
+  <data name="Adm_Saving" xml:space="preserve"><value>Đang lưu...</value></data>
+  <data name="Adm_ServerError" xml:space="preserve"><value>Lỗi server. Vui lòng thử lại.</value></data>
+  <data name="Adm_LoadError" xml:space="preserve"><value>Không thể tải thông tin Manager!</value></data>
+  <data name="Adm_DeleteConfirm" xml:space="preserve"><value>Xóa tài khoản Manager</value></data>
+  <!-- Admin Payments -->
+  <data name="Adm_PaymentTitle" xml:space="preserve"><value>Lịch sử Thanh toán</value></data>
+  <data name="Adm_PaymentSub" xml:space="preserve"><value>Theo dõi tất cả giao dịch thanh toán trong hệ thống</value></data>
+  <data name="Adm_SearchPayment" xml:space="preserve"><value>Tìm theo tên học viên hoặc khóa học...</value></data>
+  <data name="Adm_StatusFilter" xml:space="preserve"><value>☰ Trạng thái</value></data>
+  <data name="Adm_StatusPaid" xml:space="preserve"><value>✅ Đã thanh toán</value></data>
+  <data name="Adm_StatusPending" xml:space="preserve"><value>⏳ Chờ xử lý</value></data>
+  <data name="Adm_StatusCancelled" xml:space="preserve"><value>❌ Đã hủy</value></data>
+  <data name="Adm_PaidLabel" xml:space="preserve"><value>Đã thanh toán</value></data>
+  <data name="Adm_PendingLabel" xml:space="preserve"><value>Chờ xử lý</value></data>
+  <data name="Adm_CancelledLabel" xml:space="preserve"><value>Đã hủy</value></data>
+  <data name="Adm_ColCourse" xml:space="preserve"><value>Khóa học</value></data>
+  <data name="Adm_ColCreatedAt" xml:space="preserve"><value>Ngày tạo</value></data>
+  <data name="Adm_ColPaidAt" xml:space="preserve"><value>Ngày thanh toán</value></data>
+  <data name="Adm_ColOrderCode" xml:space="preserve"><value>Mã đơn</value></data>
+  <data name="Adm_NoPayments" xml:space="preserve"><value>Không có giao dịch nào</value></data>
+  <data name="Adm_Total" xml:space="preserve"><value>Tổng</value></data>
+  <data name="Adm_Transactions" xml:space="preserve"><value>giao dịch</value></data>
+  <data name="Adm_Page" xml:space="preserve"><value>Trang</value></data>
+  <data name="Adm_BadgePaid" xml:space="preserve"><value>✅ Đã TT</value></data>
+  <data name="Adm_BadgePending" xml:space="preserve"><value>⏳ Chờ</value></data>
+  <data name="Adm_BadgeCancelled" xml:space="preserve"><value>❌ Hủy</value></data>
 </root>

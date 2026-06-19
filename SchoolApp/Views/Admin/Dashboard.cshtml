@@ -1,6 +1,6 @@
 ﻿@model SchoolApp.DTOs.AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Dashboard Hệ thống";
+    ViewData["Title"] = L["Adm_DashboardTitle"];
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 
     var monthLabelsJson = System.Text.Json.JsonSerializer.Serialize(Model.MonthLabels);
@@ -89,8 +89,8 @@
 <!-- ── PAGE HEADER ─────────────────────────────────────────── -->
 <div class="adm-page-header">
     <div>
-        <div class="adm-page-title">Dashboard <span>Hệ thống</span></div>
-        <div class="adm-page-sub">Tổng quan toàn bộ hoạt động — cập nhật @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
+        <div class="adm-page-title">Dashboard <span>@L["Footer_System"]</span></div>
+        <div class="adm-page-sub">@L["Adm_DashboardSub"] — @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</div>
     </div>
 </div>
 
@@ -98,44 +98,44 @@
 <div class="adm-stats">
     <div class="adm-stat">
         <div class="adm-stat-icon" style="background:rgba(88,166,255,0.12);color:#58a6ff;"><i class="bi bi-people-fill"></i></div>
-        <div class="adm-stat-label">Học viên</div>
+        <div class="adm-stat-label">@L["AdminStudents"]</div>
         <div class="adm-stat-value">@Model.TotalStudents</div>
-        <div class="adm-stat-sub">Tài khoản Student</div>
+        <div class="adm-stat-sub">@L["Adm_StatStudentSub"]</div>
     </div>
     <div class="adm-stat">
         <div class="adm-stat-icon" style="background:rgba(91,157,217,0.12);color:#5b9dd9;"><i class="bi bi-person-gear"></i></div>
         <div class="adm-stat-label">Manager</div>
         <div class="adm-stat-value">@Model.TotalManagers</div>
-        <div class="adm-stat-sub">Tài khoản quản lý</div>
+        <div class="adm-stat-sub">@L["Adm_StatManagerSub"]</div>
     </div>
     <div class="adm-stat">
         <div class="adm-stat-icon" style="background:rgba(201,168,76,0.12);color:#c9a84c;"><i class="bi bi-book-fill"></i></div>
-        <div class="adm-stat-label">Khóa học</div>
+        <div class="adm-stat-label">@L["AdminCourses"]</div>
         <div class="adm-stat-value">@Model.TotalCourses</div>
-        <div class="adm-stat-sub">Tổng số khóa học</div>
+        <div class="adm-stat-sub">@L["Adm_StatTotalCourses"]</div>
     </div>
     <div class="adm-stat">
         <div class="adm-stat-icon" style="background:rgba(63,185,80,0.12);color:#3fb950;"><i class="bi bi-journal-check"></i></div>
-        <div class="adm-stat-label">Đăng ký</div>
+        <div class="adm-stat-label">@L["Adm_StatEnrollments"]</div>
         <div class="adm-stat-value">@Model.TotalEnrollments</div>
-        <div class="adm-stat-sub">Lượt đăng ký học</div>
+        <div class="adm-stat-sub">@L["Adm_StatEnrollmentSub"]</div>
     </div>
     <div class="adm-stat">
         <div class="adm-stat-icon" style="background:rgba(248,81,73,0.12);color:#f85149;"><i class="bi bi-cash-coin"></i></div>
-        <div class="adm-stat-label">Doanh thu</div>
+        <div class="adm-stat-label">@L["Adm_StatRevenue"]</div>
         <div class="adm-stat-value" style="font-size:1.2rem;">@Model.TotalRevenue.ToString("N0") ₫</div>
-        <div class="adm-stat-sub">Thanh toán thành công</div>
+        <div class="adm-stat-sub">@L["Adm_StatRevenueSub"]</div>
     </div>
 </div>
 
 <!-- ── CHARTS ROW 1 ────────────────────────────────────────── -->
 <div class="adm-charts">
     <div class="adm-chart-card">
-        <div class="adm-chart-title"><i class="bi bi-person-plus"></i> Học viên đăng ký mới (12 tháng)</div>
+        <div class="adm-chart-title"><i class="bi bi-person-plus"></i> @L["Adm_ChartNewStudents"]</div>
         <canvas id="chartStudents" height="220" class="adm-chart-canvas"></canvas>
     </div>
     <div class="adm-chart-card">
-        <div class="adm-chart-title"><i class="bi bi-cash-stack"></i> Doanh thu theo tháng</div>
+        <div class="adm-chart-title"><i class="bi bi-cash-stack"></i> @L["Adm_ChartRevenue"]</div>
         <canvas id="chartRevenue" height="220" class="adm-chart-canvas"></canvas>
     </div>
 </div>
@@ -143,30 +143,30 @@
 <!-- ── CHARTS ROW 2 ────────────────────────────────────────── -->
 <div class="adm-charts">
     <div class="adm-chart-card">
-        <div class="adm-chart-title"><i class="bi bi-trophy"></i> Top khóa học phổ biến</div>
+        <div class="adm-chart-title"><i class="bi bi-trophy"></i> @L["Adm_ChartTopCourses"]</div>
         <canvas id="chartTopCourses" height="260" class="adm-chart-canvas"></canvas>
     </div>
     <div class="adm-chart-card">
-        <div class="adm-chart-title"><i class="bi bi-pie-chart"></i> Trạng thái thanh toán</div>
+        <div class="adm-chart-title"><i class="bi bi-pie-chart"></i> @L["Adm_ChartPaymentStatus"]</div>
         <canvas id="chartPaymentStatus" height="260" class="adm-chart-canvas"></canvas>
     </div>
 </div>
 
 <!-- ── RECENT ENROLLMENTS ──────────────────────────────────── -->
 <div class="adm-table-card">
-    <div class="adm-chart-title"><i class="bi bi-clock-history"></i> Đăng ký học gần nhất</div>
+    <div class="adm-chart-title"><i class="bi bi-clock-history"></i> @L["Adm_RecentEnrollments"]</div>
     <table class="adm-table">
         <thead>
             <tr>
-                <th>Học viên</th>
-                <th>Khóa học</th>
-                <th>Ngày đăng ký</th>
+                <th>@L["AdminStudents"]</th>
+                <th>@L["AdminCourses"]</th>
+                <th>@L["Adm_ColEnrollDate"]</th>
             </tr>
         </thead>
         <tbody>
             @if (!Model.RecentEnrollments.Any())
             {
-                <tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.3);padding:24px;">Chưa có dữ liệu</td></tr>
+                <tr><td colspan="4" style="text-align:center;color:rgba(255,255,255,0.3);padding:24px;">@L["Adm_NoData"]</td></tr>
             }
             @foreach (var e in Model.RecentEnrollments)
             {
@@ -182,21 +182,21 @@
 
 <!-- ── RECENT PAYMENTS ────────────────────────────────────── -->
 <div class="adm-table-card">
-    <div class="adm-chart-title"><i class="bi bi-credit-card"></i> Thanh toán gần nhất</div>
+    <div class="adm-chart-title"><i class="bi bi-credit-card"></i> @L["Adm_RecentPayments"]</div>
     <table class="adm-table">
         <thead>
             <tr>
-                <th>Học viên</th>
-                <th>Khóa học</th>
-                <th>Số tiền</th>
-                <th>Trạng thái</th>
-                <th>Thời gian</th>
+                <th>@L["AdminStudents"]</th>
+                <th>@L["AdminCourses"]</th>
+                <th>@L["Adm_ColAmount"]</th>
+                <th>@L["Adm_ColStatus"]</th>
+                <th>@L["Adm_ColTime"]</th>
             </tr>
         </thead>
         <tbody>
             @if (!Model.RecentPayments.Any())
             {
-                <tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.3);padding:24px;">Chưa có dữ liệu</td></tr>
+                <tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,0.3);padding:24px;">@L["Adm_NoData"]</td></tr>
             }
             @foreach (var p in Model.RecentPayments)
             {
@@ -207,17 +207,15 @@
                     <td>
                         @if (p.Status == "PAID")
                         {
-                            <span class="badge-paid">PAID</span>
+                            <span class="badge-paid">@L["Adm_BadgePaid"]</span>
                         }
                         else if (p.Status == "PENDING")
                         {
-
-                            <span class="badge-pending">PENDING</span>
+                            <span class="badge-pending">@L["Adm_BadgePending"]</span>
                         }
                         else
                         {
-
-                            <span class="badge-cancelled">CANCELLED</span>
+                            <span class="badge-cancelled">@L["Adm_BadgeCancelled"]</span>
                         }
                     </td>
                     <td>@p.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
@@ -237,13 +235,13 @@
         const gold = '#c9a84c';
         const blue = '#58a6ff';
 
-        // Chart 1: Học viên mới - Line
+        // Chart 1: New students - Line
         new Chart(document.getElementById('chartStudents'), {
             type: 'line',
             data: {
                 labels: monthLabels,
                 datasets: [{
-                    label: 'Học viên mới',
+                    label: '@L["Adm_ChartLabelStudents"]',
                     data: @Html.Raw(newStudentsJson),
                     borderColor: blue,
                     backgroundColor: 'rgba(88,166,255,0.1)',
@@ -264,13 +262,13 @@
             }
         });
 
-        // Chart 2: Doanh thu - Bar
+        // Chart 2: Revenue - Bar
         new Chart(document.getElementById('chartRevenue'), {
             type: 'bar',
             data: {
                 labels: monthLabels,
                 datasets: [{
-                    label: 'Doanh thu (₫)',
+                    label: '@L["Adm_ChartLabelRevenue"]',
                     data: @Html.Raw(revenueJson),
                     backgroundColor: 'rgba(201,168,76,0.6)',
                     borderColor: gold,
@@ -302,7 +300,7 @@
             data: {
                 labels: @Html.Raw(topCourseNamesJson),
                 datasets: [{
-                    label: 'Lượt đăng ký',
+                    label: '@L["Adm_ChartLabelEnrollments"]',
                     data: @Html.Raw(topCourseEnrollJson),
                     backgroundColor: [
                         'rgba(201,168,76,0.7)','rgba(88,166,255,0.7)','rgba(63,185,80,0.7)',
