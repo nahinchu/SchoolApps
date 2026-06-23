@@ -61,6 +61,12 @@
   <data name="NavCourses" xml:space="preserve">
     <value>Courses</value>
   </data>
+  <data name="NavChess" xml:space="preserve">
+    <value>Chess</value>
+  </data>
+  <data name="Chess_Fullscreen" xml:space="preserve">
+    <value>Fullscreen</value>
+  </data>
   <data name="NavMyEnrollments" xml:space="preserve">
     <value>My Courses</value>
   </data>
