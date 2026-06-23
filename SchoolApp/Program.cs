@@ -3,21 +3,24 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Minio;
+using QuestPDF.Infrastructure;
 using SchoolApp.Data;
 using SchoolApp.Services;
+using SchoolApp.Services.CertificateService;
 using SchoolApp.Services.CloudinaryService;
+using SchoolApp.Services.CompletionService;
 using SchoolApp.Services.EmailService;
+using SchoolApp.Services.ExcelExportService;
 using SchoolApp.Services.HashPassService;
 using SchoolApp.Services.MinioService;
-using SchoolApp.Services.PayosService;
-using SchoolApp.Services.ExcelExportService;
-using SchoolApp.Services.CompletionService;
-using SchoolApp.Services.CertificateService;
 using SchoolApp.Services.NotificationService;
+using SchoolApp.Services.PayosService;
 using SchoolApp.UnitOfWork;
-using QuestPDF.Infrastructure;
+using Microsoft.AspNetCore.StaticFiles;
+using SchoolApp.Hubs;
 namespace SchoolApp
 {
     public class Program
@@ -55,6 +58,8 @@ namespace SchoolApp
             builder.Services.AddSingleton<IExcelImportService, ExcelImportService>();
             builder.Services.AddSingleton<IPasswordService, BCryptPasswordService>();
             builder.Services.AddSingleton<ICloudinaryService, CloudinaryService>();
+            builder.Services.AddSignalR();
+
             builder.Services.AddHttpClient<PayOSService>();
             builder.Services.AddSingleton<IMinioClient>(sp =>
             {
@@ -124,7 +129,36 @@ namespace SchoolApp
                 .AddSupportedUICultures(supportedCultures));
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+
+            // Phục vụ file Unity WebGL. Build dùng nén Brotli (.br), nên phải:
+            //  - đăng ký MIME cho .br/.wasm/.data (nếu không UseStaticFiles trả 404)
+            //  - gửi header Content-Encoding: br + Content-Type đúng của file gốc
+            //    để trình duyệt tự giải nén.
+            var unityProvider = new FileExtensionContentTypeProvider();
+            unityProvider.Mappings[".wasm"] = "application/wasm";
+            unityProvider.Mappings[".data"] = "application/octet-stream";
+            unityProvider.Mappings[".symbols.json"] = "application/octet-stream";
+            unityProvider.Mappings[".br"] = "application/octet-stream";
+            unityProvider.Mappings[".gz"] = "application/octet-stream";
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ContentTypeProvider = unityProvider,
+                OnPrepareResponse = ctx =>
+                {
+                    var name = ctx.File.Name;
+                    var headers = ctx.Context.Response.Headers;
+                    if (name.EndsWith(".br"))
+                    {
+                        headers["Content-Encoding"] = "br";
+                        ctx.Context.Response.ContentType = UnityContentType(name);
+                    }
+                    else if (name.EndsWith(".gz"))
+                    {
+                        headers["Content-Encoding"] = "gzip";
+                        ctx.Context.Response.ContentType = UnityContentType(name);
+                    }
+                }
+            });
             app.UseRouting();
 
             // Phải đứng trước UseAuthentication để SameSite policy áp dụng
@@ -148,8 +182,18 @@ namespace SchoolApp
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-
+            app.MapHub<ChessHub>("/chess-hub");
             app.Run();
+        }
+
+        // Trả về Content-Type GỐC của file Unity đã nén (.wasm.br -> wasm...).
+        private static string UnityContentType(string fileName)
+        {
+            if (fileName.Contains(".wasm")) return "application/wasm";
+            if (fileName.Contains(".js")) return "application/javascript";
+            if (fileName.Contains(".data")) return "application/octet-stream";
+            if (fileName.Contains(".symbols.json")) return "application/octet-stream";
+            return "application/octet-stream";
         }
     }
 }
