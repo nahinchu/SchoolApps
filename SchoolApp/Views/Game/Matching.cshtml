@@ -1,0 +1,220 @@
+@{
+    ViewData["Title"] = "Lật thẻ ghép cặp";
+}
+
+<div class="container my-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
+        <h2 class="mb-0">
+            <i class="bi bi-grid-1x2-fill me-2 text-success"></i>@ViewData["Title"]
+        </h2>
+        <a asp-controller="Game" asp-action="Index" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Sảnh game
+        </a>
+    </div>
+
+    <p class="text-muted">Ghép mỗi <strong>đáp án</strong> (thẻ xanh dương) với <strong>câu hỏi</strong> đúng của nó (thẻ xanh lá). Mỗi ván random 6 cặp từ ngân hàng câu hỏi.</p>
+
+    @* ── Khi ngân hàng chưa có dữ liệu phù hợp ── *@
+    <div id="mcEmpty" class="alert alert-warning d-none">
+        <i class="bi bi-exclamation-triangle me-1"></i>
+        Chưa có đủ câu hỏi (loại "Một đáp án") trong ngân hàng để tạo game.
+        Hãy thêm câu hỏi vào <a asp-controller="QuestionBank" asp-action="Index">Ngân hàng câu hỏi</a>.
+    </div>
+
+    @* ── Thanh trạng thái ── *@
+    <div id="mcStatus" class="d-flex flex-wrap gap-3 mb-3">
+        <span class="badge bg-light text-dark border fs-6"><i class="bi bi-arrow-repeat me-1"></i>Lượt: <strong id="mcMoves">0</strong></span>
+        <span class="badge bg-light text-dark border fs-6"><i class="bi bi-check2-circle me-1"></i>Đã ghép: <strong id="mcMatched">0</strong>/<strong id="mcTotal">0</strong></span>
+        <span class="badge bg-light text-dark border fs-6"><i class="bi bi-stopwatch me-1"></i>Thời gian: <strong id="mcTime">0:00</strong></span>
+        <button id="mcRestart" class="btn btn-success btn-sm ms-auto"><i class="bi bi-arrow-clockwise me-1"></i>Chơi lại</button>
+    </div>
+
+    @* ── Bảng thắng ── *@
+    <div id="mcWin" class="alert alert-success d-none text-center fs-5">
+        🎉 Hoàn thành! Bạn ghép xong <strong id="mcWinPairs">0</strong> cặp trong
+        <strong id="mcWinMoves">0</strong> lượt, <strong id="mcWinTime">0:00</strong>.
+        <div class="mt-2"><button id="mcPlayAgain" class="btn btn-success btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>Chơi ván mới</button></div>
+    </div>
+
+    @* ── Lưới thẻ 4x4 ── *@
+    <div id="mcBoard" class="mc-board"></div>
+</div>
+
+<style>
+    .mc-board {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        max-width: 760px;
+        margin: 0 auto;
+    }
+    @@media (max-width: 575px) { .mc-board { grid-template-columns: repeat(2, 1fr); gap: 8px; } }
+
+    .mc-card {
+        position: relative;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        aspect-ratio: 1 / 1;
+        perspective: 800px;
+        cursor: pointer;
+    }
+    .mc-inner {
+        position: absolute; inset: 0;
+        transition: transform .45s;
+        transform-style: preserve-3d;
+    }
+    .mc-card.flipped .mc-inner,
+    .mc-card.matched .mc-inner { transform: rotateY(180deg); }
+
+    .mc-face {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        text-align: center; padding: 8px;
+        border-radius: 12px;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        line-height: 1.2; overflow: auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,.10);
+    }
+    .mc-front {
+        background: linear-gradient(135deg,#475569,#64748b);
+        color: #fff; font-size: 1.8rem;
+    }
+    .mc-back { transform: rotateY(180deg); color: #fff; }
+    .mc-back.term { background: linear-gradient(135deg,#2563eb,#3b82f6); font-weight: 600; font-size: .82rem; }
+    .mc-back.def  { background: linear-gradient(135deg,#0d9488,#16a34a); font-weight: 500; font-size: .72rem; }
+
+    .mc-card.matched { cursor: default; }
+    .mc-card.matched .mc-face { box-shadow: 0 0 0 3px #22c55e, 0 4px 12px rgba(0,0,0,.10); opacity: .85; }
+</style>
+
+<script>
+(function () {
+    // POOL = toàn bộ kho cặp từ ngân hàng (nạp 1 lần): [ { term, def }, ... ]
+    const POOL = @Html.Raw(ViewBag.PoolJson ?? "[]");
+    const PAIRS_PER_GAME = 6;   // 6 cặp = 12 thẻ = lưới 4x3 (4 cột x 3 hàng)
+
+    const board   = document.getElementById("mcBoard");
+    const statusEl = document.getElementById("mcStatus");
+    const emptyEl  = document.getElementById("mcEmpty");
+    const elMoves  = document.getElementById("mcMoves");
+    const elMatch  = document.getElementById("mcMatched");
+    const elTotal  = document.getElementById("mcTotal");
+    const elTime   = document.getElementById("mcTime");
+    const winBox   = document.getElementById("mcWin");
+
+    let deck = [], first = null, second = null, lock = false;
+    let moves = 0, matched = 0, total = 0;
+    let timer = null, seconds = 0, started = false;
+
+    function fmt(s) {
+        const m = Math.floor(s / 60), r = s % 60;
+        return m + ":" + (r < 10 ? "0" : "") + r;
+    }
+    function startTimer() {
+        if (started) return;
+        started = true;
+        timer = setInterval(() => { seconds++; elTime.textContent = fmt(seconds); }, 1000);
+    }
+    function stopTimer() { clearInterval(timer); timer = null; }
+
+    function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+
+    function buildDeck() {
+        // Random chọn PAIRS_PER_GAME cặp từ kho (hoặc ít hơn nếu kho nhỏ)
+        const n = Math.min(PAIRS_PER_GAME, POOL.length);
+        const picked = shuffle(POOL.slice()).slice(0, n);
+        const cards = [];
+        picked.forEach((p, i) => {
+            cards.push({ pair: i, type: "term", text: p.term });
+            cards.push({ pair: i, type: "def",  text: p.def });
+        });
+        return shuffle(cards);
+    }
+
+    function render() {
+        board.innerHTML = "";
+        deck.forEach((c) => {
+            const btn = document.createElement("button");
+            btn.className = "mc-card";
+            btn.dataset.pair = c.pair;
+            btn.innerHTML =
+                '<div class="mc-inner">' +
+                    '<div class="mc-face mc-front"><i class="bi bi-question-lg"></i></div>' +
+                    '<div class="mc-face mc-back ' + c.type + '">' + escapeHtml(c.text) + '</div>' +
+                '</div>';
+            btn.addEventListener("click", () => onFlip(btn, c));
+            board.appendChild(btn);
+        });
+    }
+
+    function onFlip(btn, card) {
+        if (lock || btn.classList.contains("flipped") || btn.classList.contains("matched")) return;
+        startTimer();
+        btn.classList.add("flipped");
+
+        if (!first) { first = { btn, card }; return; }
+        second = { btn, card };
+        moves++; elMoves.textContent = moves;
+
+        if (first.card.pair === second.card.pair && first.card.type !== second.card.type) {
+            first.btn.classList.add("matched");
+            second.btn.classList.add("matched");
+            matched++; elMatch.textContent = matched;
+            reset();
+            if (matched === total) win();
+        } else {
+            lock = true;
+            setTimeout(() => {
+                first.btn.classList.remove("flipped");
+                second.btn.classList.remove("flipped");
+                reset();
+            }, 850);
+        }
+    }
+
+    function reset() { first = null; second = null; lock = false; }
+
+    function win() {
+        stopTimer();
+        document.getElementById("mcWinPairs").textContent = total;
+        document.getElementById("mcWinMoves").textContent = moves;
+        document.getElementById("mcWinTime").textContent  = fmt(seconds);
+        winBox.classList.remove("d-none");
+    }
+
+    function newGame() {
+        stopTimer();
+        deck = buildDeck();
+        total = deck.length / 2;
+        moves = 0; matched = 0; seconds = 0; started = false;
+        elMoves.textContent = "0"; elMatch.textContent = "0";
+        elTotal.textContent = total; elTime.textContent = "0:00";
+        winBox.classList.add("d-none");
+        reset();
+        render();
+    }
+
+    // ── Khởi tạo ──
+    if (!Array.isArray(POOL) || POOL.length < 2) {
+        emptyEl.classList.remove("d-none");
+        statusEl.classList.add("d-none");
+    } else {
+        document.getElementById("mcRestart").addEventListener("click", newGame);
+        document.getElementById("mcPlayAgain").addEventListener("click", newGame);
+        newGame();
+    }
+})();
+</script>

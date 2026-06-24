@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = L["NavGames"].Value;
+}
+
+<div class="container my-4">
+    <div class="text-center mb-4">
+        <h2 class="mb-1">
+            <i class="bi bi-controller me-2"></i>@ViewData["Title"]
+        </h2>
+        <p class="text-muted mb-0">Vừa chơi vừa học — chọn một trò chơi để bắt đầu.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+        @* ── Cờ vua (đã có) ── *@
+        <div class="col-12 col-sm-6 col-lg-4">
+            <a asp-controller="Game" asp-action="Chess" class="game-card text-decoration-none">
+                <div class="game-card-icon" style="background:linear-gradient(135deg,#2c4a72,#4a6fa5);">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </div>
+                <div class="game-card-body">
+                    <h5 class="game-card-title">Cờ vua</h5>
+                    <p class="game-card-desc">Đấu với AI, 2 người chơi hoặc online theo thời gian thực.</p>
+                    <span class="badge bg-primary">Chơi ngay</span>
+                </div>
+            </a>
+        </div>
+
+        @* ── Lật thẻ ghép cặp (mới) ── *@
+        <div class="col-12 col-sm-6 col-lg-4">
+            <a asp-controller="Game" asp-action="Matching" class="game-card text-decoration-none">
+                <div class="game-card-icon" style="background:linear-gradient(135deg,#0d9488,#22c55e);">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                </div>
+                <div class="game-card-body">
+                    <h5 class="game-card-title">
+                        Lật thẻ ghép cặp
+                        <span class="badge bg-success ms-1">Mới</span>
+                    </h5>
+                    <p class="game-card-desc">Ghép thuật ngữ với định nghĩa theo chủ đề lập trình. Rèn trí nhớ.</p>
+                    <span class="badge bg-primary">Chơi ngay</span>
+                </div>
+            </a>
+        </div>
+
+        @* ── Quiz Battle (sắp ra mắt) ── *@
+        @* <div class="col-12 col-sm-6 col-lg-4">
+            <div class="game-card game-card--soon">
+                <div class="game-card-icon" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                </div>
+                <div class="game-card-body">
+                    <h5 class="game-card-title">Quiz Battle</h5>
+                    <p class="game-card-desc">Trắc nghiệm tốc độ từ ngân hàng câu hỏi, tính điểm và streak.</p>
+                    <span class="badge bg-secondary">Sắp ra mắt</span>
+                </div>
+            </div>
+        </div> *@
+
+        @* ── Code Race (sắp ra mắt) ── *@
+        @* <div class="col-12 col-sm-6 col-lg-4">
+            <div class="game-card game-card--soon">
+                <div class="game-card-icon" style="background:linear-gradient(135deg,#ea580c,#f59e0b);">
+                    <i class="bi bi-keyboard-fill"></i>
+                </div>
+                <div class="game-card-body">
+                    <h5 class="game-card-title">Code Race</h5>
+                    <p class="game-card-desc">Gõ lại đoạn code thật nhanh, đo tốc độ và độ chính xác.</p>
+                    <span class="badge bg-secondary">Sắp ra mắt</span>
+                </div>
+            </div>
+        </div> *@
+
+    </div>
+</div>
+
+<style>
+    .game-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,.08);
+        border-radius: 16px;
+        overflow: hidden;
+        color: inherit;
+        box-shadow: 0 6px 18px rgba(0,0,0,.06);
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+    a.game-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0,0,0,.14);
+    }
+    .game-card-icon {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #fff;
+    }
+    .game-card-body { padding: 1.1rem 1.2rem 1.3rem; }
+    .game-card-title { font-weight: 700; margin-bottom: .4rem; }
+    .game-card-desc { color: #6b7280; font-size: .92rem; min-height: 3em; margin-bottom: .8rem; }
+    .game-card--soon { opacity: .65; }
+</style>

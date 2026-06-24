@@ -54,12 +54,7 @@
                             @L["NavCourses"]
                         </a>
                     </li>
-                    <li>
-                        <a class="sa-nav-link" asp-controller="Game" asp-action="Chess">
-                            <i class="bi bi-grid-3x3-gap-fill nav-icon"></i>
-                            @L["NavChess"]
-                        </a>
-                    </li>
+                    
                     @if (Context.Session.GetString("Role") == "Admin")
                     {
                         <li>
@@ -113,8 +108,14 @@
                             </a>
                         </li>
                     }
+                    <li>
+                        <a class="sa-nav-link" asp-controller="Game" asp-action="Index">
+                            <i class="bi bi-controller nav-icon"></i>
+                            @L["NavGames"]
+                        </a>
+                    </li>
                 </ul>
-
+               
                 <ul class="sa-user-section" aria-label="@L["Nav_AccountMenu"]">
                     @{
                         var _currentCulture = System.Globalization.CultureInfo.CurrentUICulture.Name;
@@ -390,7 +391,7 @@
                         <ul class="sa-footer-links">
                             <li><a asp-controller="Home" asp-action="Index">@L["Footer_Home"]</a></li>
                             <li><a asp-controller="Course" asp-action="Index">@L["NavCourses"]</a></li>
-                            <li><a asp-controller="Game" asp-action="Chess">@L["NavChess"]</a></li>
+                            <li><a asp-controller="Game" asp-action="Index">@L["NavGames"]</a></li>
                             @if (Context.Session.GetString("Role") == "Admin")
                             {
                                 <li><a asp-controller="Admin" asp-action="Dashboard">Dashboard</a></li>
