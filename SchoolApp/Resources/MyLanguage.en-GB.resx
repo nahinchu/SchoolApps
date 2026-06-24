@@ -64,6 +64,9 @@
   <data name="NavChess" xml:space="preserve">
     <value>Chess</value>
   </data>
+  <data name="NavGames" xml:space="preserve">
+    <value>Games</value>
+  </data>
   <data name="Chess_Fullscreen" xml:space="preserve">
     <value>Fullscreen</value>
   </data>

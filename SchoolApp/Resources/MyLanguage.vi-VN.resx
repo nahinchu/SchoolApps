@@ -64,6 +64,9 @@
   <data name="NavChess" xml:space="preserve">
     <value>Cờ vua</value>
   </data>
+  <data name="NavGames" xml:space="preserve">
+    <value>Trò chơi</value>
+  </data>
   <data name="Chess_Fullscreen" xml:space="preserve">
     <value>Toàn màn hình</value>
   </data>

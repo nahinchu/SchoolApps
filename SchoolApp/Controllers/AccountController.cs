@@ -442,10 +442,20 @@ namespace SchoolApp.Controllers
 
         // ─── Google OAuth ─────────────────────────────────────────────────────
 
-        public IActionResult GoogleLogin()
+        public async Task<IActionResult> GoogleLogin(
+            [FromServices] Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider schemes)
         {
+            // Google OAuth chỉ được đăng ký khi có ClientId/Secret (xem Program.cs).
+            // Nếu chưa cấu hình (vd: chạy local) thì báo nhẹ thay vì ném lỗi.
+            if (await schemes.GetSchemeAsync(GoogleDefaults.AuthenticationScheme) == null)
+            {
+                TempData["Error"] = "Đăng nhập Google chưa được cấu hình.";
+                return RedirectToAction("Login");
+            }
+
             var redirectUrl = Url.Action("GoogleCallback", "Account");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            properties.SetParameter("prompt", "select_account");
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
